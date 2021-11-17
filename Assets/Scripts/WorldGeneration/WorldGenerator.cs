@@ -87,14 +87,14 @@ public class WorldGenerator : MonoBehaviour
     private void Generate()
     {
         m_worldTiles = new List<Tile>();
-        for (int y = 0; y < m_worldHeight; y++)
+        for (int z = 0; z < m_worldHeight; z++)
         {
             for (int x = 0; x < m_worldWidth; x++)
             {
-                var newTile = Instantiate(m_tilePrefab);
-                m_tilePrefab.Initialise(x, y, m_tileOuterRadius, m_worldHeight);
+                var newTile = Instantiate(m_tilePrefab, transform);
+                m_tilePrefab.Initialise(x, z, m_tileOuterRadius, m_worldHeight);
 
-                SetNeighbours(x, y, newTile);
+                SetNeighbours(x, z, newTile);
 
                 m_worldTiles.Add(newTile);
             }
@@ -102,7 +102,6 @@ public class WorldGenerator : MonoBehaviour
 
         int landBudget = (int)(m_worldWidth * (float)m_worldHeight * m_landPercentage);
         GenerateLand(landBudget);
-        SetBiomeSprites();
     }
 
     private void GenerateLand(int landBudget)
@@ -117,7 +116,7 @@ public class WorldGenerator : MonoBehaviour
             TerrainType type = TerrainType.GRASS;
            
             System.Array terrainTypes = System.Enum.GetValues(typeof(TerrainType));
-            type = (TerrainType)terrainTypes.GetValue(Random.Range(1, terrainTypes.Length));
+            type = (TerrainType)terrainTypes.GetValue(Random.Range(0, terrainTypes.Length));
 
             landBudget = GenerateLandChunk(Random.Range(m_minChunkSize, m_minChunkSize), landBudget, type);
         }
@@ -127,12 +126,10 @@ public class WorldGenerator : MonoBehaviour
     {
         Tile startingTile = m_worldTiles[Random.Range(0, m_worldTiles.Count)];
 
-        int count = 0;
-
         var tileQueue = new Queue<Tile>();
         tileQueue.Enqueue(startingTile);
 
-        while (count < size)
+        for (int i = 0; i < size; i++)
         {
             Tile current = tileQueue.Dequeue();
 
@@ -142,7 +139,7 @@ public class WorldGenerator : MonoBehaviour
             }
 
             current.Terrain = type;
-            count++;
+            SetBiomeSprite(current);
 
             for (EHexDirection direction = EHexDirection.NE; direction <= EHexDirection.NW; direction++)
             {
@@ -167,52 +164,44 @@ public class WorldGenerator : MonoBehaviour
         return landBudget;
     }
 
-    private void SetBiomeSprites()
+    private void SetBiomeSprite(Tile tile)
     {
-        foreach (Tile tile in m_worldTiles)
+        switch (tile.Terrain)
         {
-            switch (tile.Terrain)
+            case TerrainType.GRASS:
             {
-                case TerrainType.GRASS:
-                {
-                    int randomIndex = Random.Range(0, m_grassSprites.Length - 1);
-                    tile.SetSprite(m_grassSprites[randomIndex]);
-                    break;
-                }
-                case TerrainType.WATER:
-                {
-                    int randomIndex = Random.Range(0, m_waterSprites.Length - 1);
-                    tile.SetSprite(m_waterSprites[randomIndex]);
-                    break;
-                }
-                case TerrainType.DESERT:
-                {
-                    int randomIndex = Random.Range(0, m_desertSprites.Length - 1);
-                    tile.SetSprite(m_desertSprites[randomIndex]);
-                    break;
-                }
-                case TerrainType.MOUNTAIN:
-                {
-                    int randomIndex = Random.Range(0, m_mountainSprites.Length - 1);
-                    tile.SetSprite(m_mountainSprites[randomIndex]);
-                    break;
-                }
+                int randomIndex = Random.Range(0, m_grassSprites.Length - 1);
+                tile.SetSprite(m_grassSprites[randomIndex]);
+                break;
+            }
+            case TerrainType.WATER:
+            {
+                int randomIndex = Random.Range(0, m_waterSprites.Length - 1);
+                tile.SetSprite(m_waterSprites[randomIndex]);
+                break;
+            }
+            case TerrainType.DESERT:
+            {
+                int randomIndex = Random.Range(0, m_desertSprites.Length - 1);
+                tile.SetSprite(m_desertSprites[randomIndex]);
+                break;
+            }
+            case TerrainType.MOUNTAIN:
+            {
+                int randomIndex = Random.Range(0, m_mountainSprites.Length - 1);
+                tile.SetSprite(m_mountainSprites[randomIndex]);
+                break;
             }
         }
     }
 
-    private void SetNeighbours(int x, int y, Tile newTile)
+    private void SetNeighbours(int x, int z, Tile newTile)
     {
-        int currentIndex = (y * m_worldWidth) + x;
+        int currentIndex = (z * m_worldWidth) + x;
 
-        if (x > 0)
+        if (z > 0)
         {
-            newTile.SetNeighbour(EHexDirection.W, m_worldTiles[currentIndex - 1]);
-        }
-
-        if (y > 0)
-        {
-            if (y % 2 == 0)
+            if (z % 2 == 0)
             {
                 newTile.SetNeighbour(EHexDirection.SE, m_worldTiles[currentIndex - m_worldWidth]);
 

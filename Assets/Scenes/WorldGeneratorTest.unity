@@ -209,9 +209,9 @@ MonoBehaviour:
   m_worldHeight: 30
   m_tileOuterRadius: 0.8
   m_generationRandomness: 0.3
-  m_landPercentage: 0.98
-  m_minChunkSize: 15
-  m_maxChunkSize: 20
+  m_landPercentage: 0.7
+  m_minChunkSize: 5
+  m_maxChunkSize: 10
 --- !u!4 &1258461992
 Transform:
   m_ObjectHideFlags: 0
