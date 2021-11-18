@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface ITileObject
+public interface ITileObject : IWorldSelectable
 {
-
+    Tile Tile
+    {
+        get; set;
+    }
 }

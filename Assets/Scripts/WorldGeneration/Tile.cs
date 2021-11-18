@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Tile : MonoBehaviour
+public class Tile : MonoBehaviour, IWorldSelectable
 {
     [SerializeField] private SpriteRenderer m_spriteRenderer = default;
 
     public HexCoordinates Coordinates => m_coordinates;
-
-    public HexMatrics Matrics => m_matrics;
 
     public int DistanceValue => 1;
 
@@ -17,45 +16,10 @@ public class Tile : MonoBehaviour
 
     [HideInInspector] public TerrainType Terrain = TerrainType.WATER;
 
-    [HideInInspector] public bool HasRiver = false;
-    public HashSet<EHexDirection> RiverDirections = new HashSet<EHexDirection>();
-
     private HexCoordinates m_coordinates = default;
     private HexMatrics m_matrics = default;
 
-    public void Initialise(int x, int z, float radius, int worldHeight)
-    {
-        m_coordinates = new HexCoordinates(x, z);
-        m_matrics = new HexMatrics(radius);
-
-        Neighbours = new Dictionary<EHexDirection, Tile>()
-        {
-            {EHexDirection.NW, null },
-            {EHexDirection.NE, null },
-            {EHexDirection.E, null },
-            {EHexDirection.SE, null },
-            {EHexDirection.SW, null },
-            {EHexDirection.W, null },
-        };
-
-        transform.position = new Vector3(
-            (m_coordinates.X + (m_coordinates.Z * 0.5f) - (m_coordinates.Z / 2)) * (Matrics.InnerRadius * 2f),
-            m_coordinates.Z * (Matrics.OuterRadius * 1.5f) / 2,
-            0
-        );
-
-        m_spriteRenderer.sortingOrder = worldHeight - m_coordinates.Z;
-    }
-
-    public void SetSprite(Sprite sprite)
-    {
-        m_spriteRenderer.sprite = sprite;
-    }
-
-    public bool HasNeighbour(EHexDirection dir)
-    {
-        return Neighbours.ContainsKey(dir) && Neighbours[dir] != null;
-    }
+    private ITileObject m_tileObject = null;
 
     public static EHexDirection ReverseDirection(EHexDirection dir)
     {
@@ -76,6 +40,40 @@ public class Tile : MonoBehaviour
         }
 
         return diff;
+    }
+
+    public void Initialise(int x, int z, float radius, int worldHeight)
+    {
+        m_coordinates = new HexCoordinates(x, z);
+        m_matrics = new HexMatrics(radius);
+
+        Neighbours = new Dictionary<EHexDirection, Tile>()
+        {
+            {EHexDirection.NW, null },
+            {EHexDirection.NE, null },
+            {EHexDirection.E, null },
+            {EHexDirection.SE, null },
+            {EHexDirection.SW, null },
+            {EHexDirection.W, null },
+        };
+
+        transform.position = new Vector3(
+            (m_coordinates.X + (m_coordinates.Z * 0.5f) - (m_coordinates.Z / 2)) * (m_matrics.InnerRadius * 2f),
+            m_coordinates.Z * (m_matrics.OuterRadius * 1.5f) / 2,
+            0
+        );
+
+        m_spriteRenderer.sortingOrder = worldHeight - m_coordinates.Z;
+    }
+
+    public void SetSprite(Sprite sprite)
+    {
+        m_spriteRenderer.sprite = sprite;
+    }
+
+    public bool HasNeighbour(EHexDirection dir)
+    {
+        return Neighbours.ContainsKey(dir) && Neighbours[dir] != null;
     }
 
     public void SetNeighbour(EHexDirection direction, Tile tile)
@@ -120,5 +118,39 @@ public class Tile : MonoBehaviour
         }
 
         return closestNeighbour;
+    }
+
+    public void Select()
+    {
+        m_spriteRenderer.color = new Color(1, 0, 0);
+        if (m_tileObject != null)
+        {
+            m_tileObject.Select();
+        }
+    }
+
+    public void Deselect()
+    {
+        m_spriteRenderer.color = new Color(1, 1, 1);
+        if (m_tileObject != null)
+        {
+            m_tileObject.Deselect();
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            if (m_tileObject == null)
+            {
+                WorldSelection.ChangeSelection(this);
+            }
+        }
+        else if (eventData.button == PointerEventData.InputButton.Right &&
+            WorldSelection.SelectedObject == this)
+        {
+            WorldSelection.ChangeSelection(null);
+        }
     }
 }
