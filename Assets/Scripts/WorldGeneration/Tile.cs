@@ -134,6 +134,14 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+            if (WorldSelection.SelectedObject is Tile tile)
+            {
+                foreach (var step in WorldGenerator.GetPath(this, tile))
+                {
+                    Debug.Log(step.Coordinates);
+                }
+            }
+
             if (m_tileObject == null)
             {
                 WorldSelection.ChangeSelection(this);

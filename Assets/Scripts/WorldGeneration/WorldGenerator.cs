@@ -24,7 +24,7 @@ public class WorldGenerator : MonoBehaviour
 
     private List<Tile> m_worldTiles = new List<Tile>();
 
-    public static IEnumerable<Tile> GetPath(Tile start, Tile destination, float randomness = 0)
+    public static IEnumerable<Tile> GetPath(Tile start, Tile destination)
     {
         var openTiles = new Queue<Tile>();
         openTiles.Enqueue(start);
@@ -92,7 +92,7 @@ public class WorldGenerator : MonoBehaviour
             for (int x = 0; x < m_worldWidth; x++)
             {
                 var newTile = Instantiate(m_tilePrefab, transform);
-                m_tilePrefab.Initialise(x, z, m_tileOuterRadius, m_worldHeight);
+                newTile.Initialise(x, z, m_tileOuterRadius, m_worldHeight);
 
                 SetNeighbours(x, z, newTile);
 
@@ -198,6 +198,11 @@ public class WorldGenerator : MonoBehaviour
     private void SetNeighbours(int x, int z, Tile newTile)
     {
         int currentIndex = (z * m_worldWidth) + x;
+
+        if (x > 0)
+        {
+            newTile.SetNeighbour(EHexDirection.W, m_worldTiles[currentIndex - 1]);
+        }
 
         if (z > 0)
         {
