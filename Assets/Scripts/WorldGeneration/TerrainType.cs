@@ -1,8 +1,8 @@
 
 public enum TerrainType
 {
-    GRASS,
     WATER,
+    GRASS,
     MOUNTAIN,
     DESERT
 };

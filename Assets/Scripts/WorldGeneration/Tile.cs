@@ -10,6 +10,8 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public HexCoordinates Coordinates => m_coordinates;
 
+    public ITileObject Object => m_tileObject;
+
     public int DistanceValue => 1;
 
     public Dictionary<EHexDirection, Tile> Neighbours = new Dictionary<EHexDirection, Tile>();
@@ -63,7 +65,12 @@ public class Tile : MonoBehaviour, IWorldSelectable
             0
         );
 
-        m_spriteRenderer.sortingOrder = worldHeight - m_coordinates.Z;
+        m_spriteRenderer.sortingOrder = (worldHeight - m_coordinates.Z) * 2;
+    }
+
+    public void SetTileObject(ITileObject obj)
+    {
+        m_tileObject = obj;
     }
 
     public void SetSprite(Sprite sprite)

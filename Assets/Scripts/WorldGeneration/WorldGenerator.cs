@@ -4,10 +4,11 @@ using UnityEngine;
 public class WorldGenerator : MonoBehaviour
 {
     [SerializeField] private Tile m_tilePrefab = default;
+    [SerializeField] private Ruin m_ruinPrefab = default;
 
     [Header("Sprite References")]
-    [SerializeField] private Sprite[] m_grassSprites = { };
     [SerializeField] private Sprite[] m_waterSprites = { };
+    [SerializeField] private Sprite[] m_grassSprites = { };
     [SerializeField] private Sprite[] m_mountainSprites = { };
     [SerializeField] private Sprite[] m_desertSprites = { };
 
@@ -22,9 +23,12 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private int m_minChunkSize = 3;
     [SerializeField] private int m_maxChunkSize = 10;
 
+    [Header("Ruin Generation Values")]
+    [SerializeField] private int m_ruinNumber = 10;
+
     private List<Tile> m_worldTiles = new List<Tile>();
 
-    public static IEnumerable<Tile> GetPath(Tile start, Tile destination, float randomness = 0)
+    public static IEnumerable<Tile> GetPath(Tile start, Tile destination)
     {
         var openTiles = new Queue<Tile>();
         openTiles.Enqueue(start);
@@ -54,7 +58,9 @@ public class WorldGenerator : MonoBehaviour
 
                 int distance = scoreMap[current] + neighbour.Value.DistanceValue;
 
-                if (!scoreMap.ContainsKey(neighbour.Value) || distance < scoreMap[neighbour.Value])
+                if ((!scoreMap.ContainsKey(neighbour.Value) || distance < scoreMap[neighbour.Value]) &&
+                    neighbour.Value.Object == null &&
+                    neighbour.Value.Terrain != TerrainType.WATER)
                 {
                     previousMap[neighbour.Value] = current;
                     scoreMap[neighbour.Value] = distance;
@@ -92,7 +98,7 @@ public class WorldGenerator : MonoBehaviour
             for (int x = 0; x < m_worldWidth; x++)
             {
                 var newTile = Instantiate(m_tilePrefab, transform);
-                m_tilePrefab.Initialise(x, z, m_tileOuterRadius, m_worldHeight);
+                newTile.Initialise(x, z, m_tileOuterRadius, m_worldHeight);
 
                 SetNeighbours(x, z, newTile);
 
@@ -102,6 +108,8 @@ public class WorldGenerator : MonoBehaviour
 
         int landBudget = (int)(m_worldWidth * (float)m_worldHeight * m_landPercentage);
         GenerateLand(landBudget);
+
+        GenerateRuins();
     }
 
     private void GenerateLand(int landBudget)
@@ -113,10 +121,8 @@ public class WorldGenerator : MonoBehaviour
                 landBudget = 0;
             }
 
-            TerrainType type = TerrainType.GRASS;
-           
             System.Array terrainTypes = System.Enum.GetValues(typeof(TerrainType));
-            type = (TerrainType)terrainTypes.GetValue(Random.Range(0, terrainTypes.Length));
+            var type = (TerrainType)terrainTypes.GetValue(Random.Range(0, terrainTypes.Length));
 
             landBudget = GenerateLandChunk(Random.Range(m_minChunkSize, m_minChunkSize), landBudget, type);
         }
@@ -164,20 +170,36 @@ public class WorldGenerator : MonoBehaviour
         return landBudget;
     }
 
+    private void GenerateRuins()
+    {
+        for (int i = 0; i < m_ruinNumber; i++)
+        {
+            int index = Random.Range(0, m_worldTiles.Count - 1);
+            while (m_worldTiles[index].Terrain == TerrainType.WATER && m_worldTiles[index].Object != null)
+            {
+                index = Random.Range(0, m_worldTiles.Count - 1);
+            }
+
+            Ruin newRuin = Instantiate(m_ruinPrefab, transform);
+            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight);
+            m_worldTiles[index].SetTileObject(newRuin);
+        }
+    }
+
     private void SetBiomeSprite(Tile tile)
     {
         switch (tile.Terrain)
         {
-            case TerrainType.GRASS:
-            {
-                int randomIndex = Random.Range(0, m_grassSprites.Length - 1);
-                tile.SetSprite(m_grassSprites[randomIndex]);
-                break;
-            }
             case TerrainType.WATER:
             {
                 int randomIndex = Random.Range(0, m_waterSprites.Length - 1);
                 tile.SetSprite(m_waterSprites[randomIndex]);
+                break;
+            }
+            case TerrainType.GRASS:
+            {
+                int randomIndex = Random.Range(0, m_grassSprites.Length - 1);
+                tile.SetSprite(m_grassSprites[randomIndex]);
                 break;
             }
             case TerrainType.DESERT:
@@ -198,6 +220,11 @@ public class WorldGenerator : MonoBehaviour
     private void SetNeighbours(int x, int z, Tile newTile)
     {
         int currentIndex = (z * m_worldWidth) + x;
+
+        if (x > 0)
+        {
+            newTile.SetNeighbour(EHexDirection.W, m_worldTiles[currentIndex - 1]);
+        }
 
         if (z > 0)
         {
