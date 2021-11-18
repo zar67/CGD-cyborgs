@@ -17,7 +17,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public HexCoordinates Coordinates => m_coordinates;
 
-    public ITileObject Object { get; private set; } = null;
+    public ITileObject TileObject { get; private set; } = null;
 
     public int DistanceValue => 1;
 
@@ -78,7 +78,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void SetTileObject(ITileObject obj)
     {
-        Object = obj;
+        TileObject = obj;
         obj.Tile = this;
     }
 
@@ -162,7 +162,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (Object == null)
+            if (TileObject == null)
             {
                 WorldSelection.ChangeSelection(this);
             }
@@ -176,6 +176,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (TileObject != null)
+        {
+            return;
+        }
+
         // TODO: Replace "is ITileObject tileObj" with "is Unit unit"
         if (WorldSelection.SelectedObject is ITileObject tileObj)
         {

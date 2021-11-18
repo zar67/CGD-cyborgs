@@ -59,7 +59,7 @@ public class WorldGenerator : MonoBehaviour
                 int distance = scoreMap[current] + neighbour.Value.DistanceValue;
 
                 if ((!scoreMap.ContainsKey(neighbour.Value) || distance < scoreMap[neighbour.Value]) &&
-                    neighbour.Value.Object == null &&
+                    neighbour.Value.TileObject == null &&
                     neighbour.Value.Terrain != TerrainType.WATER)
                 {
                     previousMap[neighbour.Value] = current;
@@ -181,7 +181,7 @@ public class WorldGenerator : MonoBehaviour
         for (int i = 0; i < m_ruinNumber; i++)
         {
             int index = Random.Range(0, m_worldTiles.Count - 1);
-            while (m_worldTiles[index].Terrain == TerrainType.WATER && m_worldTiles[index].Object != null)
+            while (m_worldTiles[index].Terrain == TerrainType.WATER && m_worldTiles[index].TileObject != null)
             {
                 index = Random.Range(0, m_worldTiles.Count - 1);
             }
