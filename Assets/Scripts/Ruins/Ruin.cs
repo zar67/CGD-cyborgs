@@ -39,4 +39,15 @@ public class Ruin : MonoBehaviour, ITileObject
             WorldSelection.ChangeSelection(null);
         }
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+
+    }
+
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+
+    }
 }

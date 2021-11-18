@@ -6,11 +6,18 @@ using UnityEngine.EventSystems;
 
 public class Tile : MonoBehaviour, IWorldSelectable
 {
-    [SerializeField] private SpriteRenderer m_spriteRenderer = default;
+    [Header("Sprite References")]
+    [SerializeField] private SpriteRenderer m_tileSpriteRenderer = default;
+    [SerializeField] private SpriteRenderer m_selectedSpriteRenderer = default;
+
+    [Header("Colour Values")]
+    [SerializeField] private Color m_selectedColour = Color.white;
+    [SerializeField] private Color m_invalidColour = Color.red;
+    [SerializeField] private Color m_validColour = Color.green;
 
     public HexCoordinates Coordinates => m_coordinates;
 
-    public ITileObject Object => m_tileObject;
+    public ITileObject Object { get; private set; } = null;
 
     public int DistanceValue => 1;
 
@@ -21,7 +28,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
     private HexCoordinates m_coordinates = default;
     private HexMatrics m_matrics = default;
 
-    private ITileObject m_tileObject = null;
+    private List<Tile> m_hightlightedTiles = new List<Tile>();
 
     public static EHexDirection ReverseDirection(EHexDirection dir)
     {
@@ -65,17 +72,30 @@ public class Tile : MonoBehaviour, IWorldSelectable
             0
         );
 
-        m_spriteRenderer.sortingOrder = (worldHeight - m_coordinates.Z) * 2;
+        m_tileSpriteRenderer.sortingOrder = (worldHeight - m_coordinates.Z) * 2;
+        m_selectedSpriteRenderer.sortingOrder = ((worldHeight - m_coordinates.Z) * 2) + 1;
     }
 
     public void SetTileObject(ITileObject obj)
     {
-        m_tileObject = obj;
+        Object = obj;
+        obj.Tile = this;
     }
 
     public void SetSprite(Sprite sprite)
     {
-        m_spriteRenderer.sprite = sprite;
+        m_tileSpriteRenderer.sprite = sprite;
+    }
+
+    public void ShowPathSprite(bool valid)
+    {
+        m_selectedSpriteRenderer.color = valid ? m_validColour : m_invalidColour;
+        m_selectedSpriteRenderer.enabled = true;
+    }
+
+    public void HidePathSprite()
+    {
+        m_selectedSpriteRenderer.enabled = false;
     }
 
     public bool HasNeighbour(EHexDirection dir)
@@ -129,19 +149,20 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void Select()
     {
-        m_spriteRenderer.color = new Color(1, 0, 0);
+        m_selectedSpriteRenderer.color = m_selectedColour;
+        m_selectedSpriteRenderer.enabled = true;
     }
 
     public void Deselect()
     {
-        m_spriteRenderer.color = new Color(1, 1, 1);
+        m_selectedSpriteRenderer.enabled = false;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (m_tileObject == null)
+            if (Object == null)
             {
                 WorldSelection.ChangeSelection(this);
             }
@@ -150,6 +171,56 @@ public class Tile : MonoBehaviour, IWorldSelectable
             WorldSelection.SelectedObject == this)
         {
             WorldSelection.ChangeSelection(null);
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        // TODO: Replace "is ITileObject tileObj" with "is Unit unit"
+        if (WorldSelection.SelectedObject is ITileObject tileObj)
+        {
+            // TODO: Replace "3" with "unit.MovementSpeed"
+            bool valid = HexCoordinates.Distance(Coordinates, tileObj.Tile.Coordinates) <= 3;
+
+            if (WorldGenerator.GetPath(tileObj.Tile, this, out List<Tile> path))
+            {
+                foreach (var tile in path)
+                {
+                    m_hightlightedTiles.Add(tile);
+                    tile.ShowPathSprite(valid);
+                }
+            }
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        foreach (var tile in m_hightlightedTiles)
+        {
+            tile.HidePathSprite();
+        }
+
+        m_hightlightedTiles = new List<Tile>();
+    }
+
+    private void Awake()
+    {
+        Deselect();
+        WorldSelection.OnSelectionChanged += OnSelectionChange;
+    }
+
+    private void OnSelectionChange(object sender, WorldSelection.SelectionChangedData data)
+    {
+        if (m_hightlightedTiles.Count > 0)
+        {
+            foreach (var tile in m_hightlightedTiles)
+            {
+                tile.HidePathSprite();
+                if (WorldSelection.SelectedObject == tile)
+                {
+                    tile.Select();
+                }
+            }
         }
     }
 }

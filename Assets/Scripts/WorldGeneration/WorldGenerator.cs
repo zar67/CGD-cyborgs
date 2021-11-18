@@ -28,7 +28,7 @@ public class WorldGenerator : MonoBehaviour
 
     private List<Tile> m_worldTiles = new List<Tile>();
 
-    public static IEnumerable<Tile> GetPath(Tile start, Tile destination)
+    public static bool GetPath(Tile start, Tile destination, out List<Tile> path)
     {
         var openTiles = new Queue<Tile>();
         openTiles.Enqueue(start);
@@ -73,7 +73,13 @@ public class WorldGenerator : MonoBehaviour
             }
         }
 
-        var path = new List<Tile>() { destination };
+        path = new List<Tile>();
+        if (!previousMap.ContainsKey(destination))
+        {
+            return false;
+        }
+
+        path.Add(destination);
         Tile cur = destination;
         while (cur != start)
         {
@@ -82,7 +88,7 @@ public class WorldGenerator : MonoBehaviour
         }
 
         path.Reverse();
-        return path;
+        return true;
     }
 
     private void Awake()
