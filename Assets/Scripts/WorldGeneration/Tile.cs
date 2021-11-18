@@ -123,19 +123,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
     public void Select()
     {
         m_spriteRenderer.color = new Color(1, 0, 0);
-        if (m_tileObject != null)
-        {
-            m_tileObject.Select();
-        }
     }
 
     public void Deselect()
     {
         m_spriteRenderer.color = new Color(1, 1, 1);
-        if (m_tileObject != null)
-        {
-            m_tileObject.Deselect();
-        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
