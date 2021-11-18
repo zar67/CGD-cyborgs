@@ -220,19 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tilePrefab: {fileID: 3270343899794960400, guid: 5efc49fe9a7dcf149a7f28f4f4fbecfa, type: 3}
-  m_grassSprites:
-  - {fileID: 21300000, guid: 802ea09db218fd04ebfaada95219a868, type: 3}
-  - {fileID: 21300000, guid: 97add218f53c17248aa909efd5e3aabc, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  m_ruinPrefab: {fileID: 8677792839401451146, guid: 47c773758f71785418deb2cf89ce80aa, type: 3}
   m_waterSprites:
   - {fileID: 21300000, guid: 3df3aae32c31258408b6430047d5a2c6, type: 3}
   - {fileID: 21300000, guid: bd2a801ad1752904aabc1eeb5f6a39ef, type: 3}
@@ -246,6 +234,19 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
   - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
   - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
+  m_grassSprites:
+  - {fileID: 21300000, guid: 802ea09db218fd04ebfaada95219a868, type: 3}
+  - {fileID: 21300000, guid: 97add218f53c17248aa909efd5e3aabc, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
+  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
   m_mountainSprites:
   - {fileID: 21300000, guid: 456738e4e08609e4dabff99ff907573d, type: 3}
   - {fileID: 21300000, guid: c1ca65be61bd1fd4e986b78713c05864, type: 3}
@@ -279,6 +280,7 @@ MonoBehaviour:
   m_landPercentage: 0.7
   m_minChunkSize: 5
   m_maxChunkSize: 10
+  m_ruinNumber: 10
 --- !u!4 &1258461992
 Transform:
   m_ObjectHideFlags: 0
