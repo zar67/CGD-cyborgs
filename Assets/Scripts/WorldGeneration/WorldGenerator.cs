@@ -91,6 +91,12 @@ public class WorldGenerator : MonoBehaviour
         return true;
     }
 
+    public Tile GetTileAtCoordinate(HexCoordinates coordinates)
+    {
+        int x = coordinates.X + (coordinates.Z / 2);
+        return m_worldTiles[(coordinates.Z * m_worldWidth) + x];
+    }
+
     private void Awake()
     {
         Generate();
@@ -99,14 +105,15 @@ public class WorldGenerator : MonoBehaviour
     private void Generate()
     {
         m_worldTiles = new List<Tile>();
+        int i = 0;
         for (int z = 0; z < m_worldHeight; z++)
         {
             for (int x = 0; x < m_worldWidth; x++)
             {
                 var newTile = Instantiate(m_tilePrefab, transform);
-                newTile.Initialise(x, z, m_tileOuterRadius, m_worldHeight);
+                newTile.Initialise(i++, x - (z / 2), z, m_tileOuterRadius, m_worldHeight);
 
-                SetNeighbours(x, z, newTile);
+                SetNeighbours(x - (z / 2), z, newTile);
 
                 m_worldTiles.Add(newTile);
             }
@@ -225,33 +232,19 @@ public class WorldGenerator : MonoBehaviour
 
     private void SetNeighbours(int x, int z, Tile newTile)
     {
-        int currentIndex = (z * m_worldWidth) + x;
-
         if (x > 0)
         {
-            newTile.SetNeighbour(EHexDirection.W, m_worldTiles[currentIndex - 1]);
+            Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.W));
+            newTile.SetNeighbour(EHexDirection.W, neighbour);
         }
 
         if (z > 0)
         {
-            if (z % 2 == 0)
-            {
-                newTile.SetNeighbour(EHexDirection.SE, m_worldTiles[currentIndex - m_worldWidth]);
+            Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SE));
+            newTile.SetNeighbour(EHexDirection.SE, neighbour);
 
-                if (x > 0)
-                {
-                    newTile.SetNeighbour(EHexDirection.SW, m_worldTiles[currentIndex - m_worldWidth - 1]);
-                }
-            }
-            else
-            {
-                newTile.SetNeighbour(EHexDirection.SW, m_worldTiles[currentIndex - m_worldWidth]);
-
-                if (x < m_worldWidth - 1)
-                {
-                    newTile.SetNeighbour(EHexDirection.SE, m_worldTiles[currentIndex - m_worldWidth + 1]);
-                }
-            }
+            neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SW));
+            newTile.SetNeighbour(EHexDirection.SW, neighbour);
         }
     }
 
