@@ -15,6 +15,8 @@ public class Tile : MonoBehaviour, IWorldSelectable
     [SerializeField] private Color m_invalidColour = Color.red;
     [SerializeField] private Color m_validColour = Color.green;
 
+    public int WorldTilesIndex => m_worldTileIndex;
+
     public HexCoordinates Coordinates => m_coordinates;
 
     public ITileObject TileObject { get; private set; } = null;
@@ -25,6 +27,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     [HideInInspector] public TerrainType Terrain = TerrainType.WATER;
 
+    private int m_worldTileIndex = -1;
     private HexCoordinates m_coordinates = default;
     private HexMatrics m_matrics = default;
 
@@ -51,8 +54,9 @@ public class Tile : MonoBehaviour, IWorldSelectable
         return diff;
     }
 
-    public void Initialise(int x, int z, float radius, int worldHeight)
+    public void Initialise(int i, int x, int z, float radius, int worldHeight)
     {
+        m_worldTileIndex = i;
         m_coordinates = new HexCoordinates(x, z);
         m_matrics = new HexMatrics(radius);
 
@@ -67,7 +71,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
         };
 
         transform.position = new Vector3(
-            (m_coordinates.X + (m_coordinates.Z * 0.5f) - (m_coordinates.Z / 2)) * (m_matrics.InnerRadius * 2f),
+            (m_coordinates.X + (m_coordinates.Z * 0.5f)) * (m_matrics.InnerRadius * 2f),
             m_coordinates.Z * (m_matrics.OuterRadius * 1.5f) / 2,
             0
         );
