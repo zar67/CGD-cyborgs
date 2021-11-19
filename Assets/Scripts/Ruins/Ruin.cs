@@ -6,8 +6,6 @@ public class Ruin : MonoBehaviour, ITileObject
     [SerializeField] private SpriteRenderer m_ruinSpriteRenderer = default;
     [SerializeField] private SpriteRenderer m_takeOverSpriteRenderer = default;
 
-    [SerializeField] private TerrainType[] m_traversableTerrains;
-
     public Tile Tile
     {
         get;
