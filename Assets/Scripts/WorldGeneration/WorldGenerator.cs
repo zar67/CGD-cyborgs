@@ -232,7 +232,7 @@ public class WorldGenerator : MonoBehaviour
 
     private void SetNeighbours(int x, int z, Tile newTile)
     {
-        if (x > 0)
+        if (x + (z / 2) > 0)
         {
             Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.W));
             newTile.SetNeighbour(EHexDirection.W, neighbour);
@@ -240,11 +240,17 @@ public class WorldGenerator : MonoBehaviour
 
         if (z > 0)
         {
-            Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SE));
-            newTile.SetNeighbour(EHexDirection.SE, neighbour);
+            if (x + (z / 2) < m_worldWidth - 1)
+            {
+                Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SE));
+                newTile.SetNeighbour(EHexDirection.SE, neighbour);
+            }
 
-            neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SW));
-            newTile.SetNeighbour(EHexDirection.SW, neighbour);
+            if (x + (z / 2) > 0)
+            {
+                Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SW));
+                newTile.SetNeighbour(EHexDirection.SW, neighbour);
+            }
         }
     }
 }
