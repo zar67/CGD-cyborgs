@@ -12,6 +12,8 @@ public class Ruin : MonoBehaviour, ITileObject
         set;
     }
 
+    public TerrainType[] TraversibleTerrains => new TerrainType[0];
+
     public void Initialise(Vector3 position, int z, int worldHeight)
     {
         transform.position = position;

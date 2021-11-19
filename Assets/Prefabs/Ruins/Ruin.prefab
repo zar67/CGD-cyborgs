@@ -130,6 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ruinSpriteRenderer: {fileID: 8760726990172856733}
   m_takeOverSpriteRenderer: {fileID: 2550329166584408198}
+  m_traversableTerrains: 010000000200000003000000
 --- !u!212 &8760726990172856733
 SpriteRenderer:
   m_ObjectHideFlags: 0

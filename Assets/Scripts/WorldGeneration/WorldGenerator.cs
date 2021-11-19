@@ -28,7 +28,7 @@ public class WorldGenerator : MonoBehaviour
 
     private List<Tile> m_worldTiles = new List<Tile>();
 
-    public static bool GetPath(Tile start, Tile destination, out List<Tile> path)
+    public static bool GetPath(Tile start, Tile destination, List<TerrainType> validTerrain, out List<Tile> path)
     {
         var openTiles = new Queue<Tile>();
         openTiles.Enqueue(start);
@@ -60,7 +60,7 @@ public class WorldGenerator : MonoBehaviour
 
                 if ((!scoreMap.ContainsKey(neighbour.Value) || distance < scoreMap[neighbour.Value]) &&
                     neighbour.Value.TileObject == null &&
-                    neighbour.Value.Terrain != TerrainType.WATER)
+                    validTerrain.Contains(neighbour.Value.Terrain))
                 {
                     previousMap[neighbour.Value] = current;
                     scoreMap[neighbour.Value] = distance;
@@ -232,7 +232,7 @@ public class WorldGenerator : MonoBehaviour
 
     private void SetNeighbours(int x, int z, Tile newTile)
     {
-        if (x > 0)
+        if (x + (z / 2) > 0)
         {
             Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.W));
             newTile.SetNeighbour(EHexDirection.W, neighbour);
@@ -240,11 +240,28 @@ public class WorldGenerator : MonoBehaviour
 
         if (z > 0)
         {
-            Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SE));
-            newTile.SetNeighbour(EHexDirection.SE, neighbour);
+            if (z % 2 == 0)
+            {
+                Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SE));
+                newTile.SetNeighbour(EHexDirection.SE, neighbour);
 
-            neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SW));
-            newTile.SetNeighbour(EHexDirection.SW, neighbour);
+                if (x + (z / 2) > 0)
+                {
+                    neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SW));
+                    newTile.SetNeighbour(EHexDirection.SW, neighbour);
+                }
+            }
+            else
+            {
+                Tile neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SW));
+                newTile.SetNeighbour(EHexDirection.SW, neighbour);
+
+                if (x + (z / 2) < m_worldWidth - 1)
+                {
+                    neighbour = GetTileAtCoordinate(HexCoordinates.GetCoordinateInDirection(newTile.Coordinates, EHexDirection.SE));
+                    newTile.SetNeighbour(EHexDirection.SE, neighbour);
+                }
+            }
         }
     }
 }
