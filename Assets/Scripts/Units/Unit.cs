@@ -89,7 +89,6 @@ public class Unit : MonoBehaviour, ITileObject
             {
                 MoveToTile(current);
             }
-            
         }
     }
 
@@ -100,8 +99,9 @@ public class Unit : MonoBehaviour, ITileObject
         current.SetTileObject(this);
         HexCoordinates coord = Tile.Coordinates;
         transform.position = new Vector3(
-        (coord.X + (coord.Z * 0.5f) - (coord.Z / 2)) * (Tile.Matrics.InnerRadius * 2f),
-        coord.Z * (Tile.Matrics.OuterRadius * 1.5f) / 2,
-        0);
+            (Tile.Coordinates.X + (Tile.Coordinates.Z * 0.5f)) * (Tile.Matrics.InnerRadius * 2f),
+            Tile.Coordinates.Z * (Tile.Matrics.OuterRadius * 1.5f) / 2,
+            0
+        );
     }
 }
