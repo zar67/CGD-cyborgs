@@ -16,6 +16,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
     [SerializeField] private Color m_validColour = Color.green;
 
     public HexCoordinates Coordinates => m_coordinates;
+    public HexMatrics Matrics => m_matrics;
 
     public ITileObject TileObject { get; private set; } = null;
 
@@ -80,6 +81,12 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         TileObject = obj;
         obj.Tile = this;
+    }
+
+    public void UnSetTileObject()
+    {
+        TileObject.Tile = null;
+        TileObject = null;
     }
 
     public void SetSprite(Sprite sprite)
@@ -182,12 +189,12 @@ public class Tile : MonoBehaviour, IWorldSelectable
         }
 
         // TODO: Replace "is ITileObject tileObj" with "is Unit unit"
-        if (WorldSelection.SelectedObject is ITileObject tileObj)
+        if (WorldSelection.SelectedObject is Unit unit)
         {
             // TODO: Replace "3" with "unit.MovementSpeed"
-            bool valid = HexCoordinates.Distance(Coordinates, tileObj.Tile.Coordinates) <= 3;
+            bool valid = HexCoordinates.Distance(Coordinates, unit.Tile.Coordinates) <= unit.Stats.movementSpeed;
 
-            if (WorldGenerator.GetPath(tileObj.Tile, this, out List<Tile> path))
+            if (WorldGenerator.GetPath(unit.Tile, this, out List<Tile> path))
             {
                 foreach (var tile in path)
                 {
@@ -228,4 +235,6 @@ public class Tile : MonoBehaviour, IWorldSelectable
             }
         }
     }
+
+
 }

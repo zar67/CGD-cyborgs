@@ -79,4 +79,12 @@ public struct HexCoordinates
     {
         return $"({X},{Y},{Z})";
     }
+
+    public bool Equals(HexCoordinates _other)
+    {
+        return (X == _other.X && Y == _other.Y && Z == _other.Z);
+    }
+
+    public static bool operator ==(HexCoordinates lhs, HexCoordinates rhs) => lhs.Equals(rhs);
+    public static bool operator !=(HexCoordinates lhs, HexCoordinates rhs) => !(lhs.Equals(rhs));
 }

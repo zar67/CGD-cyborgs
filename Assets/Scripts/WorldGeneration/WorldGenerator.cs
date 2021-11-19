@@ -254,4 +254,17 @@ public class WorldGenerator : MonoBehaviour
             }
         }
     }
+
+    public Tile GetTileFromPosition(HexCoordinates coordinates)
+    {
+        foreach (Tile tile in m_worldTiles)
+        {
+            if (tile.Coordinates == coordinates)
+            {
+                return tile;
+            }
+        }
+        Debug.LogError("COULDNT FIND TILE AT POSITION");
+        return m_worldTiles[0];
+    }
 }
