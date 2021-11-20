@@ -22,6 +22,13 @@ public class Unit : MonoBehaviour, ITileObject
 
     [SerializeField] private SpriteRenderer unitSprite;
     [SerializeField] private UnitTypes unitType;
+    private TerrainType[] traversibleTerrain;
+
+    public UnitTypes Type => unitType;
+
+    private bool specialClick = false;
+
+    public bool Attacking => specialClick;
 
     public UnitStats Stats => unitStats;
     private UnitStats unitStats;
@@ -32,20 +39,26 @@ public class Unit : MonoBehaviour, ITileObject
         set;
     }
 
+    public TerrainType[] TraversibleTerrains => traversibleTerrain;
+
     public void SetUpUnit(Tile tile)
     {
         tile.SetTileObject(this);
         unitStats = UnitFactory.Instance.GetBaseUnitStats(unitType);
+        traversibleTerrain = UnitFactory.Instance.GetTraversableTerrain(unitType).ToArray();
         MoveToTile(tile);
-    }
-
-    void Start()
-    {
     }
 
     public void Select()
     {
-        unitSprite.color = new Color(1, 0, 0);
+        if (specialClick)
+        {
+            unitSprite.color = new Color(1, 0, 0);
+        }
+        else
+        {
+            unitSprite.color = new Color(0, 1, 0);
+        }
     }
 
     public void Deselect()
@@ -57,12 +70,18 @@ public class Unit : MonoBehaviour, ITileObject
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+            specialClick = false;
             WorldSelection.ChangeSelection(this);
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
             WorldSelection.SelectedObject == this)
         {
             WorldSelection.ChangeSelection(null);
+        }
+        else if (eventData.button == PointerEventData.InputButton.Right && WorldSelection.SelectedObject == null)
+        {
+            specialClick = true;
+            WorldSelection.ChangeSelection(this);
         }
     }
 

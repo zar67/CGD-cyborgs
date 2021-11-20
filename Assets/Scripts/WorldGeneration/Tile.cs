@@ -203,18 +203,32 @@ public class Tile : MonoBehaviour, IWorldSelectable
             return;
         }
 
-        // TODO: Replace "is ITileObject tileObj" with "is Unit unit"
         if (WorldSelection.SelectedObject is Unit unit)
         {
-            // TODO: Replace "3" with "unit.MovementSpeed"
-            bool valid = HexCoordinates.Distance(Coordinates, unit.Tile.Coordinates) <= unit.Stats.movementSpeed;
-
-            if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path))
+            if (unit.Attacking)
             {
-                foreach (var tile in path)
+                EHexDirection dir = HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates);
+
+                Tile toMove = WorldGenerator.Instance.GetAttackPattern(unit.Tile.Coordinates, dir, UnitFactory.Instance.GetUnitAttackPattern(unit.Type), out List<Tile> attPat);
+                foreach (var tile in attPat)
                 {
                     m_hightlightedTiles.Add(tile);
-                    tile.ShowPathSprite(valid);
+                    tile.ShowPathSprite(false);
+                }
+                m_hightlightedTiles.Add(toMove);
+                toMove.ShowPathSprite(true);
+            }
+            else
+            {
+                bool valid = HexCoordinates.Distance(Coordinates, unit.Tile.Coordinates) <= unit.Stats.movementSpeed;
+
+                if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path))
+                {
+                    foreach (var tile in path)
+                    {
+                        m_hightlightedTiles.Add(tile);
+                        tile.ShowPathSprite(valid);
+                    }
                 }
             }
         }

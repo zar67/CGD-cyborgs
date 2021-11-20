@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitSprite: {fileID: 5350829030303751059}
   unitType: 0
+  traversibleTerrain: 00000000010000000200000003000000
 --- !u!212 &5350829030303751059
 SpriteRenderer:
   m_ObjectHideFlags: 0

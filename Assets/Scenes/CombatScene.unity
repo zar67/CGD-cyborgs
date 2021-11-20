@@ -443,15 +443,22 @@ MonoBehaviour:
       health: 2
       movementSpeed: 5
       damage: 1
-    attackPatterns:
-    - attackCoord:
+    attackPattern:
+      attackPattern:
+      - X: 0
+        Y: -2
+        Z: 2
+      - X: 1
+        Y: -2
+        Z: 1
+      - X: -1
+        Y: -1
+        Z: 2
+      moveAttack:
         X: 0
         Y: 0
         Z: 0
-      moveCoord:
-        X: 0
-        Y: 0
-        Z: 0
+    traversibleTerrain: 0100000003000000
   prefabs:
   - type: 0
     prefab: {fileID: 5350829030303751056, guid: 36362d325e08c0d499d239822908fd11, type: 3}

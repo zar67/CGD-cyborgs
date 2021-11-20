@@ -5,12 +5,7 @@ using System;
 
 public class UnitFactory : MonoBehaviour
 {
-    [Serializable]
-    public struct AttackPattern
-    {
-        public HexCoordinates attackCoord;
-        public HexCoordinates moveCoord;
-    }
+    #region AttackPattern/UnitToGameObject/UnitToStats Struct decleration
 
     [Serializable]
     private struct UnitToGameObject
@@ -24,15 +19,26 @@ public class UnitFactory : MonoBehaviour
     {
         public Unit.UnitTypes type;
         public Unit.UnitStats stats;
-        public List<AttackPattern> attackPatterns;
+        public AttackPattern attackPattern;
+        public List<TerrainType> traversibleTerrain;
     }
 
-    public WorldGenerator t_WG;
+    [Serializable]
+    public struct AttackPattern
+    {
+        public List<HexCoordinates> attackPattern;
+        public HexCoordinates moveAttack;
+        public HexCoordinates ennemyMove;
+    }
+
+    #endregion
+
+    [SerializeField] private WorldGenerator t_WG;
     [SerializeField] private List<UnitToStats> stats;
     [SerializeField] private List<UnitToGameObject> prefabs;
 
     private Dictionary<Unit.UnitTypes, GameObject> unitPrefabs;
-    private Dictionary<Unit.UnitTypes, (Unit.UnitStats, List<AttackPattern>)> unitStats;
+    private Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)> unitStats;
 
     #region Singleton Setup
     private static UnitFactory _instance;
@@ -71,7 +77,7 @@ public class UnitFactory : MonoBehaviour
     void SetUpDictionaries()
     {
         unitPrefabs = new Dictionary<Unit.UnitTypes, GameObject>();
-        unitStats = new Dictionary<Unit.UnitTypes, (Unit.UnitStats, List<AttackPattern>)>();
+        unitStats = new Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)>();
         foreach (UnitToGameObject u in prefabs)
         {
             unitPrefabs.Add(u.type, u.prefab);
@@ -79,13 +85,20 @@ public class UnitFactory : MonoBehaviour
 
         foreach (UnitToStats u in stats)
         {
-            unitStats.Add(u.type, (u.stats, u.attackPatterns));
+            unitStats.Add(u.type, (u.stats, u.attackPattern, u.traversibleTerrain));
         }
     }
 
-    public List<AttackPattern> GetUnitAttackPattern(Unit.UnitTypes unitType)
+    #region Get base unit stats functions
+
+    public AttackPattern GetUnitAttackPattern(Unit.UnitTypes unitType)
     {
         return unitStats[unitType].Item2;
+    }
+
+    public List<TerrainType> GetTraversableTerrain(Unit.UnitTypes unitType)
+    {
+        return unitStats[unitType].Item3;
     }
 
     public Unit.UnitStats GetBaseUnitStats(Unit.UnitTypes unitType)
@@ -93,22 +106,36 @@ public class UnitFactory : MonoBehaviour
         return unitStats[unitType].Item1;
     }
 
+    #endregion
+
+    //Test function (just creates units at the start of the game)
     void SpawnUnits()
     {
-        GameObject u = Instantiate(unitPrefabs[Unit.UnitTypes.SOLDIER]);
-        u.GetComponent<Unit>().SetUpUnit(t_WG.GetTileFromPosition(new HexCoordinates(5, 5)));
+        CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(5, 4)));
+        CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(8, 4)));
+        CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(1, 9)));
 
 
-        GameObject u1 = Instantiate(unitPrefabs[Unit.UnitTypes.SOLDIER]);
-        u1.GetComponent<Unit>().SetUpUnit(t_WG.GetTileFromPosition(new HexCoordinates(5, 4)));
-        
-        GameObject u2 = Instantiate(unitPrefabs[Unit.UnitTypes.SOLDIER]);
-        u2.GetComponent<Unit>().SetUpUnit(t_WG.GetTileFromPosition(new HexCoordinates(6, 5)));
+        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(0, 1)));
+        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(1, 0)));
+        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(1, -1)));
+        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(0, -1)));
+        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(-1, 0)));
+        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(-1, 1)));
     }
 
-    // Update is called once per frame
-    void Update()
+
+    //Creates and returns a unit on a given tile.
+    public Unit CreateUnitOnTile(Unit.UnitTypes unitType, Tile tile)
     {
-        
+        if (tile.TileObject != null)
+        {
+            Debug.LogError("Trying to create a unit on a tile with another unit!");
+            return null;
+        }
+        GameObject u = Instantiate(unitPrefabs[unitType]);
+        u.GetComponent<Unit>().SetUpUnit(tile);
+
+        return u.GetComponent<Unit>();
     }
 }
