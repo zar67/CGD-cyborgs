@@ -171,6 +171,17 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        for (EHexDirection direction = EHexDirection.NE; direction <= EHexDirection.NW; direction++)
+        {
+            if (Neighbours[direction] == null)
+            {
+                Debug.Log(direction + ": null");
+            }
+            else
+            {
+                Debug.Log(direction + ": " + Neighbours[direction].Coordinates);
+            }
+        }
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             if (TileObject == null)
@@ -198,7 +209,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
             // TODO: Replace "3" with "unit.MovementSpeed"
             bool valid = HexCoordinates.Distance(Coordinates, unit.Tile.Coordinates) <= unit.Stats.movementSpeed;
 
-            if (WorldGenerator.GetPath(unit.Tile, this, out List<Tile> path))
+            if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path))
             {
                 foreach (var tile in path)
                 {
