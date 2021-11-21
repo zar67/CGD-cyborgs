@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameplayManager : MonoBehaviour
 {
-    public GameObject UIObject;
+    [SerializeField] private GameObject UIObject;
     private GameplayUI ui;
 
     private bool thisPlayerInputEnabled = false;
@@ -21,6 +21,7 @@ public class GameplayManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
+            thisPlayerInputEnabled = true;
             ResetTurn(); //For Testing
         }
 
@@ -40,7 +41,6 @@ public class GameplayManager : MonoBehaviour
 
     private void ResetTurn()
     {
-        thisPlayerInputEnabled = true;
         timerCurrent = (float)turnTime;
         ui.SetTurnText(thisPlayerInputEnabled);
         ui.SetTimerText(timerCurrent);

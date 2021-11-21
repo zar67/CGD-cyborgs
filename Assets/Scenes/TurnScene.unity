@@ -481,6 +481,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIObject: {fileID: 1096430758}
+  turnTime: 90
 --- !u!4 &431280594
 Transform:
   m_ObjectHideFlags: 0
