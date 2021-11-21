@@ -7,42 +7,24 @@ public class GameplayManager : MonoBehaviour
     public GameObject UIObject;
     private GameplayUI ui;
 
-    private bool inputEnabled = false;
-    public bool ThisPlayerInputEnabled
-    {
-        set
-        {
-            inputEnabled = value;
-            ui.SetTurnText(ThisPlayerInputEnabled);
-
-            if (value)
-            {
-                timerCurrent = (float)turnTime;
-            }
-        }
-
-        get { return inputEnabled; }
-    }
-    
+    private bool thisPlayerInputEnabled = false;
     [SerializeField] private int turnTime = 90; //In seconds
     private float timerCurrent = 0;
 
     private void Awake()
     {
-        timerCurrent = (float)turnTime;
         ui = UIObject.GetComponent<GameplayUI>();
-        ui.SetTurnText(ThisPlayerInputEnabled);
-        ui.SetTimerText(timerCurrent);
+        ResetTurn();
     }
 
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            ThisPlayerInputEnabled = true; //FOR TESTING
+            ResetTurn(); //For Testing
         }
 
-        if(ThisPlayerInputEnabled)
+        if(thisPlayerInputEnabled)
         {
             if(timerCurrent > 0)
             {
@@ -51,8 +33,16 @@ public class GameplayManager : MonoBehaviour
             }
             else
             {
-                ThisPlayerInputEnabled = false;
+                thisPlayerInputEnabled = false;
             }
         }
+    }
+
+    private void ResetTurn()
+    {
+        thisPlayerInputEnabled = true;
+        timerCurrent = (float)turnTime;
+        ui.SetTurnText(thisPlayerInputEnabled);
+        ui.SetTimerText(timerCurrent);
     }
 }
