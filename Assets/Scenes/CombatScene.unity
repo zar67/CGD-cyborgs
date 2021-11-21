@@ -456,6 +456,10 @@ MonoBehaviour:
         Z: 2
       moveAttack:
         X: 0
+        Y: -1
+        Z: 1
+      ennemyMove:
+        X: 0
         Y: 0
         Z: 0
     traversibleTerrain: 0100000003000000

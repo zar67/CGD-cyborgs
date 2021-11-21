@@ -171,20 +171,25 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        for (EHexDirection direction = EHexDirection.NE; direction <= EHexDirection.NW; direction++)
-        {
-            if (Neighbours[direction] == null)
-            {
-                Debug.Log(direction + ": null");
-            }
-            else
-            {
-                Debug.Log(direction + ": " + Neighbours[direction].Coordinates);
-            }
-        }
+        //for (EHexDirection direction = EHexDirection.NE; direction <= EHexDirection.NW; direction++)
+        //{
+        //    if (Neighbours[direction] == null)
+        //    {
+        //        Debug.Log(direction + ": null");
+        //    }
+        //    else
+        //    {
+        //        Debug.Log(direction + ": " + Neighbours[direction].Coordinates);
+        //    }
+        //}
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (TileObject == null)
+            if (CheckAndAttack())
+            {
+                Debug.Log("ATTACKED TILES");
+                WorldSelection.ChangeSelection(null);
+            }
+            else if (TileObject == null)
             {
                 WorldSelection.ChangeSelection(this);
             }
@@ -265,5 +270,31 @@ public class Tile : MonoBehaviour, IWorldSelectable
         }
     }
 
+    private bool CheckAndAttack()
+    {
+        if (WorldSelection.SelectedObject != null && WorldSelection.SelectedObject is Unit unit)
+        {
+            if (unit.Attacking)
+            {
+                Tile toMove = WorldGenerator.Instance.GetAttackPattern(unit.Tile.Coordinates, HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates),
+                                                                       UnitFactory.Instance.GetUnitAttackPattern(unit.Type), out List<Tile> attPat);
 
+                if (toMove.TileObject == null || toMove.TileObject == unit)
+                {
+                    foreach (var tile in attPat)
+                    {
+                        if (tile.TileObject is Unit aUnit)
+                        {
+                            aUnit.TakeDamage(unit.Stats.damage);
+                        }
+                    }
+                    unit.MoveToTile(toMove);
+                    WorldSelection.ChangeSelection(null);
+
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

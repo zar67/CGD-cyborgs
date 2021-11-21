@@ -68,7 +68,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
+        if (eventData.button == PointerEventData.InputButton.Left && !(WorldSelection.SelectedObject is Unit && ((Unit)WorldSelection.SelectedObject).Attacking))
         {
             specialClick = false;
             WorldSelection.ChangeSelection(this);
@@ -78,7 +78,7 @@ public class Unit : MonoBehaviour, ITileObject
         {
             WorldSelection.ChangeSelection(null);
         }
-        else if (eventData.button == PointerEventData.InputButton.Right && WorldSelection.SelectedObject == null)
+        else if (eventData.button == PointerEventData.InputButton.Right)
         {
             specialClick = true;
             WorldSelection.ChangeSelection(this);
@@ -100,18 +100,28 @@ public class Unit : MonoBehaviour, ITileObject
 
     private void OnSelectionChange(object sender, WorldSelection.SelectionChangedData data)
     {
-        if (data.Previous == this && data.Current is Tile)
+        if (data.Previous == this && !specialClick && data.Current is Tile current)
         {
-            Tile current = (Tile)data.Current;
-
-            if (HexCoordinates.Distance(Tile, current) <= Stats.movementSpeed)
+            if (CanGoOnTile(current.Terrain) && HexCoordinates.Distance(Tile, current) <= Stats.movementSpeed)
             {
                 MoveToTile(current);
             }
         }
     }
 
-    void MoveToTile(Tile current)
+    bool CanGoOnTile(TerrainType terrainType)
+    {
+        foreach (TerrainType t in traversibleTerrain)
+        {
+            if (t == terrainType)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void MoveToTile(Tile current)
     {
         Tile.UnSetTileObject();
 
@@ -122,5 +132,12 @@ public class Unit : MonoBehaviour, ITileObject
             Tile.Coordinates.Z * (Tile.Matrics.OuterRadius * 1.5f) / 2,
             0
         );
+    }
+
+    public void TakeDamage(int dmg)
+    {
+        unitStats.health -= dmg;
+
+        Debug.Log(unitStats.health + " : took " + dmg + " dmg");
     }
 }
