@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: ExampleKill
-  m_EditorClassIdentifier: Assembly-CSharp::KillAmount
-  requiredAmount: 10
+  m_Script: {fileID: 11500000, guid: e8023a785d68fa34b9dd0652322a20a5, type: 3}
+  m_Name: Challenge1
+  m_EditorClassIdentifier: 
   reward:
     currency: 10
-    XP: 200
-  unitType: Droids
+    XP: 100
+  requiredAmount: 10
