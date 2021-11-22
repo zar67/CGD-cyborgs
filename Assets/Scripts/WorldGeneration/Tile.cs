@@ -18,6 +18,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
     public int WorldTilesIndex => m_worldTileIndex;
 
     public HexCoordinates Coordinates => m_coordinates;
+    public HexMatrics Matrics => m_matrics;
 
     public ITileObject TileObject { get; private set; } = null;
 
@@ -84,6 +85,12 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         TileObject = obj;
         obj.Tile = this;
+    }
+
+    public void UnSetTileObject()
+    {
+        TileObject.Tile = null;
+        TileObject = null;
     }
 
     public void SetSprite(Sprite sprite)
@@ -196,18 +203,32 @@ public class Tile : MonoBehaviour, IWorldSelectable
             return;
         }
 
-        // TODO: Replace "is ITileObject tileObj" with "is Unit unit"
-        if (WorldSelection.SelectedObject is ITileObject tileObj)
+        if (WorldSelection.SelectedObject is Unit unit)
         {
-            // TODO: Replace "3" with "unit.MovementSpeed"
-            bool valid = HexCoordinates.Distance(Coordinates, tileObj.Tile.Coordinates) <= 3;
-
-            if (WorldGenerator.GetPath(tileObj.Tile, this, tileObj.TraversibleTerrains.ToList(), out List<Tile> path))
+            if (unit.Attacking)
             {
-                foreach (var tile in path)
+                EHexDirection dir = HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates);
+
+                Tile toMove = WorldGenerator.Instance.GetAttackPattern(unit.Tile.Coordinates, dir, UnitFactory.Instance.GetUnitAttackPattern(unit.Type), out List<Tile> attPat);
+                foreach (var tile in attPat)
                 {
                     m_hightlightedTiles.Add(tile);
-                    tile.ShowPathSprite(valid);
+                    tile.ShowPathSprite(false);
+                }
+                m_hightlightedTiles.Add(toMove);
+                toMove.ShowPathSprite(true);
+            }
+            else
+            {
+                bool valid = HexCoordinates.Distance(Coordinates, unit.Tile.Coordinates) <= unit.Stats.movementSpeed;
+
+                if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path))
+                {
+                    foreach (var tile in path)
+                    {
+                        m_hightlightedTiles.Add(tile);
+                        tile.ShowPathSprite(valid);
+                    }
                 }
             }
         }
@@ -243,4 +264,6 @@ public class Tile : MonoBehaviour, IWorldSelectable
             }
         }
     }
+
+
 }
