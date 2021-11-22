@@ -84,10 +84,10 @@ public struct HexCoordinates
         Vector2 dir = new Vector2(coordinates.X, coordinates.Z);
         dir.Normalize();
 
-        if (dir.x > -0.4f && dir.x < 0.5f && dir.y > 0.5f) return EHexDirection.NE;
+        if (dir.x > -0.4f && dir.x < 0.8f && dir.y > 0.5f) return EHexDirection.NE;
         if (dir.x > 0.5f && dir.y < 0.5f && dir.y > -0.4f) return EHexDirection.E;
         if (dir.x > 0.4f && dir.y < -0.4f) return EHexDirection.SE;
-        if (dir.x < 0.4f && dir.x > -0.5f && dir.y < -0.4f) return EHexDirection.SW;
+        if (dir.x < 0.4f && dir.x > -0.8f && dir.y < -0.4f) return EHexDirection.SW;
         if (dir.x < -0.5f && dir.y > -0.4f && dir.y < 0.4f) return EHexDirection.W;
         return EHexDirection.NW;
     }

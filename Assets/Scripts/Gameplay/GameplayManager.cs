@@ -14,12 +14,16 @@ public class GameplayManager : MonoBehaviour
     private void Awake()
     {
         ui = UIObject.GetComponent<GameplayUI>();
+    }
+
+    private void Start()
+    {
         ResetTurn();
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             ResetTurn(); //For Testing
         }
@@ -44,5 +48,7 @@ public class GameplayManager : MonoBehaviour
         timerCurrent = (float)turnTime;
         ui.SetTurnText(thisPlayerInputEnabled);
         ui.SetTimerText(timerCurrent);
+
+        UnitFactory.Instance.ResetTurn();
     }
 }

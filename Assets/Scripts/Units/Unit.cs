@@ -25,10 +25,19 @@ public class Unit : MonoBehaviour, ITileObject
     [SerializeField] private UnitTypes unitType;
     private TerrainType[] traversibleTerrain;
 
+    private int movementLeft = 0;
+    public int Movement => movementLeft;
+    private int attacksLeft = 0;
+
+    private bool isDead = false;
+
+    // Ids
+    private int ruinId = -1;
+    private string playerId = "";
+
     public UnitTypes Type => unitType;
 
     private bool specialClick = false;
-
     public bool Attacking => specialClick;
 
     public UnitStats Stats => unitStats;
@@ -42,16 +51,34 @@ public class Unit : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
-    public void SetUpUnit(Tile tile)
+    public void SetUpUnit(Tile tile, int _ruinId)
     {
+        ruinId = _ruinId;
         tile.SetTileObject(this);
         unitStats = UnitFactory.Instance.GetBaseUnitStats(unitType);
         traversibleTerrain = UnitFactory.Instance.GetTraversableTerrain(unitType).ToArray();
         MoveToTile(tile);
+
+        //Testing
+        ResetTurn();
     }
+
+    public void SetUpPlayerId(string _playerId)
+    {
+        playerId = _playerId;
+    }
+
+    public bool isPlayer(string id)
+    {
+        return id == playerId;
+    }
+
+    #region Selection and deselection of units
 
     public void Select()
     {
+        if (isDead) return;
+
         if (specialClick)
         {
             unitSprite.color = new Color(1, 0, 0);
@@ -69,7 +96,8 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
+        if (isDead) return;
+        if (eventData.button == PointerEventData.InputButton.Left && !(WorldSelection.SelectedObject is Unit && ((Unit)WorldSelection.SelectedObject).Attacking))
         {
             specialClick = false;
             WorldSelection.ChangeSelection(this);
@@ -79,7 +107,7 @@ public class Unit : MonoBehaviour, ITileObject
         {
             WorldSelection.ChangeSelection(null);
         }
-        else if (eventData.button == PointerEventData.InputButton.Right && WorldSelection.SelectedObject == null)
+        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0)
         {
             specialClick = true;
             WorldSelection.ChangeSelection(this);
@@ -101,21 +129,35 @@ public class Unit : MonoBehaviour, ITileObject
 
     private void OnSelectionChange(object sender, WorldSelection.SelectionChangedData data)
     {
-        if (data.Previous == this && data.Current is Tile)
+        if (isDead) return;
+        if (data.Previous == this && !specialClick && data.Current is Tile current)
         {
-            Tile current = (Tile)data.Current;
-
-            if (WorldGenerator.GetPath(data.Previous as Tile, current, (current as ITileObject).TraversibleTerrains.ToList(), out List<Tile> path))
+            if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(Tile, current, traversibleTerrain.ToList(), out List<Tile> path))
             {
-                if (path.Count <= Stats.movementSpeed)
+                if (path.Count - 1 <= movementLeft)
                 {
+                    movementLeft -= path.Count - 1;
                     MoveToTile(current);
                 }
             }
         }
     }
 
-    void MoveToTile(Tile current)
+    #endregion
+
+    bool CanGoOnTile(TerrainType terrainType)
+    {
+        foreach (TerrainType t in traversibleTerrain)
+        {
+            if (t == terrainType)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void MoveToTile(Tile current)
     {
         Tile.UnSetTileObject();
 
@@ -126,5 +168,47 @@ public class Unit : MonoBehaviour, ITileObject
             Tile.Coordinates.Z * (Tile.Matrics.OuterRadius * 1.5f) / 2,
             0
         );
+
+        unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
+    }
+
+    public void HasAttacked()
+    {
+        attacksLeft--;
+    }
+
+    public void TakeDamage(int dmg)
+    {
+        unitStats.health -= dmg;
+
+        if (unitStats.health <= 0)
+        {
+            OnDeath();
+        }
+        Debug.Log(unitStats.health + " : took " + dmg + " dmg");
+    }
+
+    public void OnDeath()
+    {
+        Tile.UnSetTileObject();
+        unitSprite.color = new Color(0, 0, 0, 0);
+        unitSprite.sortingOrder = -1;
+        isDead = true;
+
+        // TODO call ruin death script;
+    }
+
+    public void Respawn(Tile tile)
+    {
+        unitSprite.color = new Color(1, 1, 1, 1);
+        tile.SetTileObject(this);
+        MoveToTile(tile);
+        ResetTurn();
+    }
+
+    public void ResetTurn()
+    {
+        movementLeft = Stats.movementSpeed;
+        attacksLeft = 1;
     }
 }
