@@ -16,9 +16,12 @@ public class MyNetwork : MonoBehaviour
 
     //host
     [SerializeField] GameObject m_hostInfo;
+    [SerializeField] GameObject clientListContent;
     TextMeshProUGUI m_ipText;
     TMP_InputField m_nameInputHost;
-    [SerializeField] GameObject clientListContent;
+    Button m_startGameBttn;
+    
+
 
     //client
     [SerializeField] GameObject m_clientInfo;
@@ -43,6 +46,7 @@ public class MyNetwork : MonoBehaviour
 
         m_ipText = m_hostInfo.transform.Find("MyIP").GetComponent<TextMeshProUGUI>();
         m_nameInputHost = m_hostInfo.transform.Find("Name_InputField (2)").GetComponent<TMP_InputField>();
+        m_startGameBttn = m_hostInfo.transform.Find("StartGameBttn").GetComponent<Button>();
 
         m_ipInput = m_clientInfo.transform.Find("IP_InputField").GetComponent<TMP_InputField>();
         m_nameInputClient = m_clientInfo.transform.Find("Name_InputField (1)").GetComponent<TMP_InputField>();
@@ -131,5 +135,8 @@ public class MyNetwork : MonoBehaviour
 
     }
 
+    void StartGame()
+    {
 
+	}
 }
