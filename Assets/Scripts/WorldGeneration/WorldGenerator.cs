@@ -28,6 +28,44 @@ public class WorldGenerator : MonoBehaviour
 
     private List<Tile> m_worldTiles = new List<Tile>();
 
+    #region Singleton Setup
+    private static WorldGenerator _instance;
+    private WorldGenerator() { }
+
+    public static WorldGenerator Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
+    private void SingletonSetUp()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+            //DontDestroyOnLoad(this.gameObject);
+        }
+    }
+
+    #endregion
+
+
+    public Tile GetAttackPattern(HexCoordinates start, EHexDirection direction, UnitFactory.AttackPattern attackPattern, out List<Tile> pattern)
+    {
+        pattern = new List<Tile>();
+        foreach (HexCoordinates p in attackPattern.attackPattern)
+        {
+            pattern.Add(GetTileAtCoordinate(HexCoordinates.Add(HexCoordinates.GetCoordinateRotatedInDirection(p, (int)direction), start)));
+        }
+        return GetTileAtCoordinate(HexCoordinates.Add(HexCoordinates.GetCoordinateRotatedInDirection(attackPattern.moveAttack, (int)direction), start));
+    }
+
     public static bool GetPath(Tile start, Tile destination, List<TerrainType> validTerrain, out List<Tile> path)
     {
         var openTiles = new Queue<Tile>();
@@ -99,6 +137,7 @@ public class WorldGenerator : MonoBehaviour
 
     private void Awake()
     {
+        SingletonSetUp();
         Generate();
     }
 
