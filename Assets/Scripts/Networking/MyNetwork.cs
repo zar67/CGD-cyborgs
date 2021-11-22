@@ -1,56 +1,78 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System.Diagnostics;
 
-public class MyNetwork 
+public class MyNetwork : MonoBehaviour
 {
-    bool m_isConnected = false;
-    public void Connect(String _ip, String message)
-    {
-       try
-       {
-            // Create a TcpClient.
-            // Note, for this client to work you need to have a TcpServer
-            // connected to the same address as specified by the server, port
-            // combination.
-            Int32 port = 10000;
-            TcpClient client = new TcpClient(_ip, port);
+    [SerializeField] Button m_hostButton;
+    [SerializeField] Button m_clientButton;
+    [SerializeField] TMP_InputField m_ipInputField;
 
-            // Translate the passed message into ASCII and store it as a Byte array.
-            Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
 
-            // Get a client stream for reading and writing.
-            //  Stream stream = client.GetStream();
+    bool m_isHost = false;
+    Int32 m_port = 10000;
+    Host m_host;
+    Client m_client;
 
-            NetworkStream stream = client.GetStream();
-
-            // Send the message to the connected TcpServer.
-            stream.Write(data, 0, data.Length);
-            
-            Debug.Log("Sent: " + message);
-
-            // Receive the TcpServer.response.
-
-            // Buffer to store the response bytes.
-            data = new Byte[256];
-
-            // String to store the response ASCII representation.
-            String responseData = String.Empty;
-
-            // Read the first batch of the TcpServer response bytes.
-            Int32 bytes = stream.Read(data, 0, data.Length);
-            responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-            Debug.Log("Received: " +  responseData);
-
-            // Close everything.
-            stream.Close();
-            client.Close();
-        }
-        catch
-        {
-            Debug.Log("ERRRORRR");
-		}
+	private void Awake()
+	{
+		m_hostButton.onClick.AddListener(delegate{SetHost();});
+        m_clientButton.onClick.AddListener(delegate{SetClient();});
 	}
+
+	void TCPDisconnect()
+	{ 
+        m_client.Close();
+    }
+
+    public void SetHost()
+    {
+        m_isHost = true;
+        m_host = new Host("Host", m_port);
+      
+        //StartCoroutine(run_cmd());
+
+        StartCoroutine(m_host.Listen());
+        m_hostButton.gameObject.GetComponent<Image>().color = Color.red;
+	}
+    public void SetClient()
+    {
+        m_isHost = false;
+        m_client = new Client("localhost", m_port, "Client");
+        m_clientButton.gameObject.GetComponent<Image>().color = Color.red;
+	}
+
+    bool hasStart = false;
+    private IEnumerator  run_cmd()
+    {
+        if(!hasStart)
+        {
+            string fileName = @"C:\\Dev\\University\\AdvancedTech\\Git\\TurnBased\\Assets\\Server\\my-server.py";
+
+            Process p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"C:\Python39\python.exe", fileName)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            hasStart = true;
+		    p.Start();
+         }
+       // p.StartTime > 0.0f;
+        //string output = p.StandardOutput.ReadToEnd();
+       // p.WaitForExit();
+
+        yield return new WaitForSeconds(0.2f);
+
+    }
+
+
 }

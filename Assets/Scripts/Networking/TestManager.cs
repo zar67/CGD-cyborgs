@@ -9,8 +9,11 @@ public class TestManager : MonoBehaviour
     void Start()
     {
         myNetwork = new MyNetwork();
-        myNetwork.Connect("localhost", "hey");
-    }
+        //myNetwork.SocketConnectClient();
+        //smyNetwork.TCPConnect("localhost", "AddClient");
+
+        
+    }   
 
     // Update is called once per frame
     void Update()
