@@ -11,17 +11,17 @@ public class Host
     Byte[] bytes;
     String data;
     Client m_client;
-    public Host(string _name, Int32 _port)
+    public Host(string _name, Int32 _port, IPAddress _ip)
     {
         //set up server
         try
 		{
-            IPAddress iP = IPAddress.Parse("127.0.0.1");
+            _ip = IPAddress.Parse("10.167.87.25");
             //IPEndPoint hostEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 10000);
             //Socket hostSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //hostSock.Blocking = false;
             //hostSock.ConnectAsync(hostEp);
-            m_listener = new TcpListener(iP, _port);
+            m_listener = new TcpListener(_ip, _port);
             // Start listening for client requests.
             m_listener.Start();
 

@@ -18,7 +18,7 @@ public class Client
 	{
         try
         {
-            String message = "heyy";
+            String message = _name;
             // Create a TcpClient.
             // Note, for this client to work you need to have a TcpServer
             // connected to the same address as specified by the server, port
