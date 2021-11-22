@@ -69,13 +69,14 @@ public class Host
                 name = data;
 
                 // Process the data sent by the client.
-                data = data.ToUpper();
+                //data = data.ToUpper();
 
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+                //send success
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes("success");
 
                 // Send back a response.
                 stream.Write(msg, 0, msg.Length);
-                Debug.Log("Sent: " + data);
+                //Debug.Log("Sent: " + data);
             }
             Client client = new Client(c, name);
             m_allCLients.Add(client);

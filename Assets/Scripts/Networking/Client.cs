@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System;
-
+using TMPro;
 
 public class Client
 {
@@ -16,7 +16,7 @@ public class Client
 		m_client = _client;
         m_name = _name;
 	}
-	public Client(String _ip, Int32 _port, string _name)
+	public Client(String _ip, Int32 _port, string _name, ref TextMeshProUGUI _connectedTxt)
 	{
         try
         {
@@ -53,6 +53,9 @@ public class Client
             Int32 bytes = stream.Read(data, 0, data.Length);
             responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
             Debug.Log("Received: =" + responseData);
+
+            if(responseData == "success")
+                _connectedTxt.text = "Connected : SUCCESS";
 
             // Close everything.
             stream.Close();

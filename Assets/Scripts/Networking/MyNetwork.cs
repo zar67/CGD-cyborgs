@@ -18,13 +18,15 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] GameObject m_hostInfo;
     TextMeshProUGUI m_ipText;
     TMP_InputField m_nameInputHost;
-    
+    [SerializeField] GameObject clientListContent;
+
     //client
     [SerializeField] GameObject m_clientInfo;
     TMP_InputField m_ipInput;
     TMP_InputField m_nameInputClient;
     Button m_connectToHostBttn;
-    [SerializeField] GameObject clientListContent;
+    TextMeshProUGUI m_conectedTxt;
+    
 
 
     bool m_isHost = false;
@@ -46,6 +48,7 @@ public class MyNetwork : MonoBehaviour
         m_nameInputClient = m_clientInfo.transform.Find("Name_InputField (1)").GetComponent<TMP_InputField>();
         m_connectToHostBttn = m_clientInfo.transform.Find("ConnectToHost").GetComponent<Button>();
         m_connectToHostBttn.onClick.AddListener(delegate{ ConnectToHost(m_nameInputClient.text, m_ipInput.text);});
+        m_conectedTxt = m_clientInfo.transform.Find("ConnectedTxt").GetComponent<TextMeshProUGUI>();
 	}
 
 	void TCPDisconnect()
@@ -100,7 +103,7 @@ public class MyNetwork : MonoBehaviour
     public void ConnectToHost(string _name, string _ip)
     {
        _ip = hostIP;
-        m_client = new Client(_ip, m_port, _name);
+        m_client = new Client(_ip, m_port, _name, ref m_conectedTxt);
 	}
 
     bool hasStart = false;
