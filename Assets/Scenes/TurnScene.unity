@@ -460,11 +460,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 431280594}
-  - component: {fileID: 431280593}
   - component: {fileID: 431280595}
+  - component: {fileID: 431280596}
+  - component: {fileID: 431280593}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: GameManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -506,10 +507,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 431280592}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88da4a094ae4cbc479e27c00db76fdf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &431280596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431280592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99badba06d8498f47820ba0ad48a638c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxChallenges: 5
+  maxChallenges: 1
   allChallenges:
   - {fileID: 11400000, guid: 537bcdfdcc2ae6d46955619eb81fabbd, type: 2}
   - {fileID: 11400000, guid: 2905986456f18eb4ea21c42e3dc92e0d, type: 2}

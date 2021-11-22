@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class GameplayManager : MonoBehaviour
 {
+    //UI
     [SerializeField] private GameObject UIObject;
     private GameplayUI ui;
 
+    //Timer
     private bool thisPlayerInputEnabled = false;
     [SerializeField] private int turnTime = 90; //In seconds
     private float timerCurrent = 0;
+
+    //TimedEvents
+    private TimedEvents timedEvents = new TimedEvents();
 
     private void Awake()
     {

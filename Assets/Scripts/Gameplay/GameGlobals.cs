@@ -11,3 +11,8 @@ public class GlobalStats
     int kills = 0;
     int ruins = 0;
 }
+
+public class GlobalData
+{
+    public static List<Challenge> dailyChallenges = new List<Challenge>();
+}
