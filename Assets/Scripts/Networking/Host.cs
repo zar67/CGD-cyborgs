@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System;
+using TMPro;
 
 public class Host
 {
@@ -11,12 +12,17 @@ public class Host
     Byte[] bytes;
     String data;
     Client m_client;
-    public Host(string _name, Int32 _port, IPAddress _ip)
+    GameObject m_listContent;
+
+    static List<Client> m_allCLients = new List<Client>();
+    
+    public Host(string _name, Int32 _port, IPAddress _ip, GameObject _listContent)
     {
+        m_listContent = _listContent;
         //set up server
         try
 		{
-            _ip = IPAddress.Parse("10.167.87.25");
+            //_ip = IPAddress.Parse(_ip);
             //IPEndPoint hostEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 10000);
             //Socket hostSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //hostSock.Blocking = false;
@@ -47,20 +53,20 @@ public class Host
             TcpClient c = m_listener.AcceptTcpClient();
                 
             Debug.Log("Connected!");
-            m_client = new Client(c);
             data = null;
 
             // Get a stream object for reading and writing
-            NetworkStream stream = m_client.GetStream();
+            NetworkStream stream = c.GetStream();
 
             int i;
-
+            string name = "";
             // Loop to receive all the data sent by the client.
             while((i = stream.Read(bytes, 0, bytes.Length))!=0)
             {
                 // Translate data bytes to a ASCII string.
                 data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                 Debug.Log("Received: " + data);
+                name = data;
 
                 // Process the data sent by the client.
                 data = data.ToUpper();
@@ -71,9 +77,15 @@ public class Host
                 stream.Write(msg, 0, msg.Length);
                 Debug.Log("Sent: " + data);
             }
+            Client client = new Client(c, name);
+            m_allCLients.Add(client);
 
+            GameObject item = GameObject.Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
+            item.transform.SetParent(m_listContent.transform);
+            item.GetComponent<TextMeshProUGUI>().text = name;
+            item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
             // Shutdown and end connection
-            m_client.Close();
+           // m_client.Close();
         }
 
         catch(SocketException e)

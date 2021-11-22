@@ -9,10 +9,12 @@ using System;
 public class Client
 {
     TcpClient m_client;
+    string m_name;
 
-	public Client(TcpClient _client)
+	public Client(TcpClient _client, string _name)
 	{ 
 		m_client = _client;
+        m_name = _name;
 	}
 	public Client(String _ip, Int32 _port, string _name)
 	{

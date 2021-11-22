@@ -24,12 +24,15 @@ public class MyNetwork : MonoBehaviour
     TMP_InputField m_ipInput;
     TMP_InputField m_nameInputClient;
     Button m_connectToHostBttn;
+    [SerializeField] GameObject clientListContent;
 
 
     bool m_isHost = false;
     Int32 m_port = 10000;
     Host m_host;
     Client m_client;
+
+    string hostIP = "";
 
 	private void Awake()
 	{
@@ -53,7 +56,10 @@ public class MyNetwork : MonoBehaviour
     public void SetHost()
     {
         m_isHost = true;
-       
+        //m_hostButton.gameObject.GetComponent<Image>().color = Color.red;
+        m_hostButton.gameObject.SetActive(false);
+        m_clientButton.gameObject.SetActive(false);
+        m_hostInfo.SetActive(true);
 
         string hostName = Dns.GetHostName(); // Retrive the Name of HOST
         // Get the IP
@@ -76,13 +82,10 @@ public class MyNetwork : MonoBehaviour
 		}
       
         //StartCoroutine(run_cmd());
-        m_host = new Host("Host", m_port, myIP);
+        m_host = new Host("Host", m_port, myIP, clientListContent);
+        hostIP = myIP.ToString();
 
-       // StartCoroutine(m_host.Listen());
-        //m_hostButton.gameObject.GetComponent<Image>().color = Color.red;
-        m_hostButton.gameObject.SetActive(false);
-        m_clientButton.gameObject.SetActive(false);
-        m_hostInfo.SetActive(true);
+        StartCoroutine(m_host.Listen());
 	}
 
     public void SetClient()
@@ -96,10 +99,7 @@ public class MyNetwork : MonoBehaviour
 
     public void ConnectToHost(string _name, string _ip)
     {
-        string hostName = Dns.GetHostName();
-        IPAddress myIP = Dns.GetHostAddresses(hostName)[0];
-       // _ip = myIP.MapToIPv4().ToString();
-       _ip = "10.167.87.25";
+       _ip = hostIP;
         m_client = new Client(_ip, m_port, _name);
 	}
 
