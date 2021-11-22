@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class Unit : MonoBehaviour, ITileObject
 {
@@ -127,9 +128,12 @@ public class Unit : MonoBehaviour, ITileObject
     {
         if (data.Previous == this && !specialClick && data.Current is Tile current)
         {
-            if (CanGoOnTile(current.Terrain) && HexCoordinates.Distance(Tile, current) <= Stats.movementSpeed)
+            if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(data.Previous as Tile, current, (current as ITileObject).TraversibleTerrains.ToList(), out List<Tile> path))
             {
-                MoveToTile(current);
+                if (path.Count <= Stats.movementSpeed)
+                {
+                    MoveToTile(current);
+                }
             }
         }
     }
