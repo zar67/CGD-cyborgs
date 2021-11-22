@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class Unit : MonoBehaviour, ITileObject
 {
@@ -104,9 +105,12 @@ public class Unit : MonoBehaviour, ITileObject
         {
             Tile current = (Tile)data.Current;
 
-            if (HexCoordinates.Distance(Tile, current) <= Stats.movementSpeed)
+            if (WorldGenerator.GetPath(data.Previous as Tile, current, (current as ITileObject).TraversibleTerrains.ToList(), out List<Tile> path))
             {
-                MoveToTile(current);
+                if (path.Count <= Stats.movementSpeed)
+                {
+                    MoveToTile(current);
+                }
             }
         }
     }
