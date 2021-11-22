@@ -162,6 +162,8 @@ public class WorldGenerator : MonoBehaviour
         GenerateLand(landBudget);
 
         GenerateRuins();
+
+        XMLFormatter.SendMapData(m_worldTiles);
     }
 
     private void GenerateLand(int landBudget)

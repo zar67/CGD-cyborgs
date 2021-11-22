@@ -32,7 +32,7 @@ public class MyNetwork : MonoBehaviour
     
 
 
-    bool m_isHost = false;
+    public static bool m_isHost = false;
     Int32 m_port = 10000;
     Host m_host;
     Client m_client;
@@ -47,6 +47,7 @@ public class MyNetwork : MonoBehaviour
         m_ipText = m_hostInfo.transform.Find("MyIP").GetComponent<TextMeshProUGUI>();
         m_nameInputHost = m_hostInfo.transform.Find("Name_InputField (2)").GetComponent<TMP_InputField>();
         m_startGameBttn = m_hostInfo.transform.Find("StartGameBttn").GetComponent<Button>();
+        m_startGameBttn.onClick.AddListener(delegate{StartGame();});
 
         m_ipInput = m_clientInfo.transform.Find("IP_InputField").GetComponent<TMP_InputField>();
         m_nameInputClient = m_clientInfo.transform.Find("Name_InputField (1)").GetComponent<TMP_InputField>();
@@ -89,10 +90,11 @@ public class MyNetwork : MonoBehaviour
 		}
       
         //StartCoroutine(run_cmd());
-        m_host = new Host("Host", m_port, myIP, clientListContent);
+        m_host = new Host(m_nameInputHost.text, m_port, myIP, clientListContent, ref m_conectedTxt);
         hostIP = myIP.ToString();
 
         StartCoroutine(m_host.Listen());
+
 	}
 
     public void SetClient()
@@ -137,6 +139,8 @@ public class MyNetwork : MonoBehaviour
 
     void StartGame()
     {
+        m_host.AddClient(hostIP, m_port, m_nameInputHost.text, ref m_conectedTxt);
 
+        StartCoroutine(m_host.Listen());
 	}
 }

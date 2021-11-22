@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System;
 using TMPro;
 
-public class Host
+public class Host : MonoBehaviour
 {
     TcpListener m_listener;
     Byte[] bytes;
@@ -15,8 +15,9 @@ public class Host
     GameObject m_listContent;
 
     static List<Client> m_allCLients = new List<Client>();
-    
-    public Host(string _name, Int32 _port, IPAddress _ip, GameObject _listContent)
+
+    const int m_MAX_PLAYER_COUNT = 1;
+    public Host(string _name, Int32 _port, IPAddress _ip, GameObject _listContent, ref TextMeshProUGUI _connectedTxt) 
     {
         m_listContent = _listContent;
         //set up server
@@ -28,8 +29,7 @@ public class Host
             //hostSock.Blocking = false;
             //hostSock.ConnectAsync(hostEp);
             m_listener = new TcpListener(_ip, _port);
-            // Start listening for client requests.
-            m_listener.Start();
+            
 
             // Buffer for reading data
             bytes = new Byte[256];
@@ -46,10 +46,16 @@ public class Host
     {
         try
         { 
+            // Start listening for client requests.
+            m_listener.Start();
+            //while(m_allCLients.Count < m_MAX_PLAYER_COUNT)
+            //{
             Debug.Log("Waiting for a connection... ");
 
             // Perform a blocking call to accept requests.
             // You could also use server.AcceptSocket() here.
+            //StartCoroutine(m_listener.AcceptTcpClient());
+           // m_listener.BeginAcceptTcpClient();
             TcpClient c = m_listener.AcceptTcpClient();
                 
             Debug.Log("Connected!");
@@ -78,6 +84,7 @@ public class Host
                 stream.Write(msg, 0, msg.Length);
                 //Debug.Log("Sent: " + data);
             }
+            //m_listener.a
             Client client = new Client(c, name);
             m_allCLients.Add(client);
 
@@ -86,18 +93,32 @@ public class Host
             item.GetComponent<TextMeshProUGUI>().text = name;
             item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
             // Shutdown and end connection
-           // m_client.Close();
+            // m_client.Close();
+		//}
         }
 
         catch(SocketException e)
         {
             Debug.Log("SocketException: " + e);
         }
-        finally
+       //if(m_allCLients.Count == m_MAX_PLAYER_COUNT)
         {
             // Stop listening for new clients.
             m_listener.Stop();
         }
         yield return new WaitForSeconds(0.2f);
     }
+
+    AsyncCallback AddClient()
+    {
+        
+
+        
+	}
+
+    public void AddClient(String _ip, Int32 _port, string _name, ref TextMeshProUGUI _connectedTxt)
+    {
+        Client client = new Client(_ip, _port, _name, ref _connectedTxt);
+        m_allCLients.Add(client);
+	}
 }
