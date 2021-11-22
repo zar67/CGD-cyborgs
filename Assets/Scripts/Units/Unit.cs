@@ -24,10 +24,16 @@ public class Unit : MonoBehaviour, ITileObject
     [SerializeField] private UnitTypes unitType;
     private TerrainType[] traversibleTerrain;
 
+    private int movementLeft = 0;
+    private int attacksLeft = 0;
+
+    // Ids
+    private int ruinId = -1;
+    private string playerId = "";
+
     public UnitTypes Type => unitType;
 
     private bool specialClick = false;
-
     public bool Attacking => specialClick;
 
     public UnitStats Stats => unitStats;
@@ -47,6 +53,25 @@ public class Unit : MonoBehaviour, ITileObject
         unitStats = UnitFactory.Instance.GetBaseUnitStats(unitType);
         traversibleTerrain = UnitFactory.Instance.GetTraversableTerrain(unitType).ToArray();
         MoveToTile(tile);
+    }
+
+    public void SetUpUnit(Tile tile, int _ruinId)
+    {
+        ruinId = _ruinId;
+        tile.SetTileObject(this);
+        unitStats = UnitFactory.Instance.GetBaseUnitStats(unitType);
+        traversibleTerrain = UnitFactory.Instance.GetTraversableTerrain(unitType).ToArray();
+        MoveToTile(tile);
+    }
+
+    public void SetUpPlayerId(string _playerId)
+    {
+        playerId = _playerId;
+    }
+
+    public bool isPlayer(string id)
+    {
+        return id == playerId;
     }
 
     public void Select()
@@ -134,10 +159,29 @@ public class Unit : MonoBehaviour, ITileObject
         );
     }
 
+    public void HasAttacked()
+    {
+        attacksLeft--;
+    }
+
     public void TakeDamage(int dmg)
     {
         unitStats.health -= dmg;
 
         Debug.Log(unitStats.health + " : took " + dmg + " dmg");
+    }
+
+    public void OnDeath()
+    {
+        Tile.TileObject = null;
+        unitSprite.color = new Color(0, 0, 0, 0);
+
+        // TODO call ruin death script;
+    }
+
+    public void ResetTurn()
+    {
+        movementLeft = Stats.movementSpeed;
+        attacksLeft = 1;
     }
 }

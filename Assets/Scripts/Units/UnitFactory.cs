@@ -124,9 +124,8 @@ public class UnitFactory : MonoBehaviour
         //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(-1, 1)));
     }
 
-
     //Creates and returns a unit on a given tile.
-    public Unit CreateUnitOnTile(Unit.UnitTypes unitType, Tile tile)
+    public Unit CreateUnitOnTile(Unit.UnitTypes unitType, Tile tile, int ruinId = -1)
     {
         if (tile.TileObject != null)
         {
@@ -134,7 +133,7 @@ public class UnitFactory : MonoBehaviour
             return null;
         }
         GameObject u = Instantiate(unitPrefabs[unitType]);
-        u.GetComponent<Unit>().SetUpUnit(tile);
+        u.GetComponent<Unit>().SetUpUnit(tile, ruinId);
 
         return u.GetComponent<Unit>();
     }

@@ -291,6 +291,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
                     unit.MoveToTile(toMove);
                     WorldSelection.ChangeSelection(null);
 
+                    unit.HasAttacked();
                     return true;
                 }
             }
