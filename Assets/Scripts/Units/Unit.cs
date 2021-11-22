@@ -26,7 +26,10 @@ public class Unit : MonoBehaviour, ITileObject
     private TerrainType[] traversibleTerrain;
 
     private int movementLeft = 0;
+    public int Movement => movementLeft;
     private int attacksLeft = 0;
+
+    private bool isDead = false;
 
     // Ids
     private int ruinId = -1;
@@ -48,14 +51,6 @@ public class Unit : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
-    public void SetUpUnit(Tile tile)
-    {
-        tile.SetTileObject(this);
-        unitStats = UnitFactory.Instance.GetBaseUnitStats(unitType);
-        traversibleTerrain = UnitFactory.Instance.GetTraversableTerrain(unitType).ToArray();
-        MoveToTile(tile);
-    }
-
     public void SetUpUnit(Tile tile, int _ruinId)
     {
         ruinId = _ruinId;
@@ -63,6 +58,9 @@ public class Unit : MonoBehaviour, ITileObject
         unitStats = UnitFactory.Instance.GetBaseUnitStats(unitType);
         traversibleTerrain = UnitFactory.Instance.GetTraversableTerrain(unitType).ToArray();
         MoveToTile(tile);
+
+        //Testing
+        ResetTurn();
     }
 
     public void SetUpPlayerId(string _playerId)
@@ -75,8 +73,12 @@ public class Unit : MonoBehaviour, ITileObject
         return id == playerId;
     }
 
+    #region Selection and deselection of units
+
     public void Select()
     {
+        if (isDead) return;
+
         if (specialClick)
         {
             unitSprite.color = new Color(1, 0, 0);
@@ -94,6 +96,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (isDead) return;
         if (eventData.button == PointerEventData.InputButton.Left && !(WorldSelection.SelectedObject is Unit && ((Unit)WorldSelection.SelectedObject).Attacking))
         {
             specialClick = false;
@@ -104,7 +107,7 @@ public class Unit : MonoBehaviour, ITileObject
         {
             WorldSelection.ChangeSelection(null);
         }
-        else if (eventData.button == PointerEventData.InputButton.Right)
+        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0)
         {
             specialClick = true;
             WorldSelection.ChangeSelection(this);
@@ -126,17 +129,21 @@ public class Unit : MonoBehaviour, ITileObject
 
     private void OnSelectionChange(object sender, WorldSelection.SelectionChangedData data)
     {
+        if (isDead) return;
         if (data.Previous == this && !specialClick && data.Current is Tile current)
         {
-            if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(data.Previous as Tile, current, (current as ITileObject).TraversibleTerrains.ToList(), out List<Tile> path))
+            if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(Tile, current, traversibleTerrain.ToList(), out List<Tile> path))
             {
-                if (path.Count <= Stats.movementSpeed)
+                if (path.Count - 1 <= movementLeft)
                 {
+                    movementLeft -= path.Count - 1;
                     MoveToTile(current);
                 }
             }
         }
     }
+
+    #endregion
 
     bool CanGoOnTile(TerrainType terrainType)
     {
@@ -161,6 +168,8 @@ public class Unit : MonoBehaviour, ITileObject
             Tile.Coordinates.Z * (Tile.Matrics.OuterRadius * 1.5f) / 2,
             0
         );
+
+        unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
     }
 
     public void HasAttacked()
@@ -172,15 +181,29 @@ public class Unit : MonoBehaviour, ITileObject
     {
         unitStats.health -= dmg;
 
+        if (unitStats.health <= 0)
+        {
+            OnDeath();
+        }
         Debug.Log(unitStats.health + " : took " + dmg + " dmg");
     }
 
     public void OnDeath()
     {
-        Tile.TileObject = null;
+        Tile.UnSetTileObject();
         unitSprite.color = new Color(0, 0, 0, 0);
+        unitSprite.sortingOrder = -1;
+        isDead = true;
 
         // TODO call ruin death script;
+    }
+
+    public void Respawn(Tile tile)
+    {
+        unitSprite.color = new Color(1, 1, 1, 1);
+        tile.SetTileObject(this);
+        MoveToTile(tile);
+        ResetTurn();
     }
 
     public void ResetTurn()

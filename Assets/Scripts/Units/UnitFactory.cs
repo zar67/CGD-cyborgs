@@ -40,6 +40,8 @@ public class UnitFactory : MonoBehaviour
     private Dictionary<Unit.UnitTypes, GameObject> unitPrefabs;
     private Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)> unitStats;
 
+    private List<Unit> allUnits = new List<Unit>();
+
     #region Singleton Setup
     private static UnitFactory _instance;
     private UnitFactory() { }
@@ -114,14 +116,15 @@ public class UnitFactory : MonoBehaviour
         CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(5, 4)));
         CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(8, 4)));
         CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(1, 9)));
+    }
 
-
-        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(0, 1)));
-        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(1, 0)));
-        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(1, -1)));
-        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(0, -1)));
-        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(-1, 0)));
-        //Debug.Log(HexCoordinates.GetDirectionFromFirstPoint(new HexCoordinates(0, 0), new HexCoordinates(-1, 1)));
+    //Resets turn for all units;
+    public void ResetTurn()
+    {
+        foreach (Unit u in allUnits)
+        {
+            u.ResetTurn();
+        }
     }
 
     //Creates and returns a unit on a given tile.
@@ -134,6 +137,8 @@ public class UnitFactory : MonoBehaviour
         }
         GameObject u = Instantiate(unitPrefabs[unitType]);
         u.GetComponent<Unit>().SetUpUnit(tile, ruinId);
+
+        allUnits.Add(u.GetComponent<Unit>());
 
         return u.GetComponent<Unit>();
     }

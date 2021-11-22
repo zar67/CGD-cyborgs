@@ -93,6 +93,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
         TileObject = null;
     }
 
+    public int GetSortingOrderOfTile()
+    {
+        return m_tileSpriteRenderer.sortingOrder;
+    }
+
     public void SetSprite(Sprite sprite)
     {
         m_tileSpriteRenderer.sprite = sprite;
@@ -171,17 +176,6 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        //for (EHexDirection direction = EHexDirection.NE; direction <= EHexDirection.NW; direction++)
-        //{
-        //    if (Neighbours[direction] == null)
-        //    {
-        //        Debug.Log(direction + ": null");
-        //    }
-        //    else
-        //    {
-        //        Debug.Log(direction + ": " + Neighbours[direction].Coordinates);
-        //    }
-        //}
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             if (CheckAndAttack())
@@ -225,10 +219,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
             }
             else
             {
-                bool valid = HexCoordinates.Distance(Coordinates, unit.Tile.Coordinates) <= unit.Stats.movementSpeed;
-
+                
                 if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path))
                 {
+                    bool valid = path.Count - 1 <= unit.Movement;
+
                     foreach (var tile in path)
                     {
                         m_hightlightedTiles.Add(tile);
