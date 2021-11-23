@@ -39,6 +39,8 @@ public class MyNetwork : MonoBehaviour
 
     string hostIP = "";
 
+    //
+
 	private void Awake()
 	{
 		m_hostButton.onClick.AddListener(delegate{SetHost();});

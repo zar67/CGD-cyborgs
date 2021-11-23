@@ -77,6 +77,8 @@ public class Client
         {
             if(m_client != null)
             {
+                //m_client.get
+                /*
                 NetworkStream stream = m_client.GetStream();
                 if(stream.CanRead)
                 {
@@ -88,7 +90,7 @@ public class Client
                 else
                 {
                     Debug.Log("Cant Read from stream");
-				}
+				}*/
                 
 			}
             yield return new WaitForSeconds(0.2f);
