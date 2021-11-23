@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
+using System.Xml;
 
 public class NetworkHost : NetworkCommunication
 {
@@ -55,7 +56,11 @@ public class NetworkHost : NetworkCommunication
 
             TcpClient c = m_server.AcceptTcpClient();
             m_allClients.Add(c);
-            byte[] byteMsg = Encoding.ASCII.GetBytes("success");
+
+            XmlDocument xmlBlob = XMLFormatter.ConstructMessage(XMLFormatter.MessageType.msCLIENT_CONNECT);
+            AddToTxQueue(xmlBlob.OuterXml);
+
+            byte[] byteMsg = Encoding.ASCII.GetBytes(xmlBlob.OuterXml);
             c.GetStream().Write(byteMsg, 0, byteMsg.Length);
             
             /*if(c.Status == TaskStatus.Created)
@@ -63,6 +68,8 @@ public class NetworkHost : NetworkCommunication
             if(c.IsCompleted)
                 Debug.Log("Completed!");*/
             Debug.Log("Completed!");
+
+           
             //Thread.Sleep(10);
 		}   
 	}

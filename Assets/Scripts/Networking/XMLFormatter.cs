@@ -7,32 +7,154 @@ using System.IO;
 
 public class XMLFormatter 
 {
-    public class TileData
-    {
-        public HexCoordinates m_coords;
-        public TerrainType m_terrain;
-        public HexMatrics m_matrics;
+	//Message Types
+	public enum MessageType
+	{
+		msTURN_HISTORY,
+		msCLIENT_CONNECT,//host to client
+		msTRY_CONNECT //client to host
 	}
-    /*  (tiles positions)
-     * 
-     */
-    public static void SendMapData(List<Tile> _allTiles)
-    {
-        List<TileData> allTilesData = new List<TileData>();
-        foreach(Tile t in _allTiles)
-        {
-            TileData tData = new TileData();
-            tData.m_coords = t.Coordinates;
-            tData.m_matrics = t.Matrics;
-            tData.m_terrain = t.Terrain;
-            allTilesData.Add(tData);
+
+	//Turn Types
+	public const string m_MOVE_UNIT = "position";
+	public const string m_HEALTH_CHANGE = "health";
+	public const string m_RUIN_OWNERSHIP = "ruin";
+
+	static List<TurnData> turnHistory = new List<TurnData>();
+	struct TurnData
+	{
+		string m_turnType;
+		string m_id;
+		string m_data;
+		public TurnData(string _type, string _id, string _data)
+		{
+			m_turnType = _type;
+			m_id = _id;
+			m_data = _data;
+		}
+	}
+	public static void AddToTurnHistory(string _type, string _id, string _data)
+	{
+		turnHistory.Add(new TurnData(_type, _id, _data));
+	}
+
+	public static XmlDocument ConstructMessage(MessageType _msgType)
+	{
+		XmlDocument xmlDoc = new XmlDocument();
+		XmlElement xmlNode = xmlDoc.CreateElement("message");
+		xmlDoc.AppendChild(xmlNode);
+
+		XmlAttribute typeAttrib = xmlDoc.CreateAttribute("type");
+		XmlAttribute idAttrib = xmlDoc.CreateAttribute("id");
+		XmlAttribute dataAttrib = xmlDoc.CreateAttribute("data");
+
+		switch(_msgType)
+		{
+			case MessageType.msCLIENT_CONNECT:
+			{
+				typeAttrib.Value = "connection";
+				idAttrib.Value = "ipaddress";
+				dataAttrib.Value = "success";
+			}break;
 		}
 
-        string filePath = Path.Combine(Application.persistentDataPath, "filename.xml"); 
-        var serializer = new XmlSerializer(typeof(List<TileData>));
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            serializer.Serialize(stream, allTilesData);
-        }
+		xmlNode.Attributes.Append(typeAttrib);
+		xmlNode.Attributes.Append(idAttrib);
+		xmlNode.Attributes.Append(dataAttrib);
+
+		Debug.Log(xmlDoc.OuterXml);
+
+		return xmlDoc;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
