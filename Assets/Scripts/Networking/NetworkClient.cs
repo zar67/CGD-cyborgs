@@ -19,7 +19,7 @@ public class NetworkClient : NetworkCommunication
         Thread commsThread = new Thread(new ThreadStart(CommsThread)); 
         commsThread.Start();
 
-        AddToTxQueue("Hey");
+        
 	}
 
     public void CommsThread()
@@ -84,6 +84,11 @@ public class NetworkClient : NetworkCommunication
                 if(bytesRecived > 0)
                 {
                     string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
+                    lock(m_rxQueue)
+                    {
+                        m_rxQueue.Add(msg);
+					}
+                    Debug.Log("Added To rx: " + msg);
 				}
 			}
 		}

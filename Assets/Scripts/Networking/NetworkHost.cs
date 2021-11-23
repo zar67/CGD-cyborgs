@@ -5,16 +5,17 @@ using System.Net.Sockets;
 using UnityEngine;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text;
 
 public class NetworkHost : NetworkCommunication
 {
-    List<NetworkClient> m_allClients;
+    List<TcpClient> m_allClients;
     TcpListener m_server;
     
 
     public NetworkHost(string _port) : base ("", _port)
     {
-        m_allClients = new List<NetworkClient>();
+        m_allClients = new List<TcpClient>();
 
         // sets host IP to the computer IP
         SetIP();
@@ -50,6 +51,11 @@ public class NetworkHost : NetworkCommunication
             Debug.Log("Waiting for a connection... ");
 
             TcpClient c = m_server.AcceptTcpClient();
+            m_allClients.Add(c);
+
+            byte[] byteMsg = Encoding.ASCII.GetBytes("success");
+            c.GetStream().Write(byteMsg, 0, byteMsg.Length);
+            
             /*if(c.Status == TaskStatus.Created)
                 Debug.Log("Created!");
             if(c.IsCompleted)

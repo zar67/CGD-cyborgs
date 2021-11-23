@@ -62,7 +62,7 @@ public class MyNetwork : MonoBehaviour
 	{
 		if(Input.GetKeyDown(KeyCode.Space))
         {
-            //m_host.SendMsg("Hey");
+            m_client.AddToTxQueue("Hey");
 		}
 	}
 	void TCPDisconnect()
