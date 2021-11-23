@@ -11,6 +11,7 @@ public class NetworkCommunication
     protected string m_port = "";
     protected List<string> m_rxQueue;
     protected List<string> m_txQueue;
+    protected byte[] m_buffer = new byte[10000];
 
     public NetworkCommunication(string _ip, string _port)
     {

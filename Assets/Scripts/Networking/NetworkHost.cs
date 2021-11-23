@@ -11,7 +11,7 @@ public class NetworkHost : NetworkCommunication
 {
     List<TcpClient> m_allClients;
     TcpListener m_server;
-    
+    TcpClient client;
 
     public NetworkHost(string _port) : base ("", _port)
     {
@@ -24,6 +24,9 @@ public class NetworkHost : NetworkCommunication
 
         Thread serverThread = new Thread(new ThreadStart(Listen));
         serverThread.Start();
+
+        Thread commsThread  = new Thread(new ThreadStart(ClientCommunication));
+        commsThread.Start();
 	}
 
     void SetIP()
@@ -40,6 +43,7 @@ public class NetworkHost : NetworkCommunication
         }
 	}
 
+    //Listen for new clients
     void Listen()
     {
         // Start listening for client requests.
@@ -52,7 +56,7 @@ public class NetworkHost : NetworkCommunication
 
             TcpClient c = m_server.AcceptTcpClient();
             m_allClients.Add(c);
-
+            client =c;
             byte[] byteMsg = Encoding.ASCII.GetBytes("success");
             c.GetStream().Write(byteMsg, 0, byteMsg.Length);
             
@@ -62,8 +66,77 @@ public class NetworkHost : NetworkCommunication
                 Debug.Log("Completed!");*/
             Debug.Log("Completed!");
             //Thread.Sleep(10);
+		}   
+	}
+
+    //Listen for client communication
+    void ClientCommunication()
+    {
+        while(true)
+        {
+            /*foreach(TcpClient client in m_allClients)
+            {
+                NetworkStream stream = client.GetStream();
+                int bytesRecived = stream.Read(m_buffer, 0, m_buffer.Length);
+                if(bytesRecived > 0)
+                {
+                    string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
+                    lock(m_rxQueue)
+                    {
+                        m_rxQueue.Add(msg);
+			        }
+                    Debug.Log("Added To rx: " + msg);
+		        }
+			}*/
+
+            if(client != null)
+            {
+                if(client.Connected)
+                {
+                    NetworkStream stream = client.GetStream();
+                    if(stream != null)
+                    {
+                        if(stream.DataAvailable)
+                        {
+                            if(stream.CanRead)
+                            {
+                                int bytesRecived = stream.Read(m_buffer, 0, m_buffer.Length);
+                                if(bytesRecived > 0)
+                                {
+                                    string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
+                                    lock(m_rxQueue)
+                                    {
+                                        m_rxQueue.Add(msg);
+			                        }
+                                    Debug.Log("Added To rx: " + msg);
+		                        }
+							}
+						}
+                    }
+			    }
+            }
+            
+            Thread.Sleep(10);
 		}
-        
+	}
+
+    void Send(ref NetworkStream _stream)
+    {
+
+	}
+
+    void Recieve(ref NetworkStream _stream)
+    {
+        int bytesRecived = _stream.Read(m_buffer, 0, m_buffer.Length);
+        if(bytesRecived > 0)
+        {
+            string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
+            lock(m_rxQueue)
+            {
+                m_rxQueue.Add(msg);
+			}
+            Debug.Log("Added To rx: " + msg);
+		}
 	}
 }
 

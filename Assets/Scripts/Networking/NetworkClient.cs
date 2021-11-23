@@ -10,7 +10,6 @@ public class NetworkClient : NetworkCommunication
 {
     TcpClient m_tcpClient;
     NetworkStream m_networkStream;
-    byte[] m_buffer = new byte[10000];
     public NetworkClient(string _ip, string _port) : base (_ip, _port)
     {
         m_connectionStatus = ConnectionStatus.cs_CONNECTING;
@@ -26,9 +25,12 @@ public class NetworkClient : NetworkCommunication
     {
         if(m_tcpClient != null)
         {
-            IPAddress ipAddress = IPAddress.Parse(m_ip);
-            m_tcpClient.ConnectAsync(ipAddress, int.Parse(m_port));
-            m_connectionStatus = ConnectionStatus.sc_CONNECTED;
+            if(m_connectionStatus != ConnectionStatus.sc_CONNECTED)
+            {
+                IPAddress ipAddress = IPAddress.Parse(m_ip);
+                m_tcpClient.Connect(ipAddress, int.Parse(m_port));
+                m_connectionStatus = ConnectionStatus.sc_CONNECTED;
+			}
 
             while(true)
             {
@@ -78,7 +80,7 @@ public class NetworkClient : NetworkCommunication
     {
         if(m_tcpClient != null && m_tcpClient.Connected)
         {
-            if(m_networkStream != null)
+            if(m_networkStream != null && m_networkStream.DataAvailable)
             {
                 int bytesRecived = m_networkStream.Read(m_buffer, 0, m_buffer.Length);
                 if(bytesRecived > 0)
