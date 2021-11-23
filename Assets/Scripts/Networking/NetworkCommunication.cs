@@ -37,4 +37,6 @@ public class NetworkCommunication
             m_txQueue.Add(_message);
 		}
 	}
+
+    public List<string> GetTxQueue(){return m_txQueue;}
 }

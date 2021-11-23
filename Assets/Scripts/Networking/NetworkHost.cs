@@ -11,7 +11,6 @@ public class NetworkHost : NetworkCommunication
 {
     List<TcpClient> m_allClients;
     TcpListener m_server;
-    TcpClient client;
 
     public NetworkHost(string _port) : base ("", _port)
     {
@@ -56,7 +55,6 @@ public class NetworkHost : NetworkCommunication
 
             TcpClient c = m_server.AcceptTcpClient();
             m_allClients.Add(c);
-            client =c;
             byte[] byteMsg = Encoding.ASCII.GetBytes("success");
             c.GetStream().Write(byteMsg, 0, byteMsg.Length);
             
@@ -89,7 +87,7 @@ public class NetworkHost : NetworkCommunication
 		        }
 			}*/
 
-            if(client != null)
+            foreach(var client in m_allClients)
             {
                 if(client.Connected)
                 {
@@ -98,6 +96,7 @@ public class NetworkHost : NetworkCommunication
                     {
                         if(stream.DataAvailable)
                         {
+                            //check for messages from client
                             if(stream.CanRead)
                             {
                                 int bytesRecived = stream.Read(m_buffer, 0, m_buffer.Length);
@@ -111,6 +110,24 @@ public class NetworkHost : NetworkCommunication
                                     Debug.Log("Added To rx: " + msg);
 		                        }
 							}
+
+                            //check if send 
+                            List<string> txQueueTemp = new List<string>();
+                            lock(m_txQueue)
+                            {
+                                foreach(var tx in m_txQueue)
+                                {
+                                    txQueueTemp.Add(tx);
+			                    }
+                                m_txQueue.Clear();
+		                    }
+
+                            foreach(var msg in txQueueTemp)
+                            {
+                                byte[] byteMsg = Encoding.ASCII.GetBytes(msg);
+                                if(stream != null)
+                                    stream.Write(byteMsg, 0, msg.Length);
+		                    }
 						}
                     }
 			    }
