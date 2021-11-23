@@ -13,6 +13,7 @@ public class NetworkCommunication
     protected List<string> m_txQueue;
     protected byte[] m_buffer = new byte[10000];
 
+    public string GetIP(){return m_ip;}
     public NetworkCommunication(string _ip, string _port)
     {
         m_ip = _ip;

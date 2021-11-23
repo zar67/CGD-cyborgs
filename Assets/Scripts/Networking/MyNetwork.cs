@@ -87,6 +87,7 @@ public class MyNetwork : MonoBehaviour
         //StartCoroutine(m_host.Listen());*/
 
         m_host = new NetworkHost(m_port.ToString());
+        m_ipText.text = m_host.GetIP();
 
 	}
 
