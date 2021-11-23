@@ -38,5 +38,17 @@ public class NetworkCommunication
 		}
 	}
 
-    public List<string> GetTxQueue(){return m_txQueue;}
+    public List<string> GetRxQueueCopyAndClear()
+    {
+        List<string> rxTemp = new List<string>();
+        lock(m_rxQueue)
+        {
+            foreach(var msg in m_rxQueue)
+            {
+                rxTemp.Add(msg);
+			}
+            m_rxQueue.Clear();
+		}
+        return rxTemp;
+    }
 }

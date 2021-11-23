@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Diagnostics;
+using System.Xml;
 
 public class MyNetwork : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class MyNetwork : MonoBehaviour
 
     //host
     [SerializeField] GameObject m_hostInfo;
-    [SerializeField] GameObject clientListContent;
+    [SerializeField] GameObject m_clientListContent;
     TextMeshProUGUI m_ipText;
     TMP_InputField m_nameInputHost;
     Button m_startGameBttn;
@@ -60,10 +61,7 @@ public class MyNetwork : MonoBehaviour
 
 	private void Update()
 	{
-		if(Input.GetKeyDown(KeyCode.Space))
-        {
-            m_client.AddToTxQueue("Hey");
-		}
+		ApplyTxQueue();
 	}
 	void TCPDisconnect()
 	{ 
@@ -132,6 +130,58 @@ public class MyNetwork : MonoBehaviour
 
     void StartGame()
     {
+        
+	}
+
+    void ApplyTxQueue()
+    {
+        
+        if(m_host != null)
+        {
+            List<string> messages = m_host.GetRxQueueCopyAndClear();
+            foreach(var msg in messages)
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(msg);
+
+                XmlNode root = doc.DocumentElement;
+                string messageType = root.Attributes["type"].Value;
+                string messageID = root.Attributes["id"].Value;
+                string messageData = root.Attributes["data"].Value;
+
+                if(messageType == "connection")
+                {
+                    GameObject item = GameObject.Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
+                    item.transform.SetParent(m_clientListContent.transform);
+                    item.GetComponent<TextMeshProUGUI>().text = messageID;
+                    item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
+				}
+			}
+		}
+        else if(m_client != null)
+        {
+            List<string> messages = m_client.GetRxQueueCopyAndClear();
+            foreach(var msg in messages)
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(msg);
+
+                XmlNode root = doc.DocumentElement;
+                string messageType = root.Attributes["type"].Value;
+                string messageID = root.Attributes["id"].Value;
+                string messageData = root.Attributes["data"].Value;
+
+                if(messageType == "connection" && messageData == "success")
+                {
+                    //send client name to host
+                    XMLFormatter.MessageData msgData = new XMLFormatter.MessageData();
+                    msgData.messageType = XMLFormatter.MessageType.msTRY_CONNECT;
+                    msgData.clientName = m_nameInputClient.text;
+                    XmlDocument xmlBlob = XMLFormatter.ConstructMessage(msgData);
+                    m_client.AddToTxQueue(xmlBlob.OuterXml);
+				}
+			}
+		}
         
 	}
 }

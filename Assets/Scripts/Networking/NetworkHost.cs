@@ -57,7 +57,9 @@ public class NetworkHost : NetworkCommunication
             TcpClient c = m_server.AcceptTcpClient();
             m_allClients.Add(c);
 
-            XmlDocument xmlBlob = XMLFormatter.ConstructMessage(XMLFormatter.MessageType.msCLIENT_CONNECT);
+            XMLFormatter.MessageData msgData = new XMLFormatter.MessageData();
+            msgData.messageType = XMLFormatter.MessageType.msCLIENT_CONNECT;
+            XmlDocument xmlBlob = XMLFormatter.ConstructMessage(msgData);
             AddToTxQueue(xmlBlob.OuterXml);
 
             byte[] byteMsg = Encoding.ASCII.GetBytes(xmlBlob.OuterXml);

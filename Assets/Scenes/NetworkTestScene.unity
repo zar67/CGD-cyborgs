@@ -155,7 +155,7 @@ MonoBehaviour:
   m_hostButton: {fileID: 773948847}
   m_clientButton: {fileID: 1213032333}
   m_hostInfo: {fileID: 1458034172}
-  clientListContent: {fileID: 1990410275}
+  m_clientListContent: {fileID: 1990410275}
   m_clientInfo: {fileID: 1053337933}
 --- !u!4 &17377431
 Transform:

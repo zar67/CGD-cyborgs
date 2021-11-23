@@ -12,7 +12,14 @@ public class XMLFormatter
 	{
 		msTURN_HISTORY,
 		msCLIENT_CONNECT,//host to client
-		msTRY_CONNECT //client to host
+		msTRY_CONNECT, //client to host
+		msMAP_DATA
+	}
+
+	public struct MessageData
+	{
+		public MessageType messageType;
+		public string clientName;
 	}
 
 	//Turn Types
@@ -38,7 +45,7 @@ public class XMLFormatter
 		turnHistory.Add(new TurnData(_type, _id, _data));
 	}
 
-	public static XmlDocument ConstructMessage(MessageType _msgType)
+	public static XmlDocument ConstructMessage(MessageData _msgData)
 	{
 		XmlDocument xmlDoc = new XmlDocument();
 		XmlElement xmlNode = xmlDoc.CreateElement("message");
@@ -48,13 +55,19 @@ public class XMLFormatter
 		XmlAttribute idAttrib = xmlDoc.CreateAttribute("id");
 		XmlAttribute dataAttrib = xmlDoc.CreateAttribute("data");
 
-		switch(_msgType)
+		switch(_msgData.messageType)
 		{
 			case MessageType.msCLIENT_CONNECT:
 			{
 				typeAttrib.Value = "connection";
-				idAttrib.Value = "ipaddress";
+				idAttrib.Value = "";
 				dataAttrib.Value = "success";
+			}break;
+			case MessageType.msTRY_CONNECT:
+			{
+				typeAttrib.Value = "connection";
+				idAttrib.Value = _msgData.clientName;
+				dataAttrib.Value = "";
 			}break;
 		}
 
