@@ -26,7 +26,7 @@ public class Client
             // connected to the same address as specified by the server, port
             // combination.
             //Int32 port = 10000;
-            TcpClient client = new TcpClient(_ip, _port);
+            m_client = new TcpClient(_ip, _port);
 
             // Translate the passed message into ASCII and store it as a Byte array.
             Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
@@ -34,7 +34,7 @@ public class Client
             // Get a client stream for reading and writing.
             //  Stream stream = client.GetStream();
 
-            NetworkStream stream = client.GetStream();
+            NetworkStream stream = m_client.GetStream();
 
             // Send the message to the connected TcpServer.
             stream.Write(data, 0, data.Length);
@@ -58,8 +58,8 @@ public class Client
                 _connectedTxt.text = "Connected : SUCCESS";
 
             // Close everything.
-            stream.Close();
-            client.Close();
+            //stream.Close();
+            //m_client.Close();
         }
         catch (ArgumentNullException e)
         {
@@ -70,14 +70,40 @@ public class Client
             Console.WriteLine("SocketException:" + e);
         }
 	}
+
+    public IEnumerator ListenForMessage()
+    {
+        while(true)
+        {
+            if(m_client != null)
+            {
+                NetworkStream stream = m_client.GetStream();
+                if(stream.CanRead)
+                {
+                    Byte[] data = new Byte[m_client.ReceiveBufferSize];
+                    Int32 bytes = stream.Read(data, 0, data.Length);
+                    String responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                    Debug.Log("Received: =" + responseData);
+				}
+                else
+                {
+                    Debug.Log("Cant Read from stream");
+				}
+                
+			}
+            yield return new WaitForSeconds(0.2f);
+		}
+	}
 	public NetworkStream GetStream()
 	{
 		return m_client.GetStream();
 	}
 	public void Close()
 	{
+        m_client.GetStream().Close();
 		m_client.Close();
 	}
 
+    public TcpClient getClient(){return m_client;}
    
 }

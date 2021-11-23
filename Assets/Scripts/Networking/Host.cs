@@ -11,7 +11,6 @@ public class Host : MonoBehaviour
     TcpListener m_listener;
     Byte[] bytes;
     String data;
-    Client m_client;
     GameObject m_listContent;
 
     static List<Client> m_allCLients = new List<Client>();
@@ -92,8 +91,6 @@ public class Host : MonoBehaviour
             item.transform.SetParent(m_listContent.transform);
             item.GetComponent<TextMeshProUGUI>().text = name;
             item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
-            // Shutdown and end connection
-            // m_client.Close();
 		//}
         }
 
@@ -109,11 +106,25 @@ public class Host : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
     }
 
-    AsyncCallback AddClient()
+    public void SendMsg(string _message)
     {
-        
+        if(m_allCLients[0].getClient().Connected == false)
+             Debug.Log("SendMsg() -> client not connected");
 
-        
+        NetworkStream stream = m_allCLients[0].GetStream();
+        if(stream.CanWrite)
+        {
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(_message);
+            stream.Write(msg, 0, msg.Length);
+		}
+        else
+        {
+            Debug.Log("SendMsg() -> cant write to stream");
+            //m_allCLients[0].Close();
+
+            // Closing the tcpClient instance does not close the network stream.
+            //m_allCLients[0].GetStream().Close();
+		}
 	}
 
     public void AddClient(String _ip, Int32 _port, string _name, ref TextMeshProUGUI _connectedTxt)

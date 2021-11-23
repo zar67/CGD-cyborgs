@@ -56,6 +56,13 @@ public class MyNetwork : MonoBehaviour
         m_conectedTxt = m_clientInfo.transform.Find("ConnectedTxt").GetComponent<TextMeshProUGUI>();
 	}
 
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.Space))
+        {
+            m_host.SendMsg("Hey");
+		}
+	}
 	void TCPDisconnect()
 	{ 
         m_client.Close();
@@ -104,12 +111,15 @@ public class MyNetwork : MonoBehaviour
         m_hostButton.gameObject.SetActive(false);
         m_clientButton.gameObject.SetActive(false);
         m_clientInfo.SetActive(true);
+
+        
 	}
 
     public void ConnectToHost(string _name, string _ip)
     {
        _ip = hostIP;
         m_client = new Client(_ip, m_port, _name, ref m_conectedTxt);
+        StartCoroutine(m_client.ListenForMessage());
 	}
 
     bool hasStart = false;
@@ -139,8 +149,6 @@ public class MyNetwork : MonoBehaviour
 
     void StartGame()
     {
-        m_host.AddClient(hostIP, m_port, m_nameInputHost.text, ref m_conectedTxt);
-
-        StartCoroutine(m_host.Listen());
+        
 	}
 }
