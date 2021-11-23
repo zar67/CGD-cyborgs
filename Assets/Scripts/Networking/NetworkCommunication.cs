@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetworkCommunication : MonoBehaviour
+public class NetworkCommunication
 {
     public enum ConnectionStatus {cs_DISCONNECTED, cs_CONNECTING, sc_CONNECTED}
     protected ConnectionStatus m_connectionStatus = ConnectionStatus.cs_DISCONNECTED;

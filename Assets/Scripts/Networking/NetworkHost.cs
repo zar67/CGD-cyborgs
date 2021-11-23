@@ -22,11 +22,11 @@ public class NetworkHost : NetworkCommunication
         m_server = new TcpListener(IPAddress.Parse(m_ip), int.Parse(m_port));
 
         Thread serverThread = new Thread(new ThreadStart(Listen));
+        serverThread.Start();
 	}
 
     void SetIP()
     {
-        IPAddress myIP = null;
         IPAddress[] allIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
         foreach (var ip in allIPs)
@@ -37,11 +37,6 @@ public class NetworkHost : NetworkCommunication
 
             }
         }
-        if(myIP == null)
-        {
-            UnityEngine.Debug.LogError("MyNetwork::SetHost() -> could not find IP address");
-            return;
-		}
 	}
 
     void Listen()
@@ -50,17 +45,17 @@ public class NetworkHost : NetworkCommunication
         m_server.Start();
         //while(m_allCLients.Count < m_MAX_PLAYER_COUNT)
         //{
-        while(true)
+        //while(true)
         {
             Debug.Log("Waiting for a connection... ");
 
-            Task<TcpClient> c = m_server.AcceptTcpClientAsync();
-            if(c.Status == TaskStatus.Created)
+            TcpClient c = m_server.AcceptTcpClient();
+            /*if(c.Status == TaskStatus.Created)
                 Debug.Log("Created!");
             if(c.IsCompleted)
-                Debug.Log("Completed!");
-
-            Thread.Sleep(10);
+                Debug.Log("Completed!");*/
+            Debug.Log("Completed!");
+            //Thread.Sleep(10);
 		}
         
 	}

@@ -17,6 +17,9 @@ public class NetworkClient : NetworkCommunication
         m_tcpClient = new TcpClient();
         
         Thread commsThread = new Thread(new ThreadStart(CommsThread)); 
+        commsThread.Start();
+
+        AddToTxQueue("Hey");
 	}
 
     public void CommsThread()

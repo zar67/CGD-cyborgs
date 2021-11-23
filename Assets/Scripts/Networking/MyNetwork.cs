@@ -34,8 +34,8 @@ public class MyNetwork : MonoBehaviour
 
     public static bool m_isHost = false;
     Int32 m_port = 10000;
-    Host m_host;
-    Client m_client;
+    NetworkHost m_host;
+    NetworkClient m_client;
 
     string hostIP = "";
 
@@ -62,12 +62,12 @@ public class MyNetwork : MonoBehaviour
 	{
 		if(Input.GetKeyDown(KeyCode.Space))
         {
-            m_host.SendMsg("Hey");
+            //m_host.SendMsg("Hey");
 		}
 	}
 	void TCPDisconnect()
 	{ 
-        m_client.Close();
+       // m_client.Close();
     }
 
     public void SetHost()
@@ -77,32 +77,18 @@ public class MyNetwork : MonoBehaviour
         m_hostButton.gameObject.SetActive(false);
         m_clientButton.gameObject.SetActive(false);
         m_hostInfo.SetActive(true);
+        
+       
 
-        string hostName = Dns.GetHostName(); // Retrive the Name of HOST
-        // Get the IP
-        IPAddress[] allIPs = Dns.GetHostAddresses(hostName);
-        IPAddress myIP = null;
-
-        foreach (var ip in allIPs)
-        {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
-            {
-                m_ipText.text =  ip.ToString();
-                myIP = ip;
-
-            }
-        }
-        if(myIP == null)
-        {
-            UnityEngine.Debug.LogError("MyNetwork::SetHost() -> could not find IP address");
-            return;
-		}
+       
       
         //StartCoroutine(run_cmd());
-        m_host = new Host(m_nameInputHost.text, m_port, myIP, clientListContent, ref m_conectedTxt);
-        hostIP = myIP.ToString();
+       // m_host = new Host(m_nameInputHost.text, m_port, myIP, clientListContent, ref m_conectedTxt);
+       // hostIP = myIP.ToString();
 
-        StartCoroutine(m_host.Listen());
+        //StartCoroutine(m_host.Listen());*/
+
+        m_host = new NetworkHost(m_port.ToString());
 
 	}
 
@@ -119,35 +105,30 @@ public class MyNetwork : MonoBehaviour
 
     public void ConnectToHost(string _name, string _ip)
     {
-       _ip = hostIP;
-        m_client = new Client(_ip, m_port, _name, ref m_conectedTxt);
-        StartCoroutine(m_client.ListenForMessage());
-	}
-
-    bool hasStart = false;
-    private IEnumerator  run_cmd()
-    {
-        if(!hasStart)
+         string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+        // Get the IP
+        IPAddress[] allIPs = Dns.GetHostAddresses(hostName);
+        IPAddress myIP = null;
+        foreach (var ip in allIPs)
         {
-            string fileName = @"C:\\Dev\\University\\AdvancedTech\\Git\\TurnBased\\Assets\\Server\\my-server.py";
-
-            Process p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"C:\Python39\python.exe", fileName)
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
             {
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            hasStart = true;
-		    p.Start();
-         }
-       // p.StartTime > 0.0f;
-        //string output = p.StandardOutput.ReadToEnd();
-       // p.WaitForExit();
+                m_ipText.text =  ip.ToString();
+                myIP = ip;
+                hostIP = myIP.ToString();
 
-        yield return new WaitForSeconds(0.2f);
-
-    }
+            }
+        }
+        if(myIP == null)
+        {
+            UnityEngine.Debug.LogError("MyNetwork::SetHost() -> could not find IP address");
+            return;
+		}
+       _ip = hostIP;
+       m_client = new NetworkClient(_ip , m_port.ToString());
+        //m_client = new Client(_ip, m_port, _name, ref m_conectedTxt);
+        //StartCoroutine(m_client.ListenForMessage());
+	}
 
     void StartGame()
     {
