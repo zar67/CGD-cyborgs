@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 62603079}
   - component: {fileID: 62603078}
+  - component: {fileID: 62603080}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -168,6 +169,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &62603080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62603077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471e61c3ce1679b47a10ecd7e58d9f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &110802892
 GameObject:
   m_ObjectHideFlags: 0
@@ -1431,7 +1444,7 @@ MonoBehaviour:
   - type: 0
     stats:
       health: 2
-      movementSpeed: 5
+      movementSpeed: 50
       damage: 1
     attackPattern:
       attackPattern:
@@ -1449,7 +1462,7 @@ MonoBehaviour:
         X: 0
         Y: 0
         Z: 0
-    traversibleTerrain: 0100000003000000
+    traversibleTerrain: 010000000300000002000000
   prefabs:
   - type: 0
     prefab: {fileID: 5350829030303751056, guid: 36362d325e08c0d499d239822908fd11, type: 3}

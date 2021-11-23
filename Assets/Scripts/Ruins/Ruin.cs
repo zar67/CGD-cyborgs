@@ -6,6 +6,9 @@ public class Ruin : MonoBehaviour, ITileObject
     [SerializeField] private SpriteRenderer m_ruinSpriteRenderer = default;
     [SerializeField] private SpriteRenderer m_takeOverSpriteRenderer = default;
 
+    public int unique_id;
+    bool test = false;
+
     public Tile Tile
     {
         get;
@@ -14,11 +17,18 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => new TerrainType[0];
 
-    public void Initialise(Vector3 position, int z, int worldHeight)
+    private void Start()
+    {
+        EventManager.instance.Respawn += TestSpawn; 
+    }
+
+    public void Initialise(Vector3 position, int z, int worldHeight, int id)
     {
         transform.position = position;
         m_ruinSpriteRenderer.sortingOrder = ((worldHeight - z) * 2) + 1;
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 2) + 2;
+        unique_id = id;
+
     }
 
     public void Select()
@@ -75,4 +85,31 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         m_takeOverSpriteRenderer.enabled = false;
     }
+
+    void Update()
+    {
+     
+        if (test == false)
+        {
+            TestSpawn(unique_id);
+            test = true;
+        }
+    }
+
+    public void TestSpawn(int id)
+    {
+
+
+            if (Tile.TileObject != null)
+            {
+                if (id == this.unique_id)
+                {
+                    UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id);
+                }
+            }
+
+        
+    }
+
+
 }
