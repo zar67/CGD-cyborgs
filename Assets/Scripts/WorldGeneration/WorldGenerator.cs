@@ -238,7 +238,7 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    private void SetBiomeSprite(Tile tile)
+    public void SetBiomeSprite(Tile tile)
     {
         switch (tile.Terrain)
         {

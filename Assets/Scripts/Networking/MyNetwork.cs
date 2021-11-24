@@ -62,6 +62,18 @@ public class MyNetwork : MonoBehaviour
         m_conectedTxt = m_clientInfo.transform.Find("ConnectedTxt").GetComponent<TextMeshProUGUI>();
 	}
 
+    public TerrainType GetTerrain(string _item)
+    {
+        if(_item == "WATER")
+            return TerrainType.WATER;
+        if(_item == "MOUNTAIN")
+            return TerrainType.MOUNTAIN;
+        if(_item == "DESERT")
+            return TerrainType.DESERT;
+
+        return TerrainType.GRASS;
+    }
+
 	private void Update()
 	{
 		ApplyRxQueue();
@@ -207,7 +219,9 @@ public class MyNetwork : MonoBehaviour
                         int x = int.Parse(coords[0]);
                         int z = int.Parse(coords[2]);
                         Tile tile = GameObject.Instantiate(WorldGenerator.Instance.m_tilePrefab, Vector3.zero, Quaternion.identity);
-                        tile.Initialise(i, x, z, 1.0f, 10);
+                        tile.Terrain = GetTerrain(tileType);
+                        tile.Initialise(i, x, z, 0.8f, 10);
+                        WorldGenerator.Instance.SetBiomeSprite(tile);
 
                         i++;
 					}
