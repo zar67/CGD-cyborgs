@@ -13,7 +13,11 @@ public class NetworkCommunication
     protected List<string> m_txQueue;
     protected byte[] m_buffer = new byte[10000];
 
+    string m_name = "";
+
     public string GetIP(){return m_ip;}
+    public string GetName(){return m_name;}
+    public void SetName(string _name){m_name = _nane;}
     public NetworkCommunication(string _ip, string _port)
     {
         m_ip = _ip;

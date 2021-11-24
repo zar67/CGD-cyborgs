@@ -178,6 +178,7 @@ public class Unit : MonoBehaviour, ITileObject
     {
         unitStats.health -= dmg;
 
+        XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)
         {
             OnDeath(ruinId);

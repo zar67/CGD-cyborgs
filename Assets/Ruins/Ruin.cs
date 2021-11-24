@@ -9,6 +9,7 @@ public class Ruin : MonoBehaviour, ITileObject
     public int unique_id;
     bool test = false;
 
+
     public Tile Tile
     {
         get;

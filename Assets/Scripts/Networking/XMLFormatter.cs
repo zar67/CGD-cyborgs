@@ -22,17 +22,31 @@ public class XMLFormatter
 		public string clientName;
 	}
 
+	public enum TurnType
+	{
+		ttPOSITION, //unit position change
+		ttHEALTH, //unit health change
+		ttRUIN   //ruin owner change
+	}
+
+	static Dictionary<TurnType, string> turnTypeLookUp = new Dictionary<TurnType, string>()
+	{
+		{TurnType.ttPOSITION, "position"},
+		{TurnType.ttHEALTH, "health"},
+		{TurnType.ttRUIN, "ruin"}
+	};//;
+	
 	//Turn Types
 	public const string m_MOVE_UNIT = "position";
 	public const string m_HEALTH_CHANGE = "health";
 	public const string m_RUIN_OWNERSHIP = "ruin";
 
-	static List<TurnData> turnHistory = new List<TurnData>();
+	static List<TurnData> m_TurnHistory = new List<TurnData>();
 	struct TurnData
 	{
-		string m_turnType;
-		string m_id;
-		string m_data;
+		public string m_turnType;
+		public string m_id;
+		public string m_data;
 		public TurnData(string _type, string _id, string _data)
 		{
 			m_turnType = _type;
@@ -40,9 +54,47 @@ public class XMLFormatter
 			m_data = _data;
 		}
 	}
-	public static void AddToTurnHistory(string _type, string _id, string _data)
+
+	public static void AddPositionChange(Unit _unit)
 	{
-		turnHistory.Add(new TurnData(_type, _id, _data));
+		string typeStr = turnTypeLookUp[TurnType.ttPOSITION];
+		string id = _unit.GetID().ToString();
+		string data = _unit.Tile.Coordinates.ToString();
+		m_TurnHistory.Add(new TurnData(typeStr, id, data));
+	}
+
+	public static void AddHealthChange(Unit _unit)
+	{
+		string typeStr = turnTypeLookUp[TurnType.ttHEALTH];
+		string id = _unit.GetID().ToString();
+		string data = _unit.Stats.health.ToString();
+		m_TurnHistory.Add(new TurnData(typeStr, id, data));
+	}
+
+	public static void AddRuinOwnerChange(Ruin _ruin, string _owner)
+	{
+		string typeStr = turnTypeLookUp[TurnType.ttRUIN];
+		string id = _ruin.unique_id.ToString();
+		string data = _owner;
+		m_TurnHistory.Add(new TurnData(typeStr, id, data));
+	}
+
+	public static void ConstructTurnXML(ref XmlDocument _xmlDoc, ref XmlElement _xmlParent, XmlAttribute _typeAttrib, XmlAttribute _idAttrib, XmlAttribute _dataAttrib)
+	{
+		foreach(TurnData change in m_TurnHistory)
+		{
+			XmlElement cNode = _xmlDoc.CreateElement("update");
+			_typeAttrib.Value = change.m_turnType;
+			_idAttrib.Value = change.m_id;
+			_dataAttrib.Value = change.m_data;
+			cNode.Attributes.Append(_typeAttrib);
+			cNode.Attributes.Append(_idAttrib);
+			cNode.Attributes.Append(_dataAttrib);
+
+			_xmlParent.AppendChild(_xmlParent);
+		}
+
+		m_TurnHistory.Clear();
 	}
 
 	public static XmlDocument ConstructMessage(MessageData _msgData)
@@ -71,7 +123,7 @@ public class XMLFormatter
 			}break;
 			case MessageType.msTURN_HISTORY:
 			{
-				
+				ConstructTurnXML(ref xmlDoc, ref xmlNode, typeAttrib, idAttrib, dataAttrib);
 			}break;
 		}
 
@@ -133,8 +185,6 @@ public class XMLFormatter
 			itemNode.Attributes.Append(ownerAttrib);
 			itemNode.Attributes.Append(idAttrib);
 		}
-
-		
 
 		return xmlDoc;
 	}
