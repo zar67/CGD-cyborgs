@@ -135,6 +135,17 @@ public class WorldGenerator : MonoBehaviour
         return m_worldTiles[(coordinates.Z * m_worldWidth) + x];
     }
 
+    public IEnumerable<Tile> GetTilesInRange(Tile startingTile, int range)
+    {
+        foreach(var tile in m_worldTiles)
+        {
+            if (HexCoordinates.Distance(startingTile, tile) <= range)
+            {
+                yield return tile;
+            }
+        }
+    }
+
     private void Awake()
     {
         SingletonSetUp();

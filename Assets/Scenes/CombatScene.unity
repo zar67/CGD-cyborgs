@@ -1446,6 +1446,7 @@ MonoBehaviour:
       health: 2
       movementSpeed: 50
       damage: 1
+      sight: 4
     attackPattern:
       attackPattern:
       - X: 1

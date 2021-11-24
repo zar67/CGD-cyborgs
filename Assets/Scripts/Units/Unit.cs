@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour, ITileObject
         public int health;
         public int movementSpeed;
         public int damage;
+        public int sight;
     }
 
     [SerializeField] private SpriteRenderer unitSprite;
@@ -166,6 +167,11 @@ public class Unit : MonoBehaviour, ITileObject
         transform.position = current.transform.position;
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
+
+        foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+        {
+            tile.Discover();
+        }
     }
 
     public void HasAttacked()
