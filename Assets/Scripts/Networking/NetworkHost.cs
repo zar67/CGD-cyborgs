@@ -10,12 +10,15 @@ using System.Xml;
 
 public class NetworkHost : NetworkCommunication
 {
-    List<TcpClient> m_allClients;
+    List<NetworkClient> m_allClients;
     TcpListener m_server;
+    
+    string m_playerTurn = "";
+    static List<string> m_playerNames = new List<string>();
 
     public NetworkHost(string _port) : base ("", _port)
     {
-        m_allClients = new List<TcpClient>();
+        m_allClients = new List<NetworkClient>();
 
         // sets host IP to the computer IP
         SetIP();
@@ -55,7 +58,7 @@ public class NetworkHost : NetworkCommunication
             Debug.Log("Waiting for a connection... ");
 
             TcpClient c = m_server.AcceptTcpClient();
-            m_allClients.Add(c);
+            m_allClients.Add(new NetworkClient(c));
 
             XMLFormatter.MessageData msgData = new XMLFormatter.MessageData();
             msgData.messageType = XMLFormatter.MessageType.msCLIENT_CONNECT;
@@ -98,7 +101,7 @@ public class NetworkHost : NetworkCommunication
 
             foreach(var client in m_allClients)
             {
-                if(client.Connected)
+                if(client.IsConnected())
                 {
                     NetworkStream stream = client.GetStream();
                     if(stream != null)

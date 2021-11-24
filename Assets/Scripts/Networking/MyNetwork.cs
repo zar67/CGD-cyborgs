@@ -35,7 +35,6 @@ public class MyNetwork : MonoBehaviour
     //World gen
     [SerializeField] GameObject m_worldGeneration;
 
-
     public static bool m_isHost = false;
     Int32 m_port = 10000;
     NetworkHost m_host;
@@ -44,7 +43,6 @@ public class MyNetwork : MonoBehaviour
     string hostIP = "";
 
     //
-
 	private void Awake()
 	{
 		m_hostButton.onClick.AddListener(delegate{SetHost();});
@@ -140,12 +138,17 @@ public class MyNetwork : MonoBehaviour
 		}
        _ip = hostIP;
        m_client = new NetworkClient(_ip , m_port.ToString());
+       m_client.SetName(m_nameInputClient.text);
+       
         //m_client = new Client(_ip, m_port, _name, ref m_conectedTxt);
         //StartCoroutine(m_client.ListenForMessage());
 	}
 
     void StartGame()
     {
+        m_host.SetName(m_nameInputHost.text);
+        if(m_host.GetName() == "")
+            return;
         XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles());
         m_host.AddToTxQueue(mapDoc.OuterXml);
 	}
@@ -173,6 +176,7 @@ public class MyNetwork : MonoBehaviour
                         item.transform.SetParent(m_clientListContent.transform);
                         item.GetComponent<TextMeshProUGUI>().text = messageID;
                         item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
+                        
 				    }
 				}
 			}

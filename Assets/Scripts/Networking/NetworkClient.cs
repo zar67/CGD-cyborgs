@@ -14,12 +14,22 @@ public class NetworkClient : NetworkCommunication
     {
         m_connectionStatus = ConnectionStatus.cs_CONNECTING;
         m_tcpClient = new TcpClient();
+
         
         Thread commsThread = new Thread(new ThreadStart(CommsThread)); 
         commsThread.Start();
 
         
 	}
+
+    public NetworkClient(TcpClient _client) : base ("", "")
+    {
+        m_tcpClient = _client;
+	}
+
+    public bool IsConnected(){return m_tcpClient.Connected;}
+    public bool IsDataAvaliable(){return m_networkStream.DataAvailable;}
+    public NetworkStream GetStream(){return m_tcpClient.GetStream();}
 
     public void CommsThread()
     {

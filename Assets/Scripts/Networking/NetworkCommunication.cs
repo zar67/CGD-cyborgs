@@ -17,7 +17,7 @@ public class NetworkCommunication
 
     public string GetIP(){return m_ip;}
     public string GetName(){return m_name;}
-    public void SetName(string _name){m_name = _nane;}
+    public void SetName(string _name){m_name = _name;}
     public NetworkCommunication(string _ip, string _port)
     {
         m_ip = _ip;
