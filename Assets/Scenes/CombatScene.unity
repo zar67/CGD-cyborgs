@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 62603079}
   - component: {fileID: 62603078}
+  - component: {fileID: 62603080}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -168,6 +169,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &62603080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62603077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471e61c3ce1679b47a10ecd7e58d9f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &110802892
 GameObject:
   m_ObjectHideFlags: 0
@@ -1286,6 +1299,7 @@ GameObject:
   - component: {fileID: 1943439517}
   - component: {fileID: 1943439516}
   - component: {fileID: 1943439519}
+  - component: {fileID: 1943439520}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1327,8 +1341,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
-  orthographic size: 5
+  orthographic: 0
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1374,6 +1388,28 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
+--- !u!114 &1943439520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1943439515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53c7e7ee13fea2c4d9a788477d6f772d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panSpeed: 20
+  panBorderThickness: 10
+  panLimit: {x: 15, y: 5}
+  scroll: 0
+  m_OrthographicCamera: {fileID: 1943439517}
+  minFOV: 15
+  maxFOV: 80
+  sensitivity: 20
+  FOV: 50
+  scrollSpeed: 1
 --- !u!1 &2084546629
 GameObject:
   m_ObjectHideFlags: 0
@@ -1408,7 +1444,7 @@ MonoBehaviour:
   - type: 0
     stats:
       health: 2
-      movementSpeed: 5
+      movementSpeed: 50
       damage: 1
     attackPattern:
       attackPattern:
@@ -1426,7 +1462,7 @@ MonoBehaviour:
         X: 0
         Y: 0
         Z: 0
-    traversibleTerrain: 0100000003000000
+    traversibleTerrain: 010000000300000002000000
   prefabs:
   - type: 0
     prefab: {fileID: 5350829030303751056, guid: 36362d325e08c0d499d239822908fd11, type: 3}

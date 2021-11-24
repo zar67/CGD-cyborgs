@@ -183,18 +183,25 @@ public class Unit : MonoBehaviour, ITileObject
 
         if (unitStats.health <= 0)
         {
-            OnDeath();
+            OnDeath(ruinId);
         }
         Debug.Log(unitStats.health + " : took " + dmg + " dmg");
+        OnDeath(ruinId);
     }
 
-    public void OnDeath()
+    public void OnDeath(int id)
     {
+
         Tile.UnSetTileObject();
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
+        if (id == this.ruinId)
+        {
+            EventManager.instance.OnRespawn(id);
+            Destroy(gameObject);
 
+        }
         // TODO call ruin death script;
     }
 

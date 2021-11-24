@@ -233,7 +233,7 @@ public class WorldGenerator : MonoBehaviour
             }
 
             Ruin newRuin = Instantiate(m_ruinPrefab, transform);
-            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight);
+            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight, i);
             m_worldTiles[index].SetTileObject(newRuin);
         }
     }
