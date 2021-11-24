@@ -62,8 +62,8 @@ public class NetworkHost : NetworkCommunication
             XmlDocument xmlBlob = XMLFormatter.ConstructMessage(msgData);
             AddToTxQueue(xmlBlob.OuterXml);
 
-            byte[] byteMsg = Encoding.ASCII.GetBytes(xmlBlob.OuterXml);
-            c.GetStream().Write(byteMsg, 0, byteMsg.Length);
+            //byte[] byteMsg = Encoding.ASCII.GetBytes(xmlBlob.OuterXml);
+            //c.GetStream().Write(byteMsg, 0, byteMsg.Length);
             
             /*if(c.Status == TaskStatus.Created)
                 Debug.Log("Created!");
