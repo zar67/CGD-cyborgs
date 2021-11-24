@@ -27,7 +27,7 @@ public abstract class Challenge : ScriptableObject
         return description;
     }
 
-    public void OnAction()
+    public void IncreaseCurrentAmount()
     {
         currentAmount++;
     }
