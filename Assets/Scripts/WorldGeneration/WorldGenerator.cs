@@ -303,4 +303,6 @@ public class WorldGenerator : MonoBehaviour
             }
         }
     }
+
+    public List<Tile> GetTiles(){return m_worldTiles;}
 }

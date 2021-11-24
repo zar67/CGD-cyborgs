@@ -69,6 +69,10 @@ public class XMLFormatter
 				idAttrib.Value = _msgData.clientName;
 				dataAttrib.Value = "";
 			}break;
+			case MessageType.msTURN_HISTORY:
+			{
+				
+			}break;
 		}
 
 		xmlNode.Attributes.Append(typeAttrib);
@@ -79,6 +83,38 @@ public class XMLFormatter
 
 		return xmlDoc;
 	}
+
+	public static XmlDocument ConstructMapMessage(List<Tile> _allTiles)
+	{
+		XmlDocument xmlDoc = new XmlDocument();
+		
+		XmlElement xmlNode = xmlDoc.CreateElement("map");
+		xmlDoc.AppendChild(xmlNode);
+
+		foreach(var tile in _allTiles)
+		{
+			XmlElement tileNode = xmlDoc.CreateElement("tile");
+			xmlNode.AppendChild(tileNode);
+
+			XmlAttribute typeAttrib = xmlDoc.CreateAttribute("type");
+			XmlAttribute coorAttrib = xmlDoc.CreateAttribute("coordinate");
+			XmlAttribute matrixAttrib = xmlDoc.CreateAttribute("matirix");
+
+			typeAttrib.Value = tile.Terrain.ToString();
+			coorAttrib.Value = tile.Coordinates.ToString();
+			matrixAttrib.Value = tile.Matrics.ToString();
+			
+			tileNode.Attributes.Append(typeAttrib);
+			tileNode.Attributes.Append(coorAttrib);
+			tileNode.Attributes.Append(matrixAttrib);
+		}
+
+		
+
+		return xmlDoc;
+	}
+
+
 
 
 

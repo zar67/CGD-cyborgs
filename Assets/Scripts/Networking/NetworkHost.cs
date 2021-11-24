@@ -119,25 +119,25 @@ public class NetworkHost : NetworkCommunication
                                     Debug.Log("Added To rx: " + msg);
 		                        }
 							}
-
+                        }
                             //check if send 
-                            List<string> txQueueTemp = new List<string>();
-                            lock(m_txQueue)
+                        List<string> txQueueTemp = new List<string>();
+                        lock(m_txQueue)
+                        {
+                            foreach(var tx in m_txQueue)
                             {
-                                foreach(var tx in m_txQueue)
-                                {
-                                    txQueueTemp.Add(tx);
-			                    }
-                                m_txQueue.Clear();
-		                    }
+                                txQueueTemp.Add(tx);
+			                }
+                            m_txQueue.Clear();
+		                }
 
-                            foreach(var msg in txQueueTemp)
-                            {
-                                byte[] byteMsg = Encoding.ASCII.GetBytes(msg);
-                                if(stream != null)
-                                    stream.Write(byteMsg, 0, msg.Length);
-		                    }
-						}
+                        foreach(var msg in txQueueTemp)
+                        {
+                            byte[] byteMsg = Encoding.ASCII.GetBytes(msg);
+                            if(stream != null)
+                                stream.Write(byteMsg, 0, msg.Length);
+		                }
+						
                     }
 			    }
             }

@@ -32,6 +32,9 @@ public class MyNetwork : MonoBehaviour
     TextMeshProUGUI m_conectedTxt;
     
 
+    //World gen
+    [SerializeField] GameObject m_worldGeneration;
+
 
     public static bool m_isHost = false;
     Int32 m_port = 10000;
@@ -61,7 +64,7 @@ public class MyNetwork : MonoBehaviour
 
 	private void Update()
 	{
-		ApplyTxQueue();
+		ApplyRxQueue();
 	}
 	void TCPDisconnect()
 	{ 
@@ -78,7 +81,7 @@ public class MyNetwork : MonoBehaviour
         
        
 
-       
+       m_worldGeneration.SetActive(true);
       
         //StartCoroutine(run_cmd());
        // m_host = new Host(m_nameInputHost.text, m_port, myIP, clientListContent, ref m_conectedTxt);
@@ -131,12 +134,12 @@ public class MyNetwork : MonoBehaviour
 
     void StartGame()
     {
-        
+        XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles());
+        m_host.AddToTxQueue(mapDoc.OuterXml);
 	}
 
-    void ApplyTxQueue()
+    void ApplyRxQueue()
     {
-        
         if(m_host != null)
         {
             List<string> messages = m_host.GetRxQueueCopyAndClear();
@@ -146,16 +149,19 @@ public class MyNetwork : MonoBehaviour
                 doc.LoadXml(msg);
 
                 XmlNode root = doc.DocumentElement;
-                string messageType = root.Attributes["type"].Value;
-                string messageID = root.Attributes["id"].Value;
-                string messageData = root.Attributes["data"].Value;
-
-                if(messageType == "connection")
+                if(root.Name == "message")
                 {
-                    GameObject item = GameObject.Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
-                    item.transform.SetParent(m_clientListContent.transform);
-                    item.GetComponent<TextMeshProUGUI>().text = messageID;
-                    item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
+                    string messageType = root.Attributes["type"].Value;
+                    string messageID = root.Attributes["id"].Value;
+                    string messageData = root.Attributes["data"].Value;
+
+                    if(messageType == "connection")
+                    {
+                        GameObject item = GameObject.Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
+                        item.transform.SetParent(m_clientListContent.transform);
+                        item.GetComponent<TextMeshProUGUI>().text = messageID;
+                        item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
+				    }
 				}
 			}
 		}
@@ -168,21 +174,29 @@ public class MyNetwork : MonoBehaviour
                 doc.LoadXml(msg);
 
                 XmlNode root = doc.DocumentElement;
-                string messageType = root.Attributes["type"].Value;
-                string messageID = root.Attributes["id"].Value;
-                string messageData = root.Attributes["data"].Value;
-
-                if(messageType == "connection" && messageData == "success")
+                if(root.Name == "message")
                 {
-                    //send client name to host
-                    XMLFormatter.MessageData msgData = new XMLFormatter.MessageData();
-                    msgData.messageType = XMLFormatter.MessageType.msTRY_CONNECT;
-                    msgData.clientName = m_nameInputClient.text;
-                    XmlDocument xmlBlob = XMLFormatter.ConstructMessage(msgData);
-                    m_client.AddToTxQueue(xmlBlob.OuterXml);
+                    string messageType = root.Attributes["type"].Value;
+                    string messageID = root.Attributes["id"].Value;
+                    string messageData = root.Attributes["data"].Value;
+
+                    if(messageType == "connection" && messageData == "success")
+                    {
+                        //send client name to host
+                        XMLFormatter.MessageData msgData = new XMLFormatter.MessageData();
+                        msgData.messageType = XMLFormatter.MessageType.msTRY_CONNECT;
+                        msgData.clientName = m_nameInputClient.text;
+                        XmlDocument xmlBlob = XMLFormatter.ConstructMessage(msgData);
+                        m_client.AddToTxQueue(xmlBlob.OuterXml);
+				    }
+				}
+                else if(root.Name == "map")
+                {
+                    string tileType = root.Attributes["type"].Value;
+                    string tileCoord = root.Attributes["coordinate"].Value;
+                    string tileMatrix = root.Attributes["matrix"].Value;
 				}
 			}
 		}
-        
 	}
 }
