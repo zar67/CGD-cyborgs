@@ -154,6 +154,7 @@ public class MyNetwork : MonoBehaviour
         m_host.SetName(m_nameInputHost.text);
         if(m_host.GetName() == "")
             return;
+        m_playerTurn = m_host.GetName();
         XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles());
         m_host.AddToTxQueue(mapDoc.OuterXml);
 
@@ -196,7 +197,6 @@ public class MyNetwork : MonoBehaviour
         if(m_host == null && m_client == null)
             return;
 
-
         List<string> messages = new List<string>();
         if(m_host != null)
             messages = m_host.GetRxQueueCopyAndClear();
@@ -222,10 +222,25 @@ public class MyNetwork : MonoBehaviour
             //BOTH
             if(messageID == "endturn")
             {
+                m_playerTurn = messageID;
                 foreach(XmlNode node in root.ChildNodes)
                 {
-                    UnityEngine.Debug.Log("END TURN DATA:");
-                    UnityEngine.Debug.Log(msg);
+                    messageType = root.Attributes["type"].Value;
+                    messageID = root.Attributes["id"].Value;
+                    messageData = root.Attributes["data"].Value;
+
+                    if(messageType == "position")
+                    {
+                       
+					}
+                    else if(messageType == "health")
+                    {
+
+					}
+                    else if(messageType == "ruin")
+                    {
+
+					}
 				}
 	        }
             //HOST ONLY
@@ -239,7 +254,6 @@ public class MyNetwork : MonoBehaviour
                         item.transform.SetParent(m_clientListContent.transform);
                         item.GetComponent<TextMeshProUGUI>().text = messageID;
                         item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
-                        
 				    }
 				}
 			}

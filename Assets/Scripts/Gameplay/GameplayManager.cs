@@ -8,7 +8,7 @@ public class GameplayManager : MonoBehaviour
     private GameplayUI ui;
 
     private bool thisPlayerInputEnabled = false;
-    [SerializeField] private int turnTime = 5; //In seconds
+    [SerializeField] private int turnTime = 90; //In seconds
     private float timerCurrent = 0;
     [SerializeField] MyNetwork m_networkManager;
 
