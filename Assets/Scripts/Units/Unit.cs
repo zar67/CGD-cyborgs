@@ -52,6 +52,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
+    public int GetID(){return ruinId;}
     public void SetUpUnit(Tile tile, int _ruinId)
     {
         ruinId = _ruinId;
@@ -63,6 +64,11 @@ public class Unit : MonoBehaviour, ITileObject
         //Testing
         ResetTurn();
     }
+
+    public void SetHealth(int _health)
+    {
+        unitStats.health = _health;
+	}
 
     public void SetUpPlayerId(string _playerId)
     {
@@ -183,6 +189,7 @@ public class Unit : MonoBehaviour, ITileObject
     {
         unitStats.health -= dmg;
 
+        XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)
         {
             OnDeath(ruinId);
