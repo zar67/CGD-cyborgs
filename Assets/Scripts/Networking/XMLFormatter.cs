@@ -79,7 +79,7 @@ public class XMLFormatter
 		m_TurnHistory.Add(new TurnData(typeStr, id, data));
 	}
 
-	public static void ConstructTurnXML(ref XmlDocument _xmlDoc, ref XmlElement _xmlParent, XmlAttribute _typeAttrib, XmlAttribute _idAttrib, XmlAttribute _dataAttrib)
+	private static void ConstructTurnXML(ref XmlDocument _xmlDoc, ref XmlElement _xmlParent, XmlAttribute _typeAttrib, XmlAttribute _idAttrib, XmlAttribute _dataAttrib)
 	{
 		foreach(TurnData change in m_TurnHistory)
 		{
@@ -123,6 +123,8 @@ public class XMLFormatter
 			}break;
 			case MessageType.msTURN_HISTORY:
 			{
+				typeAttrib.Value = "endturn";
+				idAttrib.Value = _msgData.clientName;
 				ConstructTurnXML(ref xmlDoc, ref xmlNode, typeAttrib, idAttrib, dataAttrib);
 			}break;
 		}

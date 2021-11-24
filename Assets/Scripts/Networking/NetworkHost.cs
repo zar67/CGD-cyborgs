@@ -13,9 +13,7 @@ public class NetworkHost : NetworkCommunication
     List<NetworkClient> m_allClients;
     TcpListener m_server;
     
-    string m_playerTurn = "";
-    static List<string> m_playerNames = new List<string>();
-
+    string m_hostName = "";
     public NetworkHost(string _port) : base ("", _port)
     {
         m_allClients = new List<NetworkClient>();
@@ -31,6 +29,8 @@ public class NetworkHost : NetworkCommunication
         Thread commsThread  = new Thread(new ThreadStart(ClientCommunication));
         commsThread.Start();
 	}
+
+    
 
     void SetIP()
     {

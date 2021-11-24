@@ -42,6 +42,9 @@ public class MyNetwork : MonoBehaviour
 
     string hostIP = "";
 
+    string m_playerTurn = "";
+    List<string> m_playerNames = new List<string>();
+
     //
 	private void Awake()
 	{
@@ -104,6 +107,8 @@ public class MyNetwork : MonoBehaviour
 
 	}
 
+    public NetworkHost GetHost(){return m_host;}
+
     public void SetClient()
     {
         m_isHost = false;
@@ -151,25 +156,83 @@ public class MyNetwork : MonoBehaviour
             return;
         XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles());
         m_host.AddToTxQueue(mapDoc.OuterXml);
+
+        GameplayManager.Instance.ResetTurn();
+	}
+
+    public void NextPlayer()
+    {
+        int i = 0;
+        bool found = false;
+        foreach(var name in m_playerNames)
+        {
+            if(name == m_playerTurn)
+                found = true;
+			
+            if(found)
+            {
+                m_playerTurn = (i < m_playerNames.Count - 1)? m_playerNames[i+1] : m_playerNames[0];
+                break;
+			}
+            i++;
+		}
+        XMLFormatter.MessageData msgData = new XMLFormatter.MessageData();
+        msgData.messageType = XMLFormatter.MessageType.msTURN_HISTORY;
+        msgData.clientName = m_playerTurn;
+        XmlDocument xmlDoc = XMLFormatter.ConstructMessage(msgData);
+        if(m_isHost)
+        {
+            m_host.AddToTxQueue(xmlDoc.OuterXml);
+		}
+        else
+        {
+            m_client.AddToTxQueue(xmlDoc.OuterXml);
+		}
 	}
 
     void ApplyRxQueue()
     {
-        if(m_host != null)
-        {
-            List<string> messages = m_host.GetRxQueueCopyAndClear();
-            foreach(var msg in messages)
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(msg);
+        //wait for connection
+        if(m_host == null && m_client == null)
+            return;
 
-                XmlNode root = doc.DocumentElement;
+
+        List<string> messages = new List<string>();
+        if(m_host != null)
+            messages = m_host.GetRxQueueCopyAndClear();
+        else if(m_client != null)
+            messages = m_client.GetRxQueueCopyAndClear();
+
+        foreach(var msg in messages)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(msg);
+
+            XmlNode root = doc.DocumentElement;
+            string messageType = "";
+            string messageID = "";
+            string messageData = "";
+            if(root.Attributes["type"] != null)
+                messageType = root.Attributes["type"].Value;
+            if(root.Attributes["id"] != null)
+                messageID = root.Attributes["id"].Value;
+            if(root.Attributes["data"] != null)
+                messageData = root.Attributes["data"].Value;
+
+            //BOTH
+            if(messageID == "endturn")
+            {
+                foreach(XmlNode node in root.ChildNodes)
+                {
+                    UnityEngine.Debug.Log("END TURN DATA:");
+                    UnityEngine.Debug.Log(msg);
+				}
+	        }
+            //HOST ONLY
+            else if(m_host != null)
+            {
                 if(root.Name == "message")
                 {
-                    string messageType = root.Attributes["type"].Value;
-                    string messageID = root.Attributes["id"].Value;
-                    string messageData = root.Attributes["data"].Value;
-
                     if(messageType == "connection")
                     {
                         GameObject item = GameObject.Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
@@ -180,23 +243,11 @@ public class MyNetwork : MonoBehaviour
 				    }
 				}
 			}
-		}
-        else if(m_client != null)
-        {
-            List<string> messages = m_client.GetRxQueueCopyAndClear();
-            foreach(var msg in messages)
+            //CLIENT ONLY
+            else if(m_client != null)
             {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(msg);
-
-                XmlNode root = doc.DocumentElement;
                 if(root.Name == "message")
                 {
-                    
-                    string messageType = root.Attributes["type"].Value;
-                    string messageID = root.Attributes["id"].Value;
-                    string messageData = root.Attributes["data"].Value;
-
                     if(messageType == "connection" && messageData == "success")
                     {
                         //send client name to host
@@ -245,6 +296,6 @@ public class MyNetwork : MonoBehaviour
 					}
 				}
 			}
-		}
+        }
 	}
 }

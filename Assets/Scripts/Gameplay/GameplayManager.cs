@@ -8,17 +8,48 @@ public class GameplayManager : MonoBehaviour
     private GameplayUI ui;
 
     private bool thisPlayerInputEnabled = false;
-    [SerializeField] private int turnTime = 90; //In seconds
+    [SerializeField] private int turnTime = 5; //In seconds
     private float timerCurrent = 0;
+    [SerializeField] MyNetwork m_networkManager;
+
+    //for turntesting
+    [SerializeField] GameObject image;
+
+    #region Singleton Setup
+    private static GameplayManager _instance;
+    private GameplayManager() { }
+
+    public static GameplayManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+    private void SingletonSetUp()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+            //DontDestroyOnLoad(this.gameObject);
+        }
+    }
+
+    #endregion
 
     private void Awake()
     {
         ui = UIObject.GetComponent<GameplayUI>();
+        SingletonSetUp();
     }
 
     private void Start()
     {
-        ResetTurn();
+       
     }
 
     private void Update()
@@ -38,17 +69,20 @@ public class GameplayManager : MonoBehaviour
             else
             {
                 thisPlayerInputEnabled = false;
+
+                m_networkManager.NextPlayer();
+                image.SetActive(false);
             }
         }
     }
 
-    private void ResetTurn()
+    public void ResetTurn()
     {
         thisPlayerInputEnabled = true;
         timerCurrent = (float)turnTime;
         ui.SetTurnText(thisPlayerInputEnabled);
         ui.SetTimerText(timerCurrent);
-
         UnitFactory.Instance.ResetTurn();
+        image.SetActive(true);
     }
 }
