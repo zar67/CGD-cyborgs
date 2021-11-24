@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class GameplayManager : MonoBehaviour
 {
-    public GameObject UIObject;
+    //UI
+    [SerializeField] private GameObject UIObject;
     private GameplayUI ui;
 
+    //Timer
     private bool thisPlayerInputEnabled = false;
     [SerializeField] private int turnTime = 90; //In seconds
     private float timerCurrent = 0;
@@ -25,6 +27,7 @@ public class GameplayManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            thisPlayerInputEnabled = true;
             ResetTurn(); //For Testing
         }
 
@@ -44,7 +47,6 @@ public class GameplayManager : MonoBehaviour
 
     private void ResetTurn()
     {
-        thisPlayerInputEnabled = true;
         timerCurrent = (float)turnTime;
         ui.SetTurnText(thisPlayerInputEnabled);
         ui.SetTimerText(timerCurrent);
