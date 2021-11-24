@@ -64,6 +64,11 @@ public class Unit : MonoBehaviour, ITileObject
         ResetTurn();
     }
 
+    public void SetHealth(int _health)
+    {
+        unitStats.health = _health;
+	}
+
     public void SetUpPlayerId(string _playerId)
     {
         playerId = _playerId;

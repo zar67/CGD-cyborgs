@@ -231,15 +231,51 @@ public class MyNetwork : MonoBehaviour
 
                     if(messageType == "position")
                     {
-                       
+                       Unit unit = null;
+                       foreach(var u in UnitFactory.Instance.allUnits)
+                       {
+                           if(u.GetID().ToString() == messageID)
+                           {
+                               unit = u;
+                               break;
+					       }
+					   }
+                       Tile tileToMoveTo = null;
+                       foreach(var tile in WorldGenerator.Instance.m_worldTiles)
+                       {
+                           if(tile.Coordinates.ToString() == messageData)
+                           {
+                               tileToMoveTo = tile;
+                               break;
+						   }
+					   }
+                       unit.MoveToTile(tileToMoveTo);
 					}
                     else if(messageType == "health")
                     {
-
+                          Unit unit = null;
+                          foreach(var u in UnitFactory.Instance.allUnits)
+                          {
+                              if(u.GetID().ToString() == messageID)
+                              {
+                                  unit = u;
+                                  break;
+					          }
+					      }
+                          unit.SetHealth(int.Parse(messageData));
 					}
                     else if(messageType == "ruin")
                     {
-
+                        Ruin ruin = null;
+                        foreach(var r in WorldGenerator.Instance.m_allRuins)
+                        {
+                            if(r.unique_id.ToString() == messageID)
+                            {
+                                ruin = r;
+                                break;
+							}
+						}
+                        ruin.m_playerOwner = messageData;
 					}
 				}
 	        }
@@ -281,7 +317,7 @@ public class MyNetwork : MonoBehaviour
                         string tileCoord = tileNode.Attributes["coordinate"].Value;
                         string tileItem = tileNode.Attributes["item"].Value;
 
-                        //@@@ error checking here
+                        //@@@ add error checking here
                         tileCoord = tileCoord.Replace("(","");
                         tileCoord = tileCoord.Replace(")","");
                         string[] coords = tileCoord.Split(',');
@@ -305,6 +341,7 @@ public class MyNetwork : MonoBehaviour
                             Ruin newRuin = Instantiate(WorldGenerator.Instance.m_ruinPrefab, transform);
                             newRuin.Initialise(tile.transform.position, z, 10, i);
                             tile.SetTileObject(newRuin);
+                            WorldGenerator.Instance.m_allRuins.Add(newRuin);
 						}
                         i++;
 					}

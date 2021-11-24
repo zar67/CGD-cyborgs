@@ -181,7 +181,7 @@ public class XMLFormatter
 				idAttrib.Value = unit.GetID().ToString();
 			}
 			
-			ownerAttrib.Value = "";//host or client
+			ownerAttrib.Value = "";//host or client0
 
 			itemNode.Attributes.Append(itemTypeAttrib);
 			itemNode.Attributes.Append(ownerAttrib);

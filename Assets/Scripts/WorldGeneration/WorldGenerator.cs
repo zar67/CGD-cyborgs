@@ -27,6 +27,7 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private int m_ruinNumber = 10;
 
     public List<Tile> m_worldTiles = new List<Tile>();
+    public List<Ruin> m_allRuins = new List<Ruin>();
 
     #region Singleton Setup
     private static WorldGenerator _instance;
@@ -235,6 +236,7 @@ public class WorldGenerator : MonoBehaviour
             Ruin newRuin = Instantiate(m_ruinPrefab, transform);
             newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight, i);
             m_worldTiles[index].SetTileObject(newRuin);
+            m_allRuins.Add(newRuin);
         }
     }
 

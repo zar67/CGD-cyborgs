@@ -40,7 +40,7 @@ public class UnitFactory : MonoBehaviour
     private Dictionary<Unit.UnitTypes, GameObject> unitPrefabs;
     private Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)> unitStats;
 
-    private List<Unit> allUnits = new List<Unit>();
+    public List<Unit> allUnits = new List<Unit>();
 
     #region Singleton Setup
     private static UnitFactory _instance;

@@ -6,6 +6,7 @@ public class Ruin : MonoBehaviour, ITileObject
     [SerializeField] private SpriteRenderer m_ruinSpriteRenderer = default;
     [SerializeField] private SpriteRenderer m_takeOverSpriteRenderer = default;
 
+    public string m_playerOwner = "";
     public int unique_id;
     bool test = false;
 
