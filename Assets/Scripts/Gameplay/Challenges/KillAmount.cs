@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 [CreateAssetMenu(fileName = "DefaultChallenge", menuName = "Challenges/KillAmountOf")]
 public class KillAmount : Challenge
 {

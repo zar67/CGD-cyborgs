@@ -13,9 +13,6 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private int turnTime = 90; //In seconds
     private float timerCurrent = 0;
 
-    //TimedEvents
-    private TimedEvents timedEvents = new TimedEvents();
-
     private void Awake()
     {
         ui = UIObject.GetComponent<GameplayUI>();

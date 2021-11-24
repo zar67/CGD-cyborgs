@@ -5,27 +5,30 @@ using UnityEngine;
 public class TimedEvents : MonoBehaviour
 {
     [Header("Challenges")]
-    [SerializeField] private int maxChallenges = 1;
-    [SerializeField] public List<Challenge> allChallenges = new List<Challenge>();
+    [SerializeField] private int maxChallenges = 5;
+    [SerializeField] public List<Challenge> allChallenges;
 
     public void CheckCurrentDate()
     {
         int currentDate = WorldTimeAPI.GetCurrentDay();
         int previousDate = currentDate;
 
-        if(SaveReadWrite.DoesFileExist())
+        if (SaveReadWrite.DoesFileExist())
         {
             SaveReadWrite.ReadFromJSON();
             previousDate = SaveReadWrite.data.previousLoginDate;
-        }
 
-        //If the days are different, then time must have passed
-        //Of course, this could go wrong if someone doesn't play for exactly a year
-        //but that's really unlikely and not that important right now
-        if (currentDate != previousDate) ResetDailyChallenges();
+            if (currentDate != previousDate) ResetDailyChallenges();
+            else GlobalData.dailyChallenges = SaveReadWrite.data.dailyChallenges;
+        }
+        else
+        {
+            ResetDailyChallenges();
+        }
 
         //Save over old data after checking the date
         SaveReadWrite.data.previousLoginDate = currentDate;
+        SaveReadWrite.data.dailyChallenges = GlobalData.dailyChallenges;
         SaveReadWrite.SaveToJSON();
     }
 

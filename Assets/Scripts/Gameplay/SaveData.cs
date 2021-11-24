@@ -19,6 +19,7 @@ public static class SaveReadWrite
     {
         string json = System.IO.File.ReadAllText(filePath);
         data = JsonUtility.FromJson<SaveData>(json);
+        Debug.Log("Read data from JSON");
     }
 
     public static bool DoesFileExist()
@@ -31,4 +32,5 @@ public static class SaveReadWrite
 public class SaveData
 {
     public int previousLoginDate;
+    public List<Challenge> dailyChallenges;
 }

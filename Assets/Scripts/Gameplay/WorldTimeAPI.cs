@@ -11,7 +11,7 @@ public class WorldTimeAPI : MonoBehaviour
 
     public static int GetCurrentDay()
     {
-        if (jsonData.IsNull)
+        if (jsonData == null)
         {
             Debug.Log("Error: jsonData is null");
             return -1;
