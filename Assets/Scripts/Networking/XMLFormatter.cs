@@ -98,15 +98,15 @@ public class XMLFormatter
 
 			XmlAttribute typeAttrib = xmlDoc.CreateAttribute("type");
 			XmlAttribute coorAttrib = xmlDoc.CreateAttribute("coordinate");
-			XmlAttribute matrixAttrib = xmlDoc.CreateAttribute("matirix");
+			XmlAttribute itemAttrib = xmlDoc.CreateAttribute("item");
 
 			typeAttrib.Value = tile.Terrain.ToString();
 			coorAttrib.Value = tile.Coordinates.ToString();
-			matrixAttrib.Value = tile.Matrics.ToString();
+			itemAttrib.Value = "";//tile.TileObject.ToString();
 			
 			tileNode.Attributes.Append(typeAttrib);
 			tileNode.Attributes.Append(coorAttrib);
-			tileNode.Attributes.Append(matrixAttrib);
+			tileNode.Attributes.Append(itemAttrib);
 		}
 
 		

@@ -82,16 +82,21 @@ public class NetworkClient : NetworkCommunication
         {
             if(m_networkStream != null && m_networkStream.DataAvailable)
             {
-                int bytesRecived = m_networkStream.Read(m_buffer, 0, m_buffer.Length);
-                if(bytesRecived > 0)
+                string fullMsg = "";
+                while(m_networkStream.DataAvailable)
                 {
-                    string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
-                    lock(m_rxQueue)
+                    int bytesRecived = m_networkStream.Read(m_buffer, 0, m_buffer.Length);
+                    if(bytesRecived > 0)
                     {
-                        m_rxQueue.Add(msg);
-					}
-                    Debug.Log("Added To rx: " + msg);
+                        string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
+                        fullMsg += msg;
+				    }
 				}
+                lock(m_rxQueue)
+                {
+                    m_rxQueue.Add(fullMsg);
+				}
+                Debug.Log("Added To rx: " + fullMsg);
 			}
 		}
 	}

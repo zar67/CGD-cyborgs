@@ -64,7 +64,7 @@ public class NetworkHost : NetworkCommunication
 
             //byte[] byteMsg = Encoding.ASCII.GetBytes(xmlBlob.OuterXml);
             //c.GetStream().Write(byteMsg, 0, byteMsg.Length);
-            
+
             /*if(c.Status == TaskStatus.Created)
                 Debug.Log("Created!");
             if(c.IsCompleted)

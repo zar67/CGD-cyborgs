@@ -81,7 +81,7 @@ public class MyNetwork : MonoBehaviour
         
        
 
-       m_worldGeneration.SetActive(true);
+       WorldGenerator.Instance.Generate();
       
         //StartCoroutine(run_cmd());
        // m_host = new Host(m_nameInputHost.text, m_port, myIP, clientListContent, ref m_conectedTxt);
@@ -176,6 +176,7 @@ public class MyNetwork : MonoBehaviour
                 XmlNode root = doc.DocumentElement;
                 if(root.Name == "message")
                 {
+                    
                     string messageType = root.Attributes["type"].Value;
                     string messageID = root.Attributes["id"].Value;
                     string messageData = root.Attributes["data"].Value;
@@ -192,9 +193,24 @@ public class MyNetwork : MonoBehaviour
 				}
                 else if(root.Name == "map")
                 {
-                    string tileType = root.Attributes["type"].Value;
-                    string tileCoord = root.Attributes["coordinate"].Value;
-                    string tileMatrix = root.Attributes["matrix"].Value;
+                    int i = 0;
+                    foreach(XmlNode tileNode in root.ChildNodes)
+                    {
+                        string tileType = tileNode.Attributes["type"].Value;
+                        string tileCoord = tileNode.Attributes["coordinate"].Value;
+                        string tileItem = tileNode.Attributes["item"].Value;
+
+                        //@@@ error checking here
+                        tileCoord = tileCoord.Replace("(","");
+                        tileCoord = tileCoord.Replace(")","");
+                        string[] coords = tileCoord.Split(',');
+                        int x = int.Parse(coords[0]);
+                        int z = int.Parse(coords[2]);
+                        Tile tile = GameObject.Instantiate(WorldGenerator.Instance.m_tilePrefab, Vector3.zero, Quaternion.identity);
+                        tile.Initialise(i, x, z, 1.0f, 10);
+
+                        i++;
+					}
 				}
 			}
 		}

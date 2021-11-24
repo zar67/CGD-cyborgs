@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
-    [SerializeField] private Tile m_tilePrefab = default;
+    [SerializeField] public Tile m_tilePrefab = default;
     [SerializeField] private Ruin m_ruinPrefab = default;
 
     [Header("Sprite References")]
@@ -138,10 +138,10 @@ public class WorldGenerator : MonoBehaviour
     private void Awake()
     {
         SingletonSetUp();
-        Generate();
+        
     }
 
-    private void Generate()
+    public void Generate()
     {
         m_worldTiles = new List<Tile>();
         int i = 0;
