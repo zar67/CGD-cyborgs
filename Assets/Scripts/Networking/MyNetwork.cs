@@ -12,15 +12,15 @@ using System.Xml;
 
 public class MyNetwork : MonoBehaviour
 {
-    [SerializeField] Button m_hostButton;
-    [SerializeField] Button m_clientButton;
+    [SerializeField] UnityEngine.UI.Button m_hostButton;
+    [SerializeField] UnityEngine.UI.Button m_clientButton;
 
     //host
     [SerializeField] GameObject m_hostInfo;
     [SerializeField] GameObject m_clientListContent;
     TextMeshProUGUI m_ipText;
     TMP_InputField m_nameInputHost;
-    Button m_startGameBttn;
+    UnityEngine.UI.Button m_startGameBttn;
     
 
 
@@ -28,7 +28,7 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] GameObject m_clientInfo;
     TMP_InputField m_ipInput;
     TMP_InputField m_nameInputClient;
-    Button m_connectToHostBttn;
+    UnityEngine.UI.Button m_connectToHostBttn;
     TextMeshProUGUI m_conectedTxt;
     
 
@@ -52,12 +52,12 @@ public class MyNetwork : MonoBehaviour
 
         m_ipText = m_hostInfo.transform.Find("MyIP").GetComponent<TextMeshProUGUI>();
         m_nameInputHost = m_hostInfo.transform.Find("Name_InputField (2)").GetComponent<TMP_InputField>();
-        m_startGameBttn = m_hostInfo.transform.Find("StartGameBttn").GetComponent<Button>();
+        m_startGameBttn = m_hostInfo.transform.Find("StartGameBttn").GetComponent<UnityEngine.UI.Button>();
         m_startGameBttn.onClick.AddListener(delegate{StartGame();});
 
         m_ipInput = m_clientInfo.transform.Find("IP_InputField").GetComponent<TMP_InputField>();
         m_nameInputClient = m_clientInfo.transform.Find("Name_InputField (1)").GetComponent<TMP_InputField>();
-        m_connectToHostBttn = m_clientInfo.transform.Find("ConnectToHost").GetComponent<Button>();
+        m_connectToHostBttn = m_clientInfo.transform.Find("ConnectToHost").GetComponent<UnityEngine.UI.Button>();
         m_connectToHostBttn.onClick.AddListener(delegate{ ConnectToHost(m_nameInputClient.text, m_ipInput.text);});
         m_conectedTxt = m_clientInfo.transform.Find("ConnectedTxt").GetComponent<TextMeshProUGUI>();
 	}
@@ -219,10 +219,24 @@ public class MyNetwork : MonoBehaviour
                         int x = int.Parse(coords[0]);
                         int z = int.Parse(coords[2]);
                         Tile tile = GameObject.Instantiate(WorldGenerator.Instance.m_tilePrefab, Vector3.zero, Quaternion.identity);
+                        WorldGenerator.Instance.m_worldTiles.Add(tile);
                         tile.Terrain = GetTerrain(tileType);
-                        tile.Initialise(i, x, z, 0.8f, 10);
+                        tile.Initialise(i, x, z, 0.8f, 10, 10);
                         WorldGenerator.Instance.SetBiomeSprite(tile);
+                        WorldGenerator.Instance.SetNeighbours(x, z, tile);
+                       
 
+                        XmlNode itemNode = tileNode.ChildNodes[0];
+                        string itemTileType = itemNode.Attributes["type"].Value;
+                        string itemOwner = itemNode.Attributes["owner"].Value;
+                        string itemID = itemNode.Attributes["id"].Value;
+
+                        if(itemTileType == "ruin")
+                        {
+                            Ruin newRuin = Instantiate(WorldGenerator.Instance.m_ruinPrefab, transform);
+                            newRuin.Initialise(tile.transform.position, z, 10, i);
+                            tile.SetTileObject(newRuin);
+						}
                         i++;
 					}
 				}

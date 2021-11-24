@@ -51,6 +51,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
+    public int GetID(){return ruinId;}
     public void SetUpUnit(Tile tile, int _ruinId)
     {
         ruinId = _ruinId;

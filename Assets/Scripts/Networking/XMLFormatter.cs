@@ -107,6 +107,31 @@ public class XMLFormatter
 			tileNode.Attributes.Append(typeAttrib);
 			tileNode.Attributes.Append(coorAttrib);
 			tileNode.Attributes.Append(itemAttrib);
+
+			XmlElement itemNode = xmlDoc.CreateElement("item");
+			tileNode.AppendChild(itemNode);
+			XmlAttribute itemTypeAttrib = xmlDoc.CreateAttribute("type");
+			XmlAttribute ownerAttrib = xmlDoc.CreateAttribute("owner");
+			XmlAttribute idAttrib = xmlDoc.CreateAttribute("id");
+
+			if(tile.TileObject is Ruin)
+			{
+				Ruin ruin = (Ruin)tile.TileObject;
+				itemTypeAttrib.Value = "ruin";
+				idAttrib.Value = ruin.unique_id.ToString();
+			}
+			else if(tile.TileObject is Unit)
+			{
+				Unit unit = (Unit)tile.TileObject;
+				itemTypeAttrib.Value = "soldier";
+				idAttrib.Value = unit.GetID().ToString();
+			}
+			
+			ownerAttrib.Value = "";//host or client
+
+			itemNode.Attributes.Append(itemTypeAttrib);
+			itemNode.Attributes.Append(ownerAttrib);
+			itemNode.Attributes.Append(idAttrib);
 		}
 
 		

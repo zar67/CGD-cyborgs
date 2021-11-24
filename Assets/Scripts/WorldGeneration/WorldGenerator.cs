@@ -4,7 +4,7 @@ using UnityEngine;
 public class WorldGenerator : MonoBehaviour
 {
     [SerializeField] public Tile m_tilePrefab = default;
-    [SerializeField] private Ruin m_ruinPrefab = default;
+    [SerializeField] public Ruin m_ruinPrefab = default;
 
     [Header("Sprite References")]
     [SerializeField] private Sprite[] m_waterSprites = { };
@@ -26,7 +26,7 @@ public class WorldGenerator : MonoBehaviour
     [Header("Ruin Generation Values")]
     [SerializeField] private int m_ruinNumber = 10;
 
-    private List<Tile> m_worldTiles = new List<Tile>();
+    public List<Tile> m_worldTiles = new List<Tile>();
 
     #region Singleton Setup
     private static WorldGenerator _instance;
@@ -269,7 +269,7 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    private void SetNeighbours(int x, int z, Tile newTile)
+    public void SetNeighbours(int x, int z, Tile newTile)
     {
         if (x + (z / 2) > 0)
         {
