@@ -55,7 +55,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
         return diff;
     }
 
-    public void Initialise(int i, int x, int z, float radius, int worldHeight)
+    public void Initialise(int i, int x, int z, float radius, int worldWidth, int worldHeight)
     {
         m_worldTileIndex = i;
         m_coordinates = new HexCoordinates(x, z);
@@ -72,8 +72,8 @@ public class Tile : MonoBehaviour, IWorldSelectable
         };
 
         transform.position = new Vector3(
-            (m_coordinates.X + (m_coordinates.Z * 0.5f)) * (m_matrics.InnerRadius * 2f),
-            m_coordinates.Z * (m_matrics.OuterRadius * 1.5f) / 2,
+            ((m_coordinates.X + (m_coordinates.Z * 0.5f)) * (m_matrics.InnerRadius * 2f)) - ((worldWidth * m_matrics.InnerRadius) / 2),
+            m_coordinates.Z * (m_matrics.OuterRadius * 1.5f) / 2 - ((worldHeight * m_matrics.OuterRadius) / 2),
             0
         );
 

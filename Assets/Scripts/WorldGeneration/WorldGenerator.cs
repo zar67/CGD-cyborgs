@@ -150,7 +150,7 @@ public class WorldGenerator : MonoBehaviour
             for (int x = 0; x < m_worldWidth; x++)
             {
                 var newTile = Instantiate(m_tilePrefab, transform);
-                newTile.Initialise(i++, x - (z / 2), z, m_tileOuterRadius, m_worldHeight);
+                newTile.Initialise(i++, x - (z / 2), z, m_tileOuterRadius, m_worldWidth, m_worldHeight);
 
                 SetNeighbours(x - (z / 2), z, newTile);
 
@@ -233,7 +233,7 @@ public class WorldGenerator : MonoBehaviour
             }
 
             Ruin newRuin = Instantiate(m_ruinPrefab, transform);
-            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight);
+            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight, i);
             m_worldTiles[index].SetTileObject(newRuin);
         }
     }

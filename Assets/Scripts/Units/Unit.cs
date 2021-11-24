@@ -163,11 +163,7 @@ public class Unit : MonoBehaviour, ITileObject
 
         current.SetTileObject(this);
         HexCoordinates coord = Tile.Coordinates;
-        transform.position = new Vector3(
-            (Tile.Coordinates.X + (Tile.Coordinates.Z * 0.5f)) * (Tile.Matrics.InnerRadius * 2f),
-            Tile.Coordinates.Z * (Tile.Matrics.OuterRadius * 1.5f) / 2,
-            0
-        );
+        transform.position = current.transform.position;
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
     }
@@ -183,18 +179,25 @@ public class Unit : MonoBehaviour, ITileObject
 
         if (unitStats.health <= 0)
         {
-            OnDeath();
+            OnDeath(ruinId);
         }
         Debug.Log(unitStats.health + " : took " + dmg + " dmg");
+        OnDeath(ruinId);
     }
 
-    public void OnDeath()
+    public void OnDeath(int id)
     {
+
         Tile.UnSetTileObject();
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
+        if (id == this.ruinId)
+        {
+            EventManager.instance.OnRespawn(id);
+            Destroy(gameObject);
 
+        }
         // TODO call ruin death script;
     }
 
