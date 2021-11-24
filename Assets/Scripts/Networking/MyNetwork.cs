@@ -220,7 +220,7 @@ public class MyNetwork : MonoBehaviour
                 messageData = root.Attributes["data"].Value;
 
             //BOTH
-            if(messageID == "endturn")
+            if(messageType == "endturn")
             {
                 m_playerTurn = messageID;
                 foreach(XmlNode node in root.ChildNodes)
@@ -278,6 +278,7 @@ public class MyNetwork : MonoBehaviour
                         ruin.m_playerOwner = messageData;
 					}
 				}
+                GameplayManager.Instance.ResetTurn();
 	        }
             //HOST ONLY
             else if(m_host != null)
