@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 
 public class Ruin : MonoBehaviour, ITileObject
 {
+    public const int RUIN_SIGHT = 5;
+
     [SerializeField] private SpriteRenderer m_ruinSpriteRenderer = default;
     [SerializeField] private SpriteRenderer m_takeOverSpriteRenderer = default;
 
@@ -27,10 +29,9 @@ public class Ruin : MonoBehaviour, ITileObject
     public void Initialise(Vector3 position, int z, int worldHeight, int id)
     {
         transform.position = position;
-        m_ruinSpriteRenderer.sortingOrder = ((worldHeight - z) * 2) + 1;
-        m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 2) + 2;
+        m_ruinSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 1;
+        m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
         unique_id = id;
-
     }
 
     public void Select()

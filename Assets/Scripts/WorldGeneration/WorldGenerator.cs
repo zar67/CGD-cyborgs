@@ -150,7 +150,6 @@ public class WorldGenerator : MonoBehaviour
     private void Awake()
     {
         SingletonSetUp();
-        
     }
 
     public void Generate()
@@ -248,6 +247,11 @@ public class WorldGenerator : MonoBehaviour
             newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight, i);
             m_worldTiles[index].SetTileObject(newRuin);
             m_allRuins.Add(newRuin);
+
+            foreach (var tile in GetTilesInRange(newRuin.Tile, Ruin.RUIN_SIGHT))
+            {
+                tile.Discover();
+            }
         }
     }
 
