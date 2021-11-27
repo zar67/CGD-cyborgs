@@ -302,7 +302,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
                     {
                         if (tile.TileObject is Unit aUnit)
                         {
-                            aUnit.TakeDamage(unit.Stats.damage);
+                            aUnit.TakeDamage(unit.Stats.GetDamage(aUnit.Type));
                         }
                     }
                     unit.MoveToTile(toMove);

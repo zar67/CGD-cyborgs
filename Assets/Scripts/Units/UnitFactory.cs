@@ -40,6 +40,8 @@ public class UnitFactory : MonoBehaviour
     private Dictionary<Unit.UnitTypes, GameObject> unitPrefabs;
     private Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)> unitStats;
 
+    private Dictionary<string, int> spritesToUseForPlayer;
+
     public List<Unit> allUnits = new List<Unit>();
 
     #region Singleton Setup
@@ -73,11 +75,21 @@ public class UnitFactory : MonoBehaviour
     void Start()
     {
         SetUpDictionaries();
+
+        //TESTING
+        List<string> playerIds = new List<string>();
+        playerIds.Add("0");
+        playerIds.Add("1");
+        playerIds.Add("2");
+        playerIds.Add("3");
+
+        SetUpPlayers(playerIds);
         SpawnUnits();
     }
 
     void SetUpDictionaries()
     {
+        spritesToUseForPlayer = new Dictionary<string, int>();
         unitPrefabs = new Dictionary<Unit.UnitTypes, GameObject>();
         unitStats = new Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)>();
         foreach (UnitToGameObject u in prefabs)
@@ -88,6 +100,16 @@ public class UnitFactory : MonoBehaviour
         foreach (UnitToStats u in stats)
         {
             unitStats.Add(u.type, (u.stats, u.attackPattern, u.traversibleTerrain));
+        }
+    }
+
+    public void SetUpPlayers(List<string> playerIds)
+    {
+        int i = 0;
+        foreach (string id in playerIds)
+        {
+            spritesToUseForPlayer[id] = i % 2;
+            i++;
         }
     }
 
@@ -114,8 +136,8 @@ public class UnitFactory : MonoBehaviour
     void SpawnUnits()
     {
         //CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(5, 4)));
-        //CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(8, 4)));
-        //CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(1, 9)));
+        //CreateUnitOnTile(Unit.UnitTypes.TANK, t_WG.GetTileAtCoordinate(new HexCoordinates(8, 4)));
+        //CreateUnitOnTile(Unit.UnitTypes.PLANE, t_WG.GetTileAtCoordinate(new HexCoordinates(1, 9)));
     }
 
     //Resets turn for all units;
@@ -128,7 +150,7 @@ public class UnitFactory : MonoBehaviour
     }
 
     //Creates and returns a unit on a given tile.
-    public Unit CreateUnitOnTile(Unit.UnitTypes unitType, Tile tile, int ruinId = -1)
+    public Unit CreateUnitOnTile(Unit.UnitTypes unitType, Tile tile, int ruinId = -1, string playerId = "")
     {
         if (tile.TileObject != null)
         {
@@ -136,10 +158,15 @@ public class UnitFactory : MonoBehaviour
             return null;
         }
         GameObject u = Instantiate(unitPrefabs[unitType]);
-        u.GetComponent<Unit>().SetUpUnit(tile, ruinId);
+        u.GetComponent<Unit>().SetUpUnit(tile, ruinId, playerId, spritesToUseForPlayer[playerId]);
 
         allUnits.Add(u.GetComponent<Unit>());
 
         return u.GetComponent<Unit>();
+    }
+
+    public int GetUnitSpriteInt(string playerId)
+    {
+        return spritesToUseForPlayer[playerId];
     }
 }

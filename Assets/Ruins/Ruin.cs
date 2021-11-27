@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Ruin : MonoBehaviour, ITileObject
 {
@@ -12,6 +14,8 @@ public class Ruin : MonoBehaviour, ITileObject
     public int unique_id;
     bool test = false;
 
+    private bool hasUnit = false;
+    private Unit ruinUnit;
 
     public Tile Tile
     {
@@ -32,6 +36,7 @@ public class Ruin : MonoBehaviour, ITileObject
         m_ruinSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 1;
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
         unique_id = id;
+        m_playerOwner = id.ToString();
     }
 
     public void Select()
@@ -48,7 +53,18 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            WorldSelection.ChangeSelection(this);
+            if (WorldSelection.SelectedObject is Unit unit && CheckCanTakeOver())
+            {
+                TakeOverRuin(unit.GetPlayerId());
+                WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true);
+                unit.MoveToTile(path[path.Count - 2]);
+                unit.NullTurn();
+                WorldSelection.ChangeSelection(null);
+            }
+            else
+            {
+                WorldSelection.ChangeSelection(this);
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
             WorldSelection.SelectedObject == this)
@@ -57,21 +73,26 @@ public class Ruin : MonoBehaviour, ITileObject
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    private bool CheckCanTakeOver()
     {
-        // TODO: Replace "is ITileObject tileObj" with "is Unit unit"
-        if (WorldSelection.SelectedObject is ITileObject tileObj &&
+        if (WorldSelection.SelectedObject is Unit unit &&
             WorldSelection.SelectedObject != this)
         {
-            // TODO: Replace "10" with "unit.MovementSpeed"
-            bool valid = HexCoordinates.Distance(Tile.Coordinates, tileObj.Tile.Coordinates) <= 10;
-            if (valid)
+            if (!unit.isPlayer(m_playerOwner) && WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true))
             {
-                m_takeOverSpriteRenderer.enabled = true;
+                return path.Count - 1 <= unit.Movement;
             }
         }
+        return false;
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (CheckCanTakeOver())
+        {
+            m_takeOverSpriteRenderer.enabled = true;
+        }
+    }
 
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -91,7 +112,6 @@ public class Ruin : MonoBehaviour, ITileObject
 
     void Update()
     {
-     
         if (test == false)
         {
             TestSpawn(unique_id);
@@ -101,18 +121,31 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public void TestSpawn(int id)
     {
-
-
-            if (Tile.TileObject != null)
+        if (Tile.TileObject != null)
+        {
+            if (id == this.unique_id)
             {
-                if (id == this.unique_id)
-                {
-                    UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id);
-                }
+                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+                hasUnit = true;
             }
-
-        
+        }
     }
 
-
+    public void TakeOverRuin(string newPlayerOwner)
+    {
+        m_playerOwner = newPlayerOwner;
+        Debug.Log("NEW PLAYER OWNER: " + newPlayerOwner);
+        if (hasUnit)
+        {
+            if (ruinUnit != null)
+            {
+                ruinUnit.RuinTakenOver(newPlayerOwner, UnitFactory.Instance.GetUnitSpriteInt(newPlayerOwner));
+            }
+        }
+        else
+        {
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.PLANE, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            hasUnit = true;
+        }
+    }
 }
