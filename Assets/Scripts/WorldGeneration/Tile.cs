@@ -9,6 +9,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
     [Header("Sprite References")]
     [SerializeField] private SpriteRenderer m_tileSpriteRenderer = default;
     [SerializeField] private SpriteRenderer m_selectedSpriteRenderer = default;
+    [SerializeField] private SpriteRenderer m_fogSpriteRenderer = default;
 
     [Header("Colour Values")]
     [SerializeField] private Color m_selectedColour = Color.white;
@@ -16,6 +17,8 @@ public class Tile : MonoBehaviour, IWorldSelectable
     [SerializeField] private Color m_validColour = Color.green;
 
     public int WorldTilesIndex => m_worldTileIndex;
+
+    public bool IsDiscovered => !m_fogSpriteRenderer.enabled;
 
     public HexCoordinates Coordinates => m_coordinates;
     public HexMatrics Matrics => m_matrics;
@@ -55,7 +58,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
         return diff;
     }
 
-    public void Initialise(int i, int x, int z, float radius, int worldHeight)
+    public void Initialise(int i, int x, int z, float radius, int worldWidth, int worldHeight)
     {
         m_worldTileIndex = i;
         m_coordinates = new HexCoordinates(x, z);
@@ -72,13 +75,20 @@ public class Tile : MonoBehaviour, IWorldSelectable
         };
 
         transform.position = new Vector3(
-            (m_coordinates.X + (m_coordinates.Z * 0.5f)) * (m_matrics.InnerRadius * 2f),
-            m_coordinates.Z * (m_matrics.OuterRadius * 1.5f) / 2,
+            ((m_coordinates.X + (m_coordinates.Z * 0.5f)) * (m_matrics.InnerRadius * 2f)) - ((worldWidth * m_matrics.InnerRadius) / 2),
+            m_coordinates.Z * (m_matrics.OuterRadius * 1.5f) / 2 - ((worldHeight * m_matrics.OuterRadius) / 2),
             0
         );
 
-        m_tileSpriteRenderer.sortingOrder = (worldHeight - m_coordinates.Z) * 2;
-        m_selectedSpriteRenderer.sortingOrder = ((worldHeight - m_coordinates.Z) * 2) + 1;
+        m_tileSpriteRenderer.sortingOrder = (worldHeight - m_coordinates.Z) * 3;
+        m_selectedSpriteRenderer.sortingOrder = ((worldHeight - m_coordinates.Z) * 3) + 1;
+        m_fogSpriteRenderer.sortingOrder = ((worldHeight - m_coordinates.Z) * 3) + 2;
+    }
+
+    public void Discover(bool discovered = true)
+    {
+        m_fogSpriteRenderer.enabled = !discovered;
+        m_tileSpriteRenderer.enabled = discovered;
     }
 
     public void SetTileObject(ITileObject obj)
@@ -202,6 +212,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
             return;
         }
 
+        if (!IsDiscovered)
+        {
+            return;
+        }
+
         if (WorldSelection.SelectedObject is Unit unit)
         {
             if (unit.Attacking)
@@ -219,7 +234,6 @@ public class Tile : MonoBehaviour, IWorldSelectable
             }
             else
             {
-                
                 if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path))
                 {
                     bool valid = path.Count - 1 <= unit.Movement;
@@ -248,6 +262,9 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         Deselect();
         WorldSelection.OnSelectionChanged += OnSelectionChange;
+
+        m_tileSpriteRenderer.enabled = false;
+        m_fogSpriteRenderer.enabled = true;
     }
 
     private void OnSelectionChange(object sender, WorldSelection.SelectionChangedData data)
@@ -267,6 +284,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     private bool CheckAndAttack()
     {
+        if (!IsDiscovered)
+        {
+            return false;
+        }
+
         if (WorldSelection.SelectedObject != null && WorldSelection.SelectedObject is Unit unit)
         {
             if (unit.Attacking)

@@ -40,7 +40,7 @@ public class UnitFactory : MonoBehaviour
     private Dictionary<Unit.UnitTypes, GameObject> unitPrefabs;
     private Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)> unitStats;
 
-    private List<Unit> allUnits = new List<Unit>();
+    public List<Unit> allUnits = new List<Unit>();
 
     #region Singleton Setup
     private static UnitFactory _instance;
@@ -113,9 +113,9 @@ public class UnitFactory : MonoBehaviour
     //Test function (just creates units at the start of the game)
     void SpawnUnits()
     {
-        CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(5, 4)));
-        CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(8, 4)));
-        CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(1, 9)));
+        //CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(5, 4)));
+        //CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(8, 4)));
+        //CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(1, 9)));
     }
 
     //Resets turn for all units;

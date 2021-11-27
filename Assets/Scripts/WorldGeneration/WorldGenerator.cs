@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
-    [SerializeField] private Tile m_tilePrefab = default;
-    [SerializeField] private Ruin m_ruinPrefab = default;
+    [SerializeField] public Tile m_tilePrefab = default;
+    [SerializeField] public Ruin m_ruinPrefab = default;
 
     [Header("Sprite References")]
     [SerializeField] private Sprite[] m_waterSprites = { };
@@ -26,7 +26,8 @@ public class WorldGenerator : MonoBehaviour
     [Header("Ruin Generation Values")]
     [SerializeField] private int m_ruinNumber = 10;
 
-    private List<Tile> m_worldTiles = new List<Tile>();
+    public List<Tile> m_worldTiles = new List<Tile>();
+    public List<Ruin> m_allRuins = new List<Ruin>();
 
     #region Singleton Setup
     private static WorldGenerator _instance;
@@ -135,13 +136,23 @@ public class WorldGenerator : MonoBehaviour
         return m_worldTiles[(coordinates.Z * m_worldWidth) + x];
     }
 
+    public IEnumerable<Tile> GetTilesInRange(Tile startingTile, int range)
+    {
+        foreach(var tile in m_worldTiles)
+        {
+            if (HexCoordinates.Distance(startingTile, tile) <= range)
+            {
+                yield return tile;
+            }
+        }
+    }
+
     private void Awake()
     {
         SingletonSetUp();
-        Generate();
     }
 
-    private void Generate()
+    public void Generate()
     {
         m_worldTiles = new List<Tile>();
         int i = 0;
@@ -150,7 +161,7 @@ public class WorldGenerator : MonoBehaviour
             for (int x = 0; x < m_worldWidth; x++)
             {
                 var newTile = Instantiate(m_tilePrefab, transform);
-                newTile.Initialise(i++, x - (z / 2), z, m_tileOuterRadius, m_worldHeight);
+                newTile.Initialise(i++, x - (z / 2), z, m_tileOuterRadius, m_worldWidth, m_worldHeight);
 
                 SetNeighbours(x - (z / 2), z, newTile);
 
@@ -233,12 +244,18 @@ public class WorldGenerator : MonoBehaviour
             }
 
             Ruin newRuin = Instantiate(m_ruinPrefab, transform);
-            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight);
+            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight, i);
             m_worldTiles[index].SetTileObject(newRuin);
+            m_allRuins.Add(newRuin);
+
+            foreach (var tile in GetTilesInRange(newRuin.Tile, Ruin.RUIN_SIGHT))
+            {
+                tile.Discover();
+            }
         }
     }
 
-    private void SetBiomeSprite(Tile tile)
+    public void SetBiomeSprite(Tile tile)
     {
         switch (tile.Terrain)
         {
@@ -269,7 +286,7 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    private void SetNeighbours(int x, int z, Tile newTile)
+    public void SetNeighbours(int x, int z, Tile newTile)
     {
         if (x + (z / 2) > 0)
         {
@@ -303,4 +320,6 @@ public class WorldGenerator : MonoBehaviour
             }
         }
     }
+
+    public List<Tile> GetTiles(){return m_worldTiles;}
 }

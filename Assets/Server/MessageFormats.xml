@@ -1,0 +1,10 @@
+Add Client
+<message>
+    <body name="ADDClient" ip="" port=""/>
+</message>
+
+EndTurn
+<message>
+    <body name="EndTurn" ip="" port=""/>
+</message>
+

@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour, ITileObject
         public int health;
         public int movementSpeed;
         public int damage;
+        public int sight;
     }
 
     [SerializeField] private SpriteRenderer unitSprite;
@@ -51,6 +52,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
+    public int GetID(){return ruinId;}
     public void SetUpUnit(Tile tile, int _ruinId)
     {
         ruinId = _ruinId;
@@ -62,6 +64,11 @@ public class Unit : MonoBehaviour, ITileObject
         //Testing
         ResetTurn();
     }
+
+    public void SetHealth(int _health)
+    {
+        unitStats.health = _health;
+	}
 
     public void SetUpPlayerId(string _playerId)
     {
@@ -163,13 +170,14 @@ public class Unit : MonoBehaviour, ITileObject
 
         current.SetTileObject(this);
         HexCoordinates coord = Tile.Coordinates;
-        transform.position = new Vector3(
-            (Tile.Coordinates.X + (Tile.Coordinates.Z * 0.5f)) * (Tile.Matrics.InnerRadius * 2f),
-            Tile.Coordinates.Z * (Tile.Matrics.OuterRadius * 1.5f) / 2,
-            0
-        );
+        transform.position = current.transform.position;
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
+
+        foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+        {
+            tile.Discover();
+        }
     }
 
     public void HasAttacked()
@@ -181,20 +189,28 @@ public class Unit : MonoBehaviour, ITileObject
     {
         unitStats.health -= dmg;
 
+        XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)
         {
-            OnDeath();
+            OnDeath(ruinId);
         }
         Debug.Log(unitStats.health + " : took " + dmg + " dmg");
+        OnDeath(ruinId);
     }
 
-    public void OnDeath()
+    public void OnDeath(int id)
     {
+
         Tile.UnSetTileObject();
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
+        if (id == this.ruinId)
+        {
+            EventManager.instance.OnRespawn(id);
+            Destroy(gameObject);
 
+        }
         // TODO call ruin death script;
     }
 
