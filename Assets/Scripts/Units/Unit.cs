@@ -128,7 +128,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void Select()
     {
-        if (isDead)
+        if (isDead || !Tile.IsDiscovered)
         {
             return;
         }
@@ -158,14 +158,21 @@ public class Unit : MonoBehaviour, ITileObject
         if (eventData.button == PointerEventData.InputButton.Left && !(WorldSelection.SelectedObject is Unit && ((Unit)WorldSelection.SelectedObject).Attacking))
         {
             specialClick = false;
-            WorldSelection.ChangeSelection(WorldSelection.SelectedObject == this ? null : this);
+            if (WorldSelection.SelectedObject != this && Tile.IsDiscovered)
+            {
+                WorldSelection.ChangeSelection(this);
+            }
+            else
+            {
+                WorldSelection.ChangeSelection(null);
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
             WorldSelection.SelectedObject == this)
         {
             WorldSelection.ChangeSelection(null);
         }
-        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0)
+        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0 && Tile.IsDiscovered)
         {
             specialClick = true;
             WorldSelection.ChangeSelection(this);

@@ -180,8 +180,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void Select()
     {
-        m_selectedSpriteRenderer.color = m_selectedColour;
-        m_selectedSpriteRenderer.enabled = true;
+        if (IsDiscovered)
+        {
+            m_selectedSpriteRenderer.color = m_selectedColour;
+            m_selectedSpriteRenderer.enabled = true;
+        }
     }
 
     public void Deselect()
@@ -198,9 +201,13 @@ public class Tile : MonoBehaviour, IWorldSelectable
                 Debug.Log("ATTACKED TILES");
                 WorldSelection.ChangeSelection(null);
             }
-            else if (TileObject == null)
+            else if (TileObject == null && IsDiscovered)
             {
                 WorldSelection.ChangeSelection(this);
+            }
+            else
+            {
+                WorldSelection.ChangeSelection(null);
             }
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
