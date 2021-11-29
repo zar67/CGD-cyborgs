@@ -36,7 +36,10 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public void Select()
     {
-        m_ruinSpriteRenderer.color = new Color(1, 0, 0);
+        if (Tile.IsDiscovered)
+        {
+            m_ruinSpriteRenderer.color = new Color(1, 0, 0);
+        }
     }
 
     public void Deselect()
@@ -56,7 +59,7 @@ public class Ruin : MonoBehaviour, ITileObject
                 unit.NullTurn();
                 WorldSelection.ChangeSelection(null);
             }
-            else
+            else if (Tile.IsDiscovered)
             {
                 WorldSelection.ChangeSelection(this);
             }
