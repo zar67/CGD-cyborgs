@@ -1,17 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Xml;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Diagnostics;
-using System.Xml;
 
 public class MyNetwork : MonoBehaviour
 {
+    [SerializeField] GameObject m_uiHolder;
     [SerializeField] UnityEngine.UI.Button m_hostButton;
     [SerializeField] UnityEngine.UI.Button m_clientButton;
 
@@ -22,8 +20,6 @@ public class MyNetwork : MonoBehaviour
     TMP_InputField m_nameInputHost;
     UnityEngine.UI.Button m_startGameBttn;
     
-
-
     //client
     [SerializeField] GameObject m_clientInfo;
     TMP_InputField m_ipInput;
@@ -31,7 +27,6 @@ public class MyNetwork : MonoBehaviour
     UnityEngine.UI.Button m_connectToHostBttn;
     TextMeshProUGUI m_conectedTxt;
     
-
     //World gen
     [SerializeField] GameObject m_worldGeneration;
 
@@ -165,6 +160,8 @@ public class MyNetwork : MonoBehaviour
         UnitFactory.Instance.SetUpPlayers(m_playerNames);
         WorldGenerator.Instance.SpawnUnitsOnStart();
         GameplayManager.Instance.ResetTurn();
+
+        m_uiHolder.SetActive(false);
 	}
 
     public void NextPlayer()

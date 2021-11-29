@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f99f8524ccac1b49a2400259ad3bac2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_uiHolder: {fileID: 2016686268}
   m_hostButton: {fileID: 773948847}
   m_clientButton: {fileID: 1213032333}
   m_hostInfo: {fileID: 1458034172}
@@ -2966,6 +2967,8 @@ GameObject:
   - component: {fileID: 1386352845}
   - component: {fileID: 1386352844}
   - component: {fileID: 1386352843}
+  - component: {fileID: 1386352846}
+  - component: {fileID: 1386352847}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3038,6 +3041,44 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1386352846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1386352842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53c7e7ee13fea2c4d9a788477d6f772d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panSpeed: 20
+  panBorderThickness: 10
+  panLimit: {x: 15, y: 5}
+  scroll: 0
+  m_OrthographicCamera: {fileID: 1386352844}
+  minFOV: 15
+  maxFOV: 80
+  sensitivity: 20
+  FOV: 50
+  scrollSpeed: 1
+--- !u!114 &1386352847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1386352842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56666c5a40171f54783dd416a44f42bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0
 --- !u!1 &1458034172
 GameObject:
   m_ObjectHideFlags: 0

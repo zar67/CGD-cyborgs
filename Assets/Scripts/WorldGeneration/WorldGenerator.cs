@@ -56,7 +56,6 @@ public class WorldGenerator : MonoBehaviour
 
     #endregion
 
-
     public Tile GetAttackPattern(HexCoordinates start, EHexDirection direction, UnitFactory.AttackPattern attackPattern, out List<Tile> pattern)
     {
         pattern = new List<Tile>();
