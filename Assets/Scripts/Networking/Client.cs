@@ -1,23 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Net;
-using System.Net.Sockets;
 using System;
+using System.Collections;
+using System.Net.Sockets;
 using TMPro;
+using UnityEngine;
 
 public class Client
 {
-    TcpClient m_client;
-    string m_name;
+    private TcpClient m_client;
+    private string m_name;
 
-	public Client(TcpClient _client, string _name)
-	{ 
-		m_client = _client;
+    public Client(TcpClient _client, string _name)
+    {
+        m_client = _client;
         m_name = _name;
-	}
-	public Client(String _ip, Int32 _port, string _name, ref TextMeshProUGUI _connectedTxt)
-	{
+    }
+    public Client(String _ip, Int32 _port, string _name, ref TextMeshProUGUI _connectedTxt)
+    {
         try
         {
             String message = _name;
@@ -54,8 +52,10 @@ public class Client
             responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
             Debug.Log("Received: =" + responseData);
 
-            if(responseData == "success")
+            if (responseData == "success")
+            {
                 _connectedTxt.text = "Connected : SUCCESS";
+            }
 
             // Close everything.
             //stream.Close();
@@ -69,13 +69,13 @@ public class Client
         {
             Console.WriteLine("SocketException:" + e);
         }
-	}
+    }
 
     public IEnumerator ListenForMessage()
     {
-        while(true)
+        while (true)
         {
-            if(m_client != null)
+            if (m_client != null)
             {
                 //m_client.get
                 /*
@@ -91,21 +91,24 @@ public class Client
                 {
                     Debug.Log("Cant Read from stream");
 				}*/
-                
-			}
-            yield return new WaitForSeconds(0.2f);
-		}
-	}
-	public NetworkStream GetStream()
-	{
-		return m_client.GetStream();
-	}
-	public void Close()
-	{
-        m_client.GetStream().Close();
-		m_client.Close();
-	}
 
-    public TcpClient getClient(){return m_client;}
-   
+            }
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+    public NetworkStream GetStream()
+    {
+        return m_client.GetStream();
+    }
+    public void Close()
+    {
+        m_client.GetStream().Close();
+        m_client.Close();
+    }
+
+    public TcpClient getClient()
+    {
+        return m_client;
+    }
+
 }

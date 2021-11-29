@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,8 +12,10 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public string m_playerOwner = "";
     public int unique_id;
-    bool test = false;
+    private bool test = false;
 
+    private bool hasUnit = false;
+    private Unit ruinUnit;
 
     public Tile Tile
     {
@@ -21,17 +25,13 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => new TerrainType[0];
 
-    private void Start()
-    {
-        EventManager.instance.Respawn += TestSpawn; 
-    }
-
-    public void Initialise(Vector3 position, int z, int worldHeight, int id)
+    public void Initialise(Vector3 position, int z, int worldHeight, int ruinID, string playerID)
     {
         transform.position = position;
         m_ruinSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 1;
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
-        unique_id = id;
+        unique_id = ruinID;
+        m_playerOwner = playerID;
     }
 
     public void Select()
@@ -48,7 +48,18 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            WorldSelection.ChangeSelection(this);
+            if (WorldSelection.SelectedObject is Unit unit && CheckCanTakeOver())
+            {
+                TakeOverRuin(unit.GetPlayerId());
+                WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true);
+                unit.MoveToTile(path[path.Count - 2]);
+                unit.NullTurn();
+                WorldSelection.ChangeSelection(null);
+            }
+            else
+            {
+                WorldSelection.ChangeSelection(this);
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
             WorldSelection.SelectedObject == this)
@@ -57,21 +68,26 @@ public class Ruin : MonoBehaviour, ITileObject
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    private bool CheckCanTakeOver()
     {
-        // TODO: Replace "is ITileObject tileObj" with "is Unit unit"
-        if (WorldSelection.SelectedObject is ITileObject tileObj &&
+        if (WorldSelection.SelectedObject is Unit unit &&
             WorldSelection.SelectedObject != this)
         {
-            // TODO: Replace "10" with "unit.MovementSpeed"
-            bool valid = HexCoordinates.Distance(Tile.Coordinates, tileObj.Tile.Coordinates) <= 10;
-            if (valid)
+            if (!unit.isPlayer(m_playerOwner) && WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true))
             {
-                m_takeOverSpriteRenderer.enabled = true;
+                return path.Count - 1 <= unit.Movement;
             }
         }
+        return false;
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (CheckCanTakeOver())
+        {
+            m_takeOverSpriteRenderer.enabled = true;
+        }
+    }
 
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -89,30 +105,35 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.enabled = false;
     }
 
-    void Update()
+    public void SpawnUnit()
     {
-     
-        if (test == false)
+        if (Tile.TileObject != null)
         {
-            TestSpawn(unique_id);
-            test = true;
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            hasUnit = true;
         }
     }
 
-    public void TestSpawn(int id)
+    public void TakeOverRuin(string newPlayerOwner)
     {
-
-
-            if (Tile.TileObject != null)
+        m_playerOwner = newPlayerOwner;
+        Debug.Log("NEW PLAYER OWNER: " + newPlayerOwner);
+        if (hasUnit)
+        {
+            if (ruinUnit != null)
             {
-                if (id == this.unique_id)
-                {
-                    UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id);
-                }
+                ruinUnit.RuinTakenOver(newPlayerOwner, UnitFactory.Instance.GetUnitSpriteInt(newPlayerOwner));
             }
-
-        
+        }
+        else
+        {
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.PLANE, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            hasUnit = true;
+        }
     }
 
-
+    public void Show(bool show)
+    {
+        m_ruinSpriteRenderer.enabled = show;
+    }
 }

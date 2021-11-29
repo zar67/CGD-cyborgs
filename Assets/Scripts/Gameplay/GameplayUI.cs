@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class GameplayUI : MonoBehaviour
 {
@@ -10,7 +8,7 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI turnText;
 
     [SerializeField] private int alertTime = 1;
-    [SerializeField] Animation animAlertTick;
+    [SerializeField] private Animation animAlertTick;
 
     [SerializeField] private Color defaultTextColor;
     [SerializeField] private Color alertTextColor;
@@ -29,7 +27,7 @@ public class GameplayUI : MonoBehaviour
     {
         int i = Mathf.CeilToInt(value);
 
-        if(i != previousTime)
+        if (i != previousTime)
         {
             //Set text color
             if (i <= alertTime && i > 0)

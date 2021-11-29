@@ -44,8 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0a5070861223a2448621e8769b17743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tilePrefab: {fileID: 3270343899794960400, guid: 5efc49fe9a7dcf149a7f28f4f4fbecfa, type: 3}
-  m_ruinPrefab: {fileID: 8677792839401451146, guid: 47c773758f71785418deb2cf89ce80aa, type: 3}
+  TilePrefab: {fileID: 3270343899794960400, guid: 5efc49fe9a7dcf149a7f28f4f4fbecfa, type: 3}
+  RuinPrefab: {fileID: 8677792839401451146, guid: 47c773758f71785418deb2cf89ce80aa, type: 3}
+  WorldTiles: []
+  AllRuins: []
   m_waterSprites:
   - {fileID: 21300000, guid: 3df3aae32c31258408b6430047d5a2c6, type: 3}
   - {fileID: 21300000, guid: bd2a801ad1752904aabc1eeb5f6a39ef, type: 3}

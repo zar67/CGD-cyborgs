@@ -1,8 +1,7 @@
+using SimpleJSON;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using SimpleJSON;
 
 public class WorldTimeAPI : MonoBehaviour
 {
@@ -30,9 +29,9 @@ public class WorldTimeAPI : MonoBehaviour
         StartCoroutine(ProcessRequest(API_URL));
     }
 
-    IEnumerator ProcessRequest(string uri)
+    private IEnumerator ProcessRequest(string uri)
     {
-        UnityWebRequest request = UnityWebRequest.Get(API_URL);
+        var request = UnityWebRequest.Get(API_URL);
 
         yield return request.SendWebRequest();
 
@@ -45,7 +44,7 @@ public class WorldTimeAPI : MonoBehaviour
             string data = request.downloadHandler.text;
             jsonData = JSON.Parse(data);
 
-            if(!jsonData.IsNull)
+            if (!jsonData.IsNull)
             {
                 Debug.Log("JSON data loaded successfully");
             }
