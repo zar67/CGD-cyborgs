@@ -97,7 +97,11 @@ public class Unit : MonoBehaviour, ITileObject
 
         //Testing
         ResetTurn();
-        Show(false);
+
+        if (!Tile.IsDiscovered)
+        {
+            Show(false);
+        }
     }
 
     public void SetHealth(int _health)
