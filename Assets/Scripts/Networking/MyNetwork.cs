@@ -210,6 +210,7 @@ public class MyNetwork : MonoBehaviour
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(msg);
+            Debug.Log(doc.OuterXml);
 
             XmlNode root = doc.DocumentElement;
             string messageType = "";
@@ -228,9 +229,9 @@ public class MyNetwork : MonoBehaviour
                 m_playerTurn = messageID;
                 foreach(XmlNode node in root.ChildNodes)
                 {
-                    messageType = root.Attributes["type"].Value;
-                    messageID = root.Attributes["id"].Value;
-                    messageData = root.Attributes["data"].Value;
+                    messageType = node.Attributes["type"].Value;
+                    messageID = node.Attributes["id"].Value;
+                    messageData = node.Attributes["data"].Value;
 
                     if(messageType == "position")
                     {
@@ -348,6 +349,7 @@ public class MyNetwork : MonoBehaviour
                             
                             Ruin newRuin = Instantiate(WorldGenerator.Instance.m_ruinPrefab, transform);
                             newRuin.Initialise(tile.transform.position, z, 10, i, itemOwner);
+                            newRuin.unique_id = int.Parse(itemID);
                             tile.SetTileObject(newRuin);
                             WorldGenerator.Instance.m_allRuins.Add(newRuin);
 

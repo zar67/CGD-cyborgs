@@ -56,11 +56,12 @@ public class GameplayManager : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (Input.GetKeyDown(KeyCode.Space))
         {
             thisPlayerInputEnabled = true;
             ResetTurn(); //For Testing
-        }
+        }*/
 
         if(thisPlayerInputEnabled)
         {
@@ -81,10 +82,12 @@ public class GameplayManager : MonoBehaviour
 
     public void ResetTurn()
     {
+        thisPlayerInputEnabled = true;
         timerCurrent = (float)turnTime;
         ui.SetTurnText(thisPlayerInputEnabled);
         ui.SetTimerText(timerCurrent);
         UnitFactory.Instance.ResetTurn();
         image.SetActive(true);
+        
     }
 }
