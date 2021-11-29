@@ -224,7 +224,7 @@ public class Unit : MonoBehaviour, ITileObject
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
 
-        if (playerId == (MyNetwork.m_isHost ? MyNetwork.m_playerNames[0] : MyNetwork.m_playerNames[1]))
+        if (playerId == MyNetwork.GetMyInstacneID())
         {
             foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
             {

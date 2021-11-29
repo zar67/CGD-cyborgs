@@ -32,8 +32,8 @@ public class MyNetwork : MonoBehaviour
 
     public static bool m_isHost = false;
     private Int32 m_port = 10000;
-    private NetworkHost m_host;
-    private NetworkClient m_client;
+    private static NetworkHost m_host;
+    private static NetworkClient m_client;
     private string hostIP = "";
     private string m_playerTurn = "";
     public static List<string> m_playerNames = new List<string>();
@@ -60,6 +60,16 @@ public class MyNetwork : MonoBehaviour
         {
             ConnectToHost(m_nameInputClient.text, m_ipInput.text);
         });
+    }
+
+    public static string GetMyInstacneID()
+    {
+        string myID = "";
+        if (m_host != null)
+            myID = m_host.GetName();
+        else if (m_client != null)
+            myID = m_client.GetName();
+        return myID;
     }
 
     public TerrainType GetTerrain(string _item)
@@ -281,7 +291,7 @@ public class MyNetwork : MonoBehaviour
                             }
                         }
                         Tile tileToMoveTo = null;
-                        foreach (Tile tile in WorldGenerator.Instance.m_worldTiles)
+                        foreach (Tile tile in WorldGenerator.Instance.WorldTiles)
                         {
                             if (tile.Coordinates.ToString() == messageData)
                             {
@@ -307,7 +317,7 @@ public class MyNetwork : MonoBehaviour
                     else if (messageType == "ruin")
                     {
                         Ruin ruin = null;
-                        foreach (Ruin r in WorldGenerator.Instance.m_allRuins)
+                        foreach (Ruin r in WorldGenerator.Instance.AllRuins)
                         {
                             if (r.unique_id.ToString() == messageID)
                             {
@@ -369,8 +379,8 @@ public class MyNetwork : MonoBehaviour
                         int x = int.Parse(coords[0]);
                         int z = int.Parse(coords[2]);
 
-                        Tile tile = GameObject.Instantiate(WorldGenerator.Instance.m_tilePrefab, Vector3.zero, Quaternion.identity);
-                        WorldGenerator.Instance.m_worldTiles.Add(tile);
+                        Tile tile = GameObject.Instantiate(WorldGenerator.Instance.TilePrefab, Vector3.zero, Quaternion.identity);
+                        WorldGenerator.Instance.WorldTiles.Add(tile);
                         tile.Terrain = GetTerrain(tileType);
                         tile.Initialise(i, x, z, 0.8f, 10, 10);
                         WorldGenerator.Instance.SetBiomeSprite(tile);
@@ -385,11 +395,11 @@ public class MyNetwork : MonoBehaviour
                         if (itemTileType == "ruin")
                         {
 
-                            Ruin newRuin = Instantiate(WorldGenerator.Instance.m_ruinPrefab, transform);
+                            Ruin newRuin = Instantiate(WorldGenerator.Instance.RuinPrefab, transform);
                             newRuin.Initialise(tile.transform.position, z, 10, i, itemOwner);
                             newRuin.unique_id = int.Parse(itemID);
                             tile.SetTileObject(newRuin);
-                            WorldGenerator.Instance.m_allRuins.Add(newRuin);
+                            WorldGenerator.Instance.AllRuins.Add(newRuin);
 
                         }
                         i++;
