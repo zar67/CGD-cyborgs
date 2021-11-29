@@ -33,6 +33,7 @@ public class NetworkCommunication
         lock(m_rxQueue)
         {
             m_rxQueue.Add(_message);
+            Debug.Log("Rx: " + _message);
 		}
 	}
     public void AddToTxQueue(string _message)

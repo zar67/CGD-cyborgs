@@ -39,6 +39,7 @@ public class MyNetwork : MonoBehaviour
 
     string m_playerTurn = "";
     public static List<string> m_playerNames = new List<string>();
+    string m_hostName = "host";
 
     //
 	private void Awake()
@@ -150,13 +151,12 @@ public class MyNetwork : MonoBehaviour
         m_playerNames.Add(m_host.GetName());
 
         WorldGenerator.Instance.Generate();
-
+        
         if (m_host.GetClientCount() > 0)
         {
-            XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles());
+            XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles(), m_host.GetName());
             m_host.AddToTxQueue(mapDoc.OuterXml);
         }
-
         UnitFactory.Instance.SetUpPlayers(m_playerNames);
         WorldGenerator.Instance.SpawnUnitsOnStart();
         GameplayManager.Instance.ResetTurn();
@@ -316,6 +316,7 @@ public class MyNetwork : MonoBehaviour
                 else if(root.Name == "map")
                 {
                     int i = 0;
+                    m_playerNames.Add(root.Attributes["host"].Value);
                     foreach(XmlNode tileNode in root.ChildNodes)
                     {
                         string tileType = tileNode.Attributes["type"].Value;
@@ -353,6 +354,8 @@ public class MyNetwork : MonoBehaviour
                         }
                         i++;
 					}
+                    
+                    m_playerNames.Add(m_client.GetName());
                     UnitFactory.Instance.SetUpPlayers(m_playerNames);
                     WorldGenerator.Instance.SpawnUnitsOnStart();
                     WorldGenerator.Instance.DiscoverRuinTiles();

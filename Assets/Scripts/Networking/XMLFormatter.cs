@@ -138,11 +138,15 @@ public class XMLFormatter
 		return xmlDoc;
 	}
 
-	public static XmlDocument ConstructMapMessage(List<Tile> _allTiles)
+	public static XmlDocument ConstructMapMessage(List<Tile> _allTiles, string _hostName)
 	{
 		XmlDocument xmlDoc = new XmlDocument();
 		
 		XmlElement xmlNode = xmlDoc.CreateElement("map");
+		XmlAttribute hostAttrib = xmlDoc.CreateAttribute("host");
+		hostAttrib.Value = _hostName;
+		xmlNode.Attributes.Append(hostAttrib);
+
 		xmlDoc.AppendChild(xmlNode);
 
 		foreach(var tile in _allTiles)
@@ -173,6 +177,7 @@ public class XMLFormatter
 				Ruin ruin = (Ruin)tile.TileObject;
 				itemTypeAttrib.Value = "ruin";
 				idAttrib.Value = ruin.unique_id.ToString();
+				ownerAttrib.Value = ruin.m_playerOwner;
 			}
 			else if(tile.TileObject is Unit)
 			{
@@ -180,8 +185,6 @@ public class XMLFormatter
 				itemTypeAttrib.Value = "soldier";
 				idAttrib.Value = unit.GetID().ToString();
 			}
-			
-			ownerAttrib.Value = "";//host or client0
 
 			itemNode.Attributes.Append(itemTypeAttrib);
 			itemNode.Attributes.Append(ownerAttrib);
