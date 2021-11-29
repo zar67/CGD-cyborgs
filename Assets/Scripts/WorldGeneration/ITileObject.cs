@@ -1,10 +1,8 @@
-using System;
-
 public interface ITileObject : IWorldSelectable
 {
     Tile Tile
     {
-        get; 
+        get;
         set;
     }
 

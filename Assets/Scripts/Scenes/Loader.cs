@@ -1,69 +1,70 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public static class Loader
-{ 
-private class LoadingMonoBehaviour : MonoBehaviour { }
+{
+    private class LoadingMonoBehaviour : MonoBehaviour
+    {
+    }
 
 
     public enum Scene
-{
-    GameScene,
-    MainMenuScene,
-    CombatScene,
-    Loading,
-    
-}
-
-private static UnityAction OnLoaderCallback;
-private static AsyncOperation loadingAsyncOperation;
-
-public static void Load(Scene scene)
-{
-    OnLoaderCallback = () =>
     {
-        GameObject loadingGameObject = new GameObject("Loading Game Object");
-        loadingGameObject.AddComponent<LoadingMonoBehaviour>().StartCoroutine(LoadSceneAsync(scene));
+        GameScene,
+        MainMenuScene,
+        CombatScene,
+        Loading,
 
-    };
+    }
 
-    SceneManager.LoadScene(Scene.Loading.ToString());
-}
+    private static UnityAction OnLoaderCallback;
+    private static AsyncOperation loadingAsyncOperation;
 
-private static IEnumerator LoadSceneAsync(Scene scene)
-{
-    yield return null;
+    public static void Load(Scene scene)
+    {
+        OnLoaderCallback = () =>
+        {
+            var loadingGameObject = new GameObject("Loading Game Object");
+            loadingGameObject.AddComponent<LoadingMonoBehaviour>().StartCoroutine(LoadSceneAsync(scene));
 
-    AsyncOperation asyncOperation =  SceneManager.LoadSceneAsync(scene.ToString());
+        };
 
-    while(!asyncOperation.isDone)
+        SceneManager.LoadScene(Scene.Loading.ToString());
+    }
+
+    private static IEnumerator LoadSceneAsync(Scene scene)
     {
         yield return null;
-    }
-}
 
-public static float GetLoadingProgress()
-{
-    if(loadingAsyncOperation != null)
-    {
-        return loadingAsyncOperation.progress;
-    }
-    else
-    {
-        return 1f;
-    }
-}
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(scene.ToString());
 
-public static void LoaderCallback()
-{
-    if(OnLoaderCallback != null)
+        while (!asyncOperation.isDone)
+        {
+            yield return null;
+        }
+    }
+
+    public static float GetLoadingProgress()
     {
+        if (loadingAsyncOperation != null)
+        {
+            return loadingAsyncOperation.progress;
+        }
+        else
+        {
+            return 1f;
+        }
+    }
+
+    public static void LoaderCallback()
+    {
+        if (OnLoaderCallback != null)
+        {
             OnLoaderCallback();
             OnLoaderCallback = null;
+        }
     }
-}
 
 }

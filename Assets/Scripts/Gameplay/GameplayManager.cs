@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameplayManager : MonoBehaviour
@@ -12,27 +10,23 @@ public class GameplayManager : MonoBehaviour
     private bool thisPlayerInputEnabled = false;
     [SerializeField] private int turnTime = 90; //In seconds
     private float timerCurrent = 0;
-    [SerializeField] MyNetwork m_networkManager;
+    [SerializeField] private MyNetwork m_networkManager;
 
     //for turntesting
-    [SerializeField] GameObject image;
+    [SerializeField] private GameObject image;
 
     #region Singleton Setup
     private static GameplayManager _instance;
-    private GameplayManager() { }
-
-    public static GameplayManager Instance
+    private GameplayManager()
     {
-        get
-        {
-            return _instance;
-        }
     }
+
+    public static GameplayManager Instance => _instance;
     private void SingletonSetUp()
     {
         if (_instance != null && _instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         else
         {
@@ -51,7 +45,7 @@ public class GameplayManager : MonoBehaviour
 
     private void Start()
     {
-       
+
     }
 
     private void Update()
@@ -63,9 +57,9 @@ public class GameplayManager : MonoBehaviour
             ResetTurn(); //For Testing
         }*/
 
-        if(thisPlayerInputEnabled)
+        if (thisPlayerInputEnabled)
         {
-            if(timerCurrent > 0)
+            if (timerCurrent > 0)
             {
                 timerCurrent -= Time.deltaTime;
                 ui.SetTimerText(timerCurrent);
@@ -83,11 +77,11 @@ public class GameplayManager : MonoBehaviour
     public void ResetTurn()
     {
         thisPlayerInputEnabled = true;
-        timerCurrent = (float)turnTime;
+        timerCurrent = turnTime;
         ui.SetTurnText(thisPlayerInputEnabled);
         ui.SetTimerText(timerCurrent);
         UnitFactory.Instance.ResetTurn();
         image.SetActive(true);
-        
+
     }
 }

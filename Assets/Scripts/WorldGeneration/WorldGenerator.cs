@@ -31,21 +31,17 @@ public class WorldGenerator : MonoBehaviour
 
     #region Singleton Setup
     private static WorldGenerator _instance;
-    private WorldGenerator() { }
-
-    public static WorldGenerator Instance
+    private WorldGenerator()
     {
-        get
-        {
-            return _instance;
-        }
     }
+
+    public static WorldGenerator Instance => _instance;
 
     private void SingletonSetUp()
     {
         if (_instance != null && _instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         else
         {
@@ -137,7 +133,7 @@ public class WorldGenerator : MonoBehaviour
 
     public IEnumerable<Tile> GetTilesInRange(Tile startingTile, int range)
     {
-        foreach(var tile in m_worldTiles)
+        foreach (Tile tile in m_worldTiles)
         {
             if (HexCoordinates.Distance(startingTile, tile) <= range)
             {
@@ -159,7 +155,7 @@ public class WorldGenerator : MonoBehaviour
         {
             for (int x = 0; x < m_worldWidth; x++)
             {
-                var newTile = Instantiate(m_tilePrefab, transform);
+                Tile newTile = Instantiate(m_tilePrefab, transform);
                 newTile.Initialise(i++, x - (z / 2), z, m_tileOuterRadius, m_worldWidth, m_worldHeight);
 
                 SetNeighbours(x - (z / 2), z, newTile);
@@ -234,11 +230,11 @@ public class WorldGenerator : MonoBehaviour
 
     public void DiscoverRuinTiles()
     {
-        foreach (var ruin in m_allRuins)
+        foreach (Ruin ruin in m_allRuins)
         {
             if (ruin.m_playerOwner == (MyNetwork.m_isHost ? MyNetwork.m_playerNames[0] : MyNetwork.m_playerNames[1]))
             {
-                foreach (var tile in GetTilesInRange(ruin.Tile, Ruin.RUIN_SIGHT))
+                foreach (Tile tile in GetTilesInRange(ruin.Tile, Ruin.RUIN_SIGHT))
                 {
                     tile.Discover();
                 }
@@ -276,7 +272,7 @@ public class WorldGenerator : MonoBehaviour
 
     public void SpawnUnitsOnStart()
     {
-        foreach (var ruin in m_allRuins)
+        foreach (Ruin ruin in m_allRuins)
         {
             if (ruin.m_playerOwner != "")
             {
@@ -351,5 +347,8 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    public List<Tile> GetTiles(){return m_worldTiles;}
+    public List<Tile> GetTiles()
+    {
+        return m_worldTiles;
+    }
 }

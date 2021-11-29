@@ -5,7 +5,7 @@ public class CameraController : MonoBehaviour
     public float panSpeed = 20f;
     public float panBorderThickness = 10f;
     public Vector2 panLimit;
-    public float scroll= 8;
+    public float scroll = 8;
     public Camera m_OrthographicCamera;
 
     public float minFOV;
@@ -14,11 +14,12 @@ public class CameraController : MonoBehaviour
     public float FOV;
 
     public int scrollSpeed = 1;
+
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Vector3 pos = transform.position;
-        if(Input.GetKey("w") || Input.mousePosition.y >= Screen.height - panBorderThickness)
+        if (Input.GetKey("w") || Input.mousePosition.y >= Screen.height - panBorderThickness)
         {
             pos.y += panSpeed * Time.deltaTime;
         }

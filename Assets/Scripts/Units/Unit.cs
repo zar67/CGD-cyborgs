@@ -1,9 +1,8 @@
-using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Linq;
 
 public class Unit : MonoBehaviour, ITileObject
 {
@@ -83,7 +82,10 @@ public class Unit : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
-    public int GetID(){return ruinId;}
+    public int GetID()
+    {
+        return ruinId;
+    }
     public void SetUpUnit(Tile tile, int _ruinId, string _playerId = "", int spriteToUse = 0)
     {
         ruinId = _ruinId;
@@ -100,7 +102,7 @@ public class Unit : MonoBehaviour, ITileObject
     public void SetHealth(int _health)
     {
         unitStats.health = _health;
-	}
+    }
 
     public void SetUpPlayerId(string _playerId)
     {
@@ -121,7 +123,10 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void Select()
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
 
         if (specialClick)
         {
@@ -140,7 +145,11 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
+
         if (eventData.button == PointerEventData.InputButton.Left && !(WorldSelection.SelectedObject is Unit && ((Unit)WorldSelection.SelectedObject).Attacking))
         {
             specialClick = false;
@@ -173,7 +182,11 @@ public class Unit : MonoBehaviour, ITileObject
 
     private void OnSelectionChange(object sender, WorldSelection.SelectionChangedData data)
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
+
         if (data.Previous == this && !specialClick && data.Current is Tile current)
         {
             if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(Tile, current, traversibleTerrain.ToList(), out List<Tile> path))
@@ -189,7 +202,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     #endregion
 
-    bool CanGoOnTile(TerrainType terrainType)
+    private bool CanGoOnTile(TerrainType terrainType)
     {
         foreach (TerrainType t in traversibleTerrain)
         {
@@ -244,7 +257,7 @@ public class Unit : MonoBehaviour, ITileObject
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
-        if (id == this.ruinId)
+        if (id == ruinId)
         {
             EventManager.instance.OnRespawn(id);
             Destroy(gameObject);

@@ -1,7 +1,7 @@
-using UnityEngine;
-using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Ruin : MonoBehaviour, ITileObject
 {
@@ -12,7 +12,7 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public string m_playerOwner = "";
     public int unique_id;
-    bool test = false;
+    private bool test = false;
 
     private bool hasUnit = false;
     private Unit ruinUnit;

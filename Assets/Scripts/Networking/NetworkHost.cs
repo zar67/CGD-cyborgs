@@ -1,20 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using UnityEngine;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Text;
+using System.Threading;
 using System.Xml;
+using UnityEngine;
 
 public class NetworkHost : NetworkCommunication
 {
-    List<NetworkClient> m_allClients;
-    TcpListener m_server;
-    
-    string m_hostName = "";
-    public NetworkHost(string _port) : base ("", _port)
+    private List<NetworkClient> m_allClients;
+    private TcpListener m_server;
+    private string m_hostName = "";
+    public NetworkHost(string _port) : base("", _port)
     {
         m_allClients = new List<NetworkClient>();
 
@@ -23,23 +20,23 @@ public class NetworkHost : NetworkCommunication
 
         m_server = new TcpListener(IPAddress.Parse(m_ip), int.Parse(m_port));
 
-        Thread serverThread = new Thread(new ThreadStart(Listen));
+        var serverThread = new Thread(new ThreadStart(Listen));
         serverThread.Start();
 
-        Thread commsThread  = new Thread(new ThreadStart(ClientCommunication));
+        var commsThread = new Thread(new ThreadStart(ClientCommunication));
         commsThread.Start();
-	}
+    }
 
     public int GetClientCount()
     {
         return m_allClients.Count;
     }
 
-    void SetIP()
+    private void SetIP()
     {
         IPAddress[] allIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
-        foreach (var ip in allIPs)
+        foreach (IPAddress ip in allIPs)
         {
             if (ip.AddressFamily == AddressFamily.InterNetwork)
             {
@@ -47,10 +44,10 @@ public class NetworkHost : NetworkCommunication
 
             }
         }
-	}
+    }
 
     //Listen for new clients
-    void Listen()
+    private void Listen()
     {
         // Start listening for client requests.
         m_server.Start();
@@ -63,8 +60,10 @@ public class NetworkHost : NetworkCommunication
             TcpClient c = m_server.AcceptTcpClient();
             m_allClients.Add(new NetworkClient(c));
 
-            XMLFormatter.MessageData msgData = new XMLFormatter.MessageData();
-            msgData.messageType = XMLFormatter.MessageType.msCLIENT_CONNECT;
+            var msgData = new XMLFormatter.MessageData
+            {
+                messageType = XMLFormatter.MessageType.msCLIENT_CONNECT
+            };
             XmlDocument xmlBlob = XMLFormatter.ConstructMessage(msgData);
             AddToTxQueue(xmlBlob.OuterXml);
 
@@ -77,15 +76,15 @@ public class NetworkHost : NetworkCommunication
                 Debug.Log("Completed!");*/
             Debug.Log("Completed!");
 
-           
+
             //Thread.Sleep(10);
-		}   
-	}
+        }
+    }
 
     //Listen for client communication
-    void ClientCommunication()
+    private void ClientCommunication()
     {
-        while(true)
+        while (true)
         {
             /*foreach(TcpClient client in m_allClients)
             {
@@ -102,74 +101,76 @@ public class NetworkHost : NetworkCommunication
 		        }
 			}*/
 
-            foreach(var client in m_allClients)
+            foreach (NetworkClient client in m_allClients)
             {
-                if(client.IsConnected())
+                if (client.IsConnected())
                 {
                     NetworkStream stream = client.GetStream();
-                    if(stream != null)
+                    if (stream != null)
                     {
-                        if(stream.DataAvailable)
+                        if (stream.DataAvailable)
                         {
                             //check for messages from client
-                            if(stream.CanRead)
+                            if (stream.CanRead)
                             {
                                 int bytesRecived = stream.Read(m_buffer, 0, m_buffer.Length);
-                                if(bytesRecived > 0)
+                                if (bytesRecived > 0)
                                 {
                                     string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
-                                    lock(m_rxQueue)
+                                    lock (m_rxQueue)
                                     {
                                         m_rxQueue.Add(msg);
-			                        }
+                                    }
                                     Debug.Log("Added To rx: " + msg);
-		                        }
-							}
+                                }
+                            }
                         }
-                            //check if send 
-                        List<string> txQueueTemp = new List<string>();
-                        lock(m_txQueue)
+                        //check if send 
+                        var txQueueTemp = new List<string>();
+                        lock (m_txQueue)
                         {
-                            foreach(var tx in m_txQueue)
+                            foreach (string tx in m_txQueue)
                             {
                                 txQueueTemp.Add(tx);
-			                }
+                            }
                             m_txQueue.Clear();
-		                }
+                        }
 
-                        foreach(var msg in txQueueTemp)
+                        foreach (string msg in txQueueTemp)
                         {
                             byte[] byteMsg = Encoding.ASCII.GetBytes(msg);
-                            if(stream != null)
+                            if (stream != null)
+                            {
                                 stream.Write(byteMsg, 0, msg.Length);
-		                }
-						
-                    }
-			    }
-            }
-            
-            Thread.Sleep(10);
-		}
-	}
+                            }
+                        }
 
-    void Send(ref NetworkStream _stream)
+                    }
+                }
+            }
+
+            Thread.Sleep(10);
+        }
+    }
+
+    private void Send(ref NetworkStream _stream)
     {
 
-	}
+    }
 
-    void Recieve(ref NetworkStream _stream)
+    private void Recieve(ref NetworkStream _stream)
     {
         int bytesRecived = _stream.Read(m_buffer, 0, m_buffer.Length);
-        if(bytesRecived > 0)
+        if (bytesRecived > 0)
         {
             string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
-            lock(m_rxQueue)
+            lock (m_rxQueue)
             {
                 m_rxQueue.Add(msg);
-			}
+            }
             Debug.Log("Added To rx: " + msg);
-		}
-	}
+        }
+    }
 }
 
 

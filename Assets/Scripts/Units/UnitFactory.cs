@@ -1,7 +1,6 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public class UnitFactory : MonoBehaviour
 {
@@ -46,21 +45,17 @@ public class UnitFactory : MonoBehaviour
 
     #region Singleton Setup
     private static UnitFactory _instance;
-    private UnitFactory() { }
-
-    public static UnitFactory Instance
+    private UnitFactory()
     {
-        get
-        {
-            return _instance;
-        }
     }
+
+    public static UnitFactory Instance => _instance;
 
     private void Awake()
     {
         if (_instance != null && _instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         else
         {
@@ -72,12 +67,12 @@ public class UnitFactory : MonoBehaviour
     #endregion
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         SetUpDictionaries();
     }
 
-    void SetUpDictionaries()
+    private void SetUpDictionaries()
     {
         spritesToUseForPlayer = new Dictionary<string, int>();
         unitPrefabs = new Dictionary<Unit.UnitTypes, GameObject>();
