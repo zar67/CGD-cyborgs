@@ -12,4 +12,6 @@ public interface ITileObject : IWorldSelectable
     {
         get;
     }
-}
+
+    void Show(bool show);
+};

@@ -131,4 +131,9 @@ public class Ruin : MonoBehaviour, ITileObject
             hasUnit = true;
         }
     }
+
+    public void Show(bool show)
+    {
+        m_ruinSpriteRenderer.enabled = show;
+    }
 }

@@ -236,9 +236,16 @@ public class WorldGenerator : MonoBehaviour
     {
         foreach (var ruin in m_allRuins)
         {
-            foreach (var tile in GetTilesInRange(ruin.Tile, Ruin.RUIN_SIGHT))
+            if (ruin.m_playerOwner == (MyNetwork.m_isHost ? MyNetwork.m_playerNames[0] : MyNetwork.m_playerNames[1]))
             {
-                tile.Discover();
+                foreach (var tile in GetTilesInRange(ruin.Tile, Ruin.RUIN_SIGHT))
+                {
+                    tile.Discover();
+                }
+            }
+            else
+            {
+                ruin.Show(false);
             }
         }
     }
@@ -262,11 +269,9 @@ public class WorldGenerator : MonoBehaviour
             m_worldTiles[index].SetTileObject(newRuin);
             m_allRuins.Add(newRuin);
 
-            foreach (var tile in GetTilesInRange(newRuin.Tile, Ruin.RUIN_SIGHT))
-            {
-                tile.Discover();
-            }
         }
+
+        DiscoverRuinTiles();
     }
 
     public void SpawnUnitsOnStart()
