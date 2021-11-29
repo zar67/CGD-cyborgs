@@ -89,6 +89,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         m_fogSpriteRenderer.enabled = !discovered;
         m_tileSpriteRenderer.enabled = discovered;
+
+        if (TileObject != null)
+        {
+            TileObject.Show(discovered);
+        }
     }
 
     public void SetTileObject(ITileObject obj)

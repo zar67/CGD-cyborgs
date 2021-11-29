@@ -211,9 +211,12 @@ public class Unit : MonoBehaviour, ITileObject
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
 
-        foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+        if (playerId == (MyNetwork.m_isHost ? MyNetwork.m_playerNames[0] : MyNetwork.m_playerNames[1]))
         {
-            tile.Discover();
+            foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+            {
+                tile.Discover();
+            }
         }
         XMLFormatter.AddPositionChange(this);
     }
@@ -272,5 +275,10 @@ public class Unit : MonoBehaviour, ITileObject
     {
         movementLeft = 0;
         attacksLeft = 0;
+    }
+
+    public void Show(bool show)
+    {
+        unitSprite.enabled = show;
     }
 }
