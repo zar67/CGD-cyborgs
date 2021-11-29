@@ -188,6 +188,7 @@ public class XMLFormatter
 			itemNode.Attributes.Append(idAttrib);
 		}
 
+		Debug.Log(xmlDoc.OuterXml);
 		return xmlDoc;
 	}
 

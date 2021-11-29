@@ -40,6 +40,7 @@ public class NetworkCommunication
         lock(m_txQueue)
         {
             m_txQueue.Add(_message);
+            Debug.Log("Tx: " + _message);
 		}
 	}
 

@@ -215,6 +215,7 @@ public class Unit : MonoBehaviour, ITileObject
         {
             tile.Discover();
         }
+        XMLFormatter.AddPositionChange(this);
     }
 
     public void HasAttacked()

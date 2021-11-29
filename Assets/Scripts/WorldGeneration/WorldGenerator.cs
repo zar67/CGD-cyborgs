@@ -232,6 +232,17 @@ public class WorldGenerator : MonoBehaviour
         return landBudget;
     }
 
+    public void DiscoverRuinTiles()
+    {
+        foreach (var ruin in m_allRuins)
+        {
+            foreach (var tile in GetTilesInRange(ruin.Tile, Ruin.RUIN_SIGHT))
+            {
+                tile.Discover();
+            }
+        }
+    }
+
     private void GenerateRuins()
     {
         for (int i = 0; i < m_ruinNumber; i++)

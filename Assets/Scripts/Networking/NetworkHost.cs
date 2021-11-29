@@ -30,7 +30,10 @@ public class NetworkHost : NetworkCommunication
         commsThread.Start();
 	}
 
-    
+    public int GetClientCount()
+    {
+        return m_allClients.Count;
+    }
 
     void SetIP()
     {

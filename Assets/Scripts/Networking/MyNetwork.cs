@@ -149,13 +149,13 @@ public class MyNetwork : MonoBehaviour
         m_playerTurn = m_host.GetName();
         m_playerNames.Add(m_host.GetName());
 
-        if (m_client != null)
+        WorldGenerator.Instance.Generate();
+
+        if (m_host.GetClientCount() > 0)
         {
             XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles());
             m_host.AddToTxQueue(mapDoc.OuterXml);
         }
-
-        WorldGenerator.Instance.Generate();
 
         UnitFactory.Instance.SetUpPlayers(m_playerNames);
         WorldGenerator.Instance.SpawnUnitsOnStart();
@@ -328,6 +328,7 @@ public class MyNetwork : MonoBehaviour
                         string[] coords = tileCoord.Split(',');
                         int x = int.Parse(coords[0]);
                         int z = int.Parse(coords[2]);
+                        
                         Tile tile = GameObject.Instantiate(WorldGenerator.Instance.m_tilePrefab, Vector3.zero, Quaternion.identity);
                         WorldGenerator.Instance.m_worldTiles.Add(tile);
                         tile.Terrain = GetTerrain(tileType);
@@ -348,10 +349,14 @@ public class MyNetwork : MonoBehaviour
                             newRuin.Initialise(tile.transform.position, z, 10, i, itemOwner);
                             tile.SetTileObject(newRuin);
                             WorldGenerator.Instance.m_allRuins.Add(newRuin);
-						}
+
+                        }
                         i++;
 					}
-				}
+                    UnitFactory.Instance.SetUpPlayers(m_playerNames);
+                    WorldGenerator.Instance.SpawnUnitsOnStart();
+                    WorldGenerator.Instance.DiscoverRuinTiles();
+                }
 			}
         }
 	}
