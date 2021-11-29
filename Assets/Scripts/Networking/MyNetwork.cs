@@ -16,16 +16,16 @@ public class MyNetwork : MonoBehaviour
     //host
     [SerializeField] GameObject m_hostInfo;
     [SerializeField] GameObject m_clientListContent;
-    TextMeshProUGUI m_ipText;
-    TMP_InputField m_nameInputHost;
-    UnityEngine.UI.Button m_startGameBttn;
+    [SerializeField] TextMeshProUGUI m_ipText;
+    [SerializeField] TMP_InputField m_nameInputHost;
+    [SerializeField] UnityEngine.UI.Button m_startGameBttn;
     
     //client
     [SerializeField] GameObject m_clientInfo;
-    TMP_InputField m_ipInput;
-    TMP_InputField m_nameInputClient;
-    UnityEngine.UI.Button m_connectToHostBttn;
-    TextMeshProUGUI m_conectedTxt;
+    [SerializeField] TMP_InputField m_ipInput;
+    [SerializeField] TMP_InputField m_nameInputClient;
+    [SerializeField] UnityEngine.UI.Button m_connectToHostBttn;
+    [SerializeField] TextMeshProUGUI m_conectedTxt;
     
     //World gen
     [SerializeField] GameObject m_worldGeneration;
@@ -47,16 +47,9 @@ public class MyNetwork : MonoBehaviour
 		m_hostButton.onClick.AddListener(delegate{SetHost();});
         m_clientButton.onClick.AddListener(delegate{SetClient();});
 
-        m_ipText = m_hostInfo.transform.Find("MyIP").GetComponent<TextMeshProUGUI>();
-        m_nameInputHost = m_hostInfo.transform.Find("Name_InputField (2)").GetComponent<TMP_InputField>();
-        m_startGameBttn = m_hostInfo.transform.Find("StartGameBttn").GetComponent<UnityEngine.UI.Button>();
         m_startGameBttn.onClick.AddListener(delegate{StartGame();});
 
-        m_ipInput = m_clientInfo.transform.Find("IP_InputField").GetComponent<TMP_InputField>();
-        m_nameInputClient = m_clientInfo.transform.Find("Name_InputField (1)").GetComponent<TMP_InputField>();
-        m_connectToHostBttn = m_clientInfo.transform.Find("ConnectToHost").GetComponent<UnityEngine.UI.Button>();
         m_connectToHostBttn.onClick.AddListener(delegate{ ConnectToHost(m_nameInputClient.text, m_ipInput.text);});
-        m_conectedTxt = m_clientInfo.transform.Find("ConnectedTxt").GetComponent<TextMeshProUGUI>();
 	}
 
     public TerrainType GetTerrain(string _item)
