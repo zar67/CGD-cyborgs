@@ -97,6 +97,7 @@ public class Unit : MonoBehaviour, ITileObject
 
         //Testing
         ResetTurn();
+        Show(false);
     }
 
     public void SetHealth(int _health)
