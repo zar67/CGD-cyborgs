@@ -79,19 +79,22 @@ public class XMLFormatter
 		m_TurnHistory.Add(new TurnData(typeStr, id, data));
 	}
 
-	private static void ConstructTurnXML(ref XmlDocument _xmlDoc, ref XmlElement _xmlParent, XmlAttribute _typeAttrib, XmlAttribute _idAttrib, XmlAttribute _dataAttrib)
+	private static void ConstructTurnXML(ref XmlDocument _xmlDoc, ref XmlElement _xmlParent)
 	{
 		foreach(TurnData change in m_TurnHistory)
 		{
 			XmlElement cNode = _xmlDoc.CreateElement("update");
-			_typeAttrib.Value = change.m_turnType;
-			_idAttrib.Value = change.m_id;
-			_dataAttrib.Value = change.m_data;
-			cNode.Attributes.Append(_typeAttrib);
-			cNode.Attributes.Append(_idAttrib);
-			cNode.Attributes.Append(_dataAttrib);
+			XmlAttribute typeAttrib = _xmlDoc.CreateAttribute("type");
+			XmlAttribute idAttrib = _xmlDoc.CreateAttribute("id");
+			XmlAttribute dataAttrib = _xmlDoc.CreateAttribute("data");
+			typeAttrib.Value = change.m_turnType;
+			idAttrib.Value = change.m_id;
+			dataAttrib.Value = change.m_data;
+			cNode.Attributes.Append(typeAttrib);
+			cNode.Attributes.Append(idAttrib);
+			cNode.Attributes.Append(dataAttrib);
 
-			_xmlParent.AppendChild(_xmlParent);
+			_xmlParent.AppendChild(cNode);
 		}
 
 		m_TurnHistory.Clear();
@@ -125,7 +128,7 @@ public class XMLFormatter
 			{
 				typeAttrib.Value = "endturn";
 				idAttrib.Value = _msgData.clientName;
-				ConstructTurnXML(ref xmlDoc, ref xmlNode, typeAttrib, idAttrib, dataAttrib);
+				ConstructTurnXML(ref xmlDoc, ref xmlNode);
 			}break;
 		}
 
