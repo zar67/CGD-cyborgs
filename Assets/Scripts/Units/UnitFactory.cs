@@ -75,16 +75,6 @@ public class UnitFactory : MonoBehaviour
     void Start()
     {
         SetUpDictionaries();
-
-        //TESTING
-        List<string> playerIds = new List<string>();
-        playerIds.Add("0");
-        playerIds.Add("1");
-        playerIds.Add("2");
-        playerIds.Add("3");
-
-        SetUpPlayers(playerIds);
-        SpawnUnits();
     }
 
     void SetUpDictionaries()
@@ -132,14 +122,6 @@ public class UnitFactory : MonoBehaviour
 
     #endregion
 
-    //Test function (just creates units at the start of the game)
-    void SpawnUnits()
-    {
-        //CreateUnitOnTile(Unit.UnitTypes.SOLDIER, t_WG.GetTileAtCoordinate(new HexCoordinates(5, 4)));
-        //CreateUnitOnTile(Unit.UnitTypes.TANK, t_WG.GetTileAtCoordinate(new HexCoordinates(8, 4)));
-        //CreateUnitOnTile(Unit.UnitTypes.PLANE, t_WG.GetTileAtCoordinate(new HexCoordinates(1, 9)));
-    }
-
     //Resets turn for all units;
     public void ResetTurn()
     {
@@ -157,6 +139,12 @@ public class UnitFactory : MonoBehaviour
             Debug.LogError("Trying to create a unit on a tile with another unit!");
             return null;
         }
+
+        if (playerId == "")
+        {
+            return null;
+        }
+
         GameObject u = Instantiate(unitPrefabs[unitType]);
         u.GetComponent<Unit>().SetUpUnit(tile, ruinId, playerId, spritesToUseForPlayer[playerId]);
 

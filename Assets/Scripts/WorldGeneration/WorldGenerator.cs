@@ -242,15 +242,30 @@ public class WorldGenerator : MonoBehaviour
             {
                 index = Random.Range(0, m_worldTiles.Count - 1);
             }
-
+            string playerName = "";
+            if (i < MyNetwork.m_playerNames.Count)
+            {
+                playerName = MyNetwork.m_playerNames[i];
+            }
             Ruin newRuin = Instantiate(m_ruinPrefab, transform);
-            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight, i);
+            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight, i, playerName);
             m_worldTiles[index].SetTileObject(newRuin);
             m_allRuins.Add(newRuin);
 
             foreach (var tile in GetTilesInRange(newRuin.Tile, Ruin.RUIN_SIGHT))
             {
                 tile.Discover();
+            }
+        }
+    }
+
+    public void SpawnUnitsOnStart()
+    {
+        foreach (var ruin in m_allRuins)
+        {
+            if (ruin.m_playerOwner != "")
+            {
+                ruin.SpawnUnit();
             }
         }
     }

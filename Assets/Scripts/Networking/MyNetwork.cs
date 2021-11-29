@@ -43,7 +43,7 @@ public class MyNetwork : MonoBehaviour
     string hostIP = "";
 
     string m_playerTurn = "";
-    List<string> m_playerNames = new List<string>();
+    public static List<string> m_playerNames = new List<string>();
 
     //
 	private void Awake()
@@ -92,10 +92,6 @@ public class MyNetwork : MonoBehaviour
         m_clientButton.gameObject.SetActive(false);
         m_hostInfo.SetActive(true);
         
-       
-
-       WorldGenerator.Instance.Generate();
-      
         //StartCoroutine(run_cmd());
        // m_host = new Host(m_nameInputHost.text, m_port, myIP, clientListContent, ref m_conectedTxt);
        // hostIP = myIP.ToString();
@@ -144,6 +140,7 @@ public class MyNetwork : MonoBehaviour
        _ip = hostIP;
        m_client = new NetworkClient(_ip , m_port.ToString());
        m_client.SetName(m_nameInputClient.text);
+       //m_playerNames.Add(m_client.GetName());
        
         //m_client = new Client(_ip, m_port, _name, ref m_conectedTxt);
         //StartCoroutine(m_client.ListenForMessage());
@@ -155,9 +152,18 @@ public class MyNetwork : MonoBehaviour
         if(m_host.GetName() == "")
             return;
         m_playerTurn = m_host.GetName();
-        XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles());
-        m_host.AddToTxQueue(mapDoc.OuterXml);
+        m_playerNames.Add(m_host.GetName());
 
+        if (m_client != null)
+        {
+            XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles());
+            m_host.AddToTxQueue(mapDoc.OuterXml);
+        }
+
+        WorldGenerator.Instance.Generate();
+
+        UnitFactory.Instance.SetUpPlayers(m_playerNames);
+        WorldGenerator.Instance.SpawnUnitsOnStart();
         GameplayManager.Instance.ResetTurn();
 	}
 
@@ -291,7 +297,8 @@ public class MyNetwork : MonoBehaviour
                         item.transform.SetParent(m_clientListContent.transform);
                         item.GetComponent<TextMeshProUGUI>().text = messageID;
                         item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
-				    }
+                        m_playerNames.Add(messageID);
+                    }
 				}
 			}
             //CLIENT ONLY
@@ -339,8 +346,9 @@ public class MyNetwork : MonoBehaviour
 
                         if(itemTileType == "ruin")
                         {
+                            
                             Ruin newRuin = Instantiate(WorldGenerator.Instance.m_ruinPrefab, transform);
-                            newRuin.Initialise(tile.transform.position, z, 10, i);
+                            newRuin.Initialise(tile.transform.position, z, 10, i, itemOwner);
                             tile.SetTileObject(newRuin);
                             WorldGenerator.Instance.m_allRuins.Add(newRuin);
 						}

@@ -25,18 +25,13 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => new TerrainType[0];
 
-    private void Start()
-    {
-        EventManager.instance.Respawn += TestSpawn; 
-    }
-
-    public void Initialise(Vector3 position, int z, int worldHeight, int id)
+    public void Initialise(Vector3 position, int z, int worldHeight, int ruinID, string playerID)
     {
         transform.position = position;
         m_ruinSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 1;
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
-        unique_id = id;
-        m_playerOwner = id.ToString();
+        unique_id = ruinID;
+        m_playerOwner = playerID;
     }
 
     public void Select()
@@ -110,24 +105,12 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.enabled = false;
     }
 
-    void Update()
-    {
-        if (test == false)
-        {
-            TestSpawn(unique_id);
-            test = true;
-        }
-    }
-
-    public void TestSpawn(int id)
+    public void SpawnUnit()
     {
         if (Tile.TileObject != null)
         {
-            if (id == this.unique_id)
-            {
-                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-                hasUnit = true;
-            }
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            hasUnit = true;
         }
     }
 
