@@ -67,7 +67,7 @@ public class WorldGenerator : MonoBehaviour
         return GetTileAtCoordinate(HexCoordinates.Add(HexCoordinates.GetCoordinateRotatedInDirection(attackPattern.moveAttack, (int)direction), start));
     }
 
-    public static bool GetPath(Tile start, Tile destination, List<TerrainType> validTerrain, out List<Tile> path)
+    public static bool GetPath(Tile start, Tile destination, List<TerrainType> validTerrain, out List<Tile> path, bool isRuin = false)
     {
         var openTiles = new Queue<Tile>();
         openTiles.Enqueue(start);
@@ -98,7 +98,7 @@ public class WorldGenerator : MonoBehaviour
                 int distance = scoreMap[current] + neighbour.Value.DistanceValue;
 
                 if ((!scoreMap.ContainsKey(neighbour.Value) || distance < scoreMap[neighbour.Value]) &&
-                    neighbour.Value.TileObject == null &&
+                    (neighbour.Value.TileObject == null || (isRuin && neighbour.Value.TileObject is Ruin)) &&
                     validTerrain.Contains(neighbour.Value.Terrain))
                 {
                     previousMap[neighbour.Value] = current;

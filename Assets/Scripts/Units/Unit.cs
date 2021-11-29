@@ -7,10 +7,21 @@ using System.Linq;
 
 public class Unit : MonoBehaviour, ITileObject
 {
+    #region UnityTypes enum and UnitDamage/UnitStats structs
+
     [Serializable]
     public enum UnitTypes
     {
         SOLDIER,
+        TANK,
+        PLANE
+    }
+
+    [Serializable]
+    public struct UnitDamage
+    {
+        public UnitTypes againstType;
+        public int damage;
     }
 
     [Serializable]
@@ -18,12 +29,32 @@ public class Unit : MonoBehaviour, ITileObject
     {
         public int health;
         public int movementSpeed;
-        public int damage;
+        public int defaultDamage;
+        public List<UnitDamage> damages;
         public int sight;
+
+        public int GetDamage(UnitTypes type)
+        {
+            foreach (UnitDamage dmg in damages)
+            {
+                if (dmg.againstType == type)
+                {
+                    return dmg.damage;
+                }
+            }
+            return defaultDamage;
+        }
     }
 
+    #endregion
+
+    [Header("Sprites")]
     [SerializeField] private SpriteRenderer unitSprite;
+    [SerializeField] private List<Sprite> playerSprites;
+
+    [Header("Unit type")]
     [SerializeField] private UnitTypes unitType;
+
     private TerrainType[] traversibleTerrain;
 
     private int movementLeft = 0;
@@ -53,12 +84,13 @@ public class Unit : MonoBehaviour, ITileObject
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
     public int GetID(){return ruinId;}
-    public void SetUpUnit(Tile tile, int _ruinId)
+    public void SetUpUnit(Tile tile, int _ruinId, string _playerId = "", int spriteToUse = 0)
     {
         ruinId = _ruinId;
         tile.SetTileObject(this);
         unitStats = UnitFactory.Instance.GetBaseUnitStats(unitType);
         traversibleTerrain = UnitFactory.Instance.GetTraversableTerrain(unitType).ToArray();
+        RuinTakenOver(_playerId, spriteToUse);
         MoveToTile(tile);
 
         //Testing
@@ -73,6 +105,11 @@ public class Unit : MonoBehaviour, ITileObject
     public void SetUpPlayerId(string _playerId)
     {
         playerId = _playerId;
+    }
+
+    public string GetPlayerId()
+    {
+        return playerId;
     }
 
     public bool isPlayer(string id)
@@ -107,7 +144,7 @@ public class Unit : MonoBehaviour, ITileObject
         if (eventData.button == PointerEventData.InputButton.Left && !(WorldSelection.SelectedObject is Unit && ((Unit)WorldSelection.SelectedObject).Attacking))
         {
             specialClick = false;
-            WorldSelection.ChangeSelection(this);
+            WorldSelection.ChangeSelection(WorldSelection.SelectedObject == this ? null : this);
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
             WorldSelection.SelectedObject == this)
@@ -195,12 +232,10 @@ public class Unit : MonoBehaviour, ITileObject
             OnDeath(ruinId);
         }
         Debug.Log(unitStats.health + " : took " + dmg + " dmg");
-        OnDeath(ruinId);
     }
 
     public void OnDeath(int id)
     {
-
         Tile.UnSetTileObject();
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
@@ -209,9 +244,7 @@ public class Unit : MonoBehaviour, ITileObject
         {
             EventManager.instance.OnRespawn(id);
             Destroy(gameObject);
-
         }
-        // TODO call ruin death script;
     }
 
     public void Respawn(Tile tile)
@@ -226,5 +259,17 @@ public class Unit : MonoBehaviour, ITileObject
     {
         movementLeft = Stats.movementSpeed;
         attacksLeft = 1;
+    }
+
+    public void RuinTakenOver(string newPlayerId, int newSprite = 0)
+    {
+        playerId = newPlayerId;
+        unitSprite.sprite = playerSprites[newSprite];
+    }
+
+    public void NullTurn()
+    {
+        movementLeft = 0;
+        attacksLeft = 0;
     }
 }

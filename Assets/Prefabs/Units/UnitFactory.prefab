@@ -47,9 +47,13 @@ MonoBehaviour:
   stats:
   - type: 0
     stats:
-      health: 2
-      movementSpeed: 50
-      damage: 1
+      health: 3
+      movementSpeed: 5
+      defaultDamage: 1
+      damages:
+      - againstType: 2
+        damage: 2
+      sight: 5
     attackPattern:
       attackPattern:
       - X: 1
@@ -57,6 +61,9 @@ MonoBehaviour:
         Z: 1
       - X: -1
         Y: -1
+        Z: 2
+      - X: 0
+        Y: -2
         Z: 2
       moveAttack:
         X: 0
@@ -67,6 +74,69 @@ MonoBehaviour:
         Y: 0
         Z: 0
     traversibleTerrain: 010000000300000002000000
+  - type: 1
+    stats:
+      health: 5
+      movementSpeed: 2
+      defaultDamage: 2
+      damages:
+      - againstType: 0
+        damage: 3
+      sight: 3
+    attackPattern:
+      attackPattern:
+      - X: 0
+        Y: -1
+        Z: 1
+      - X: -1
+        Y: 0
+        Z: 1
+      - X: 1
+        Y: -1
+        Z: 0
+      - X: 0
+        Y: -2
+        Z: 2
+      moveAttack:
+        X: 0
+        Y: 0
+        Z: 0
+      ennemyMove:
+        X: 0
+        Y: 0
+        Z: 0
+    traversibleTerrain: 010000000300000002000000
+  - type: 2
+    stats:
+      health: 2
+      movementSpeed: 7
+      defaultDamage: 1
+      damages:
+      - againstType: 1
+        damage: 2
+      sight: 7
+    attackPattern:
+      attackPattern:
+      - X: 0
+        Y: -1
+        Z: 1
+      - X: 0
+        Y: -2
+        Z: 2
+      moveAttack:
+        X: 0
+        Y: -3
+        Z: 3
+      ennemyMove:
+        X: 0
+        Y: 0
+        Z: 0
+    traversibleTerrain: 01000000030000000200000000000000
   prefabs:
   - type: 0
     prefab: {fileID: 5350829030303751056, guid: 36362d325e08c0d499d239822908fd11, type: 3}
+  - type: 1
+    prefab: {fileID: 5350829030303751056, guid: 34ab61b6185ee4047a3e3db823ec1357, type: 3}
+  - type: 2
+    prefab: {fileID: 5350829030303751056, guid: 0233df43e57c6b64992fd8338df9f044, type: 3}
+  allUnits: []
