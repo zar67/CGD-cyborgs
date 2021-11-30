@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,8 +17,14 @@ public class TimedEvents : MonoBehaviour
             SaveReadWrite.ReadFromJSON();
             previousDate = SaveReadWrite.data.previousLoginDate;
 
-            if (currentDate != previousDate) ResetDailyChallenges();
-            else GlobalData.dailyChallenges = SaveReadWrite.data.dailyChallenges;
+            if (currentDate != previousDate)
+            {
+                ResetDailyChallenges();
+            }
+            else
+            {
+                GlobalData.dailyChallenges = SaveReadWrite.data.dailyChallenges;
+            }
         }
         else
         {

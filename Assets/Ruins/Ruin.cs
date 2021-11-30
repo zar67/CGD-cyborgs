@@ -1,7 +1,7 @@
-using UnityEngine;
-using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Ruin : MonoBehaviour, ITileObject
 {
@@ -12,7 +12,7 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public string m_playerOwner = "";
     public int unique_id;
-    bool test = false;
+    private bool test = false;
 
     private bool hasUnit = false;
     private Unit ruinUnit;
@@ -25,24 +25,21 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => new TerrainType[0];
 
-    private void Start()
-    {
-        EventManager.instance.Respawn += TestSpawn; 
-    }
-
-    public void Initialise(Vector3 position, int z, int worldHeight, int id)
+    public void Initialise(Vector3 position, int z, int worldHeight, int ruinID, string playerID)
     {
         transform.position = position;
         m_ruinSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 1;
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
-        unique_id = id;
-        m_playerOwner = id.ToString();
+        unique_id = ruinID;
+        m_playerOwner = playerID;
     }
 
     public void Select()
     {
-        m_ruinSpriteRenderer.color = new Color(1, 0, 0);
-        Debug.Log("Ruin selected");
+        if (Tile.IsDiscovered)
+        {
+            m_ruinSpriteRenderer.color = new Color(1, 0, 0);
+        }
     }
 
     public void Deselect()
@@ -62,7 +59,7 @@ public class Ruin : MonoBehaviour, ITileObject
                 unit.NullTurn();
                 WorldSelection.ChangeSelection(null);
             }
-            else
+            else if (Tile.IsDiscovered)
             {
                 WorldSelection.ChangeSelection(this);
             }
@@ -111,24 +108,12 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.enabled = false;
     }
 
-    void Update()
-    {
-        if (test == false)
-        {
-            TestSpawn(unique_id);
-            test = true;
-        }
-    }
-
-    public void TestSpawn(int id)
+    public void SpawnUnit()
     {
         if (Tile.TileObject != null)
         {
-            if (id == this.unique_id)
-            {
-                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.TANK, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-                hasUnit = true;
-            }
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            hasUnit = true;
         }
     }
 
@@ -148,5 +133,10 @@ public class Ruin : MonoBehaviour, ITileObject
             ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.PLANE, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
             hasUnit = true;
         }
+    }
+
+    public void Show(bool show)
+    {
+        m_ruinSpriteRenderer.enabled = show;
     }
 }

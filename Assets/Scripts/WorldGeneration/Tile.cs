@@ -89,6 +89,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         m_fogSpriteRenderer.enabled = !discovered;
         m_tileSpriteRenderer.enabled = discovered;
+
+        if (TileObject != null)
+        {
+            TileObject.Show(discovered);
+        }
     }
 
     public void SetTileObject(ITileObject obj)
@@ -175,8 +180,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void Select()
     {
-        m_selectedSpriteRenderer.color = m_selectedColour;
-        m_selectedSpriteRenderer.enabled = true;
+        if (IsDiscovered)
+        {
+            m_selectedSpriteRenderer.color = m_selectedColour;
+            m_selectedSpriteRenderer.enabled = true;
+        }
     }
 
     public void Deselect()
@@ -193,9 +201,13 @@ public class Tile : MonoBehaviour, IWorldSelectable
                 Debug.Log("ATTACKED TILES");
                 WorldSelection.ChangeSelection(null);
             }
-            else if (TileObject == null)
+            else if (TileObject == null && IsDiscovered)
             {
                 WorldSelection.ChangeSelection(this);
+            }
+            else
+            {
+                WorldSelection.ChangeSelection(null);
             }
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
@@ -224,7 +236,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
                 EHexDirection dir = HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates);
 
                 Tile toMove = WorldGenerator.Instance.GetAttackPattern(unit.Tile.Coordinates, dir, UnitFactory.Instance.GetUnitAttackPattern(unit.Type), out List<Tile> attPat);
-                foreach (var tile in attPat)
+                foreach (Tile tile in attPat)
                 {
                     m_hightlightedTiles.Add(tile);
                     tile.ShowPathSprite(false);
@@ -238,7 +250,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
                 {
                     bool valid = path.Count - 1 <= unit.Movement;
 
-                    foreach (var tile in path)
+                    foreach (Tile tile in path)
                     {
                         m_hightlightedTiles.Add(tile);
                         tile.ShowPathSprite(valid);
@@ -250,7 +262,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        foreach (var tile in m_hightlightedTiles)
+        foreach (Tile tile in m_hightlightedTiles)
         {
             tile.HidePathSprite();
         }
@@ -271,7 +283,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         if (m_hightlightedTiles.Count > 0)
         {
-            foreach (var tile in m_hightlightedTiles)
+            foreach (Tile tile in m_hightlightedTiles)
             {
                 tile.HidePathSprite();
                 if (WorldSelection.SelectedObject == tile)
@@ -298,7 +310,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
                 if (toMove.TileObject == null || toMove.TileObject == unit)
                 {
-                    foreach (var tile in attPat)
+                    foreach (Tile tile in attPat)
                     {
                         if (tile.TileObject is Unit aUnit)
                         {

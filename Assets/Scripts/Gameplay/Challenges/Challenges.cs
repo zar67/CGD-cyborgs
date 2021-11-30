@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -17,8 +15,14 @@ public abstract class Challenge : ScriptableObject
 
     [Header("Requirements")]
     public int requiredAmount = 1;
-    public int currentAmount { get; protected set; }
-    public bool completed { get; protected set; }
+    public int currentAmount
+    {
+        get; protected set;
+    }
+    public bool completed
+    {
+        get; protected set;
+    }
 
     private string description;
 

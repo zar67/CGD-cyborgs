@@ -1,10 +1,8 @@
-using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Linq;
-using UnityEngine.UI;
 
 public class Unit : MonoBehaviour, ITileObject
 {
@@ -87,7 +85,10 @@ public class Unit : MonoBehaviour, ITileObject
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
-    public int GetID(){return ruinId;}
+    public int GetID()
+    {
+        return ruinId;
+    }
     public void SetUpUnit(Tile tile, int _ruinId, string _playerId = "", int spriteToUse = 0)
     {
         ruinId = _ruinId;
@@ -99,16 +100,23 @@ public class Unit : MonoBehaviour, ITileObject
 
         //Testing
         ResetTurn();
+
+        if (!Tile.IsDiscovered)
+        {
+            Show(false);
+        }
     }
 
     public void SetHealth(int _health)
     {
         unitStats.health = _health;
-	}
+    }
+
     public int GetHealth()
     {
         return unitStats.health;
     }
+
 
     public int GetMovementSpeed()
     {
@@ -154,7 +162,10 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void Select()
     {
-        if (isDead) return;
+        if (isDead || !Tile.IsDiscovered)
+        {
+            return;
+        }
 
         if (specialClick)
         {
@@ -178,18 +189,29 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
+
         if (eventData.button == PointerEventData.InputButton.Left && !(WorldSelection.SelectedObject is Unit && ((Unit)WorldSelection.SelectedObject).Attacking))
         {
             specialClick = false;
-            WorldSelection.ChangeSelection(WorldSelection.SelectedObject == this ? null : this);
+            if (WorldSelection.SelectedObject != this && Tile.IsDiscovered)
+            {
+                WorldSelection.ChangeSelection(this);
+            }
+            else
+            {
+                WorldSelection.ChangeSelection(null);
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
             WorldSelection.SelectedObject == this)
         {
             WorldSelection.ChangeSelection(null);
         }
-        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0)
+        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0 && Tile.IsDiscovered)
         {
             specialClick = true;
             WorldSelection.ChangeSelection(this);
@@ -211,7 +233,11 @@ public class Unit : MonoBehaviour, ITileObject
 
     private void OnSelectionChange(object sender, WorldSelection.SelectionChangedData data)
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
+
         if (data.Previous == this && !specialClick && data.Current is Tile current)
         {
             if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(Tile, current, traversibleTerrain.ToList(), out List<Tile> path))
@@ -227,7 +253,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     #endregion
 
-    bool CanGoOnTile(TerrainType terrainType)
+    private bool CanGoOnTile(TerrainType terrainType)
     {
         foreach (TerrainType t in traversibleTerrain)
         {
@@ -248,12 +274,16 @@ public class Unit : MonoBehaviour, ITileObject
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
 
-        foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+        if (playerId == MyNetwork.GetMyInstacneID())
         {
-            tile.Discover();
+            foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+            {
+                tile.Discover();
+            }
         }
 
         WorldSelection.ChangeSelection(null);
+        XMLFormatter.AddPositionChange(this);
     }
 
     public void HasAttacked()
@@ -280,7 +310,7 @@ public class Unit : MonoBehaviour, ITileObject
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
-        if (id == this.ruinId)
+        if (id == ruinId)
         {
             EventManager.instance.OnRespawn(id);
             Destroy(gameObject);
@@ -312,5 +342,10 @@ public class Unit : MonoBehaviour, ITileObject
         movementLeft = 0;
         attacksLeft = 0;
     }
-  
+
+    public void Show(bool show)
+    {
+        unitSprite.enabled = show;
+    }
+
 }
