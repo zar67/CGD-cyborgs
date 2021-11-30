@@ -316,7 +316,7 @@ public class Unit : MonoBehaviour, ITileObject
         {
             unitStats.health = 3;
             XMLFormatter.AddHealthChange(this);
-            EventManager.instance.OnRespawn(id);
+            EventManager.instance.OnUnitLost(id);
             Destroy(gameObject);
         }
     }

@@ -14,6 +14,9 @@ public class Ruin : MonoBehaviour, ITileObject
     public int unique_id;
     private bool test = false;
 
+    public int unitCount = 0;
+    public int maxUnitAmount = 3;
+
     private bool hasUnit = false;
     private Unit ruinUnit;
 
@@ -21,6 +24,11 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         get;
         set;
+    }
+
+    public int GetID()
+    {
+        return unique_id;
     }
 
     public TerrainType[] TraversibleTerrains => new TerrainType[0];
@@ -32,7 +40,7 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
         unique_id = ruinID;
         m_playerOwner = playerID;
-        EventManager.instance.Respawn += RespawnUnit;
+        EventManager.instance.UnitDied += UnitLost;
     }
 
     public void Select()
@@ -108,13 +116,35 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         m_takeOverSpriteRenderer.enabled = false;
     }
+    
 
     public void SpawnUnit()
     {
-        if (Tile.TileObject != null)
+        if (Tile.TileObject != null && unitCount <= 2)
         {
             ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
             hasUnit = true;
+            unitCount++;
+        }
+    }
+
+    public void SpawnTank()
+    {
+        if (Tile.TileObject != null && unitCount <= 2)
+        {
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.TANK, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            hasUnit = true;
+            unitCount++;
+        }
+    }
+
+    public void SpawnPlane()
+    {
+        if (Tile.TileObject != null && unitCount <= 2)
+        {
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.PLANE, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            hasUnit = true;
+            unitCount++;
         }
     }
 
@@ -153,4 +183,12 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         m_ruinSpriteRenderer.enabled = show;
     }
+    public void UnitLost(int id)
+    {
+        if (id == this.unique_id)
+        {
+            unitCount--;
+        }
+    }
+
 }

@@ -8,6 +8,7 @@ public class UnitSelected : MonoBehaviour
 
     public GameObject gameObjectUiUnitSelect;
     public GameObject gameObjectUnitPortrait;
+    public GameObject gameObjectUiRuinSelect;
     public Image m_Image;
 
     private int health
@@ -24,13 +25,18 @@ public class UnitSelected : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(WorldSelection.SelectedObject is Unit unit)
+        HUD();
+    }
+
+    public void HUD()
+    {
+        if (WorldSelection.SelectedObject is Unit unit)
         {
             //Debug.Log("TRUE");
             gameObjectUiUnitSelect.SetActive(true);
@@ -42,20 +48,63 @@ public class UnitSelected : MonoBehaviour
             attackText.text = "Attack: " + unit.GetDamage();
             nameText.text = "" + unit.GetCurrentUnitType();
             m_Image.sprite = unit.GetComponent<SpriteRenderer>().sprite;
+            m_Image.SetNativeSize();
         }
 
         if (WorldSelection.SelectedObject is Ruin ruin)
         {
             gameObjectUiUnitSelect.SetActive(false);
+            gameObjectUiRuinSelect.SetActive(true);
             gameObjectUnitPortrait.SetActive(true);
-            Debug.Log("Ruin");
+            m_Image.sprite = ruin.GetComponent<SpriteRenderer>().sprite;
+            //ruin.RespawnUnit(ruin.GetID());
+            //ruin.SpawnUnit();
+
+
+
+            //if (id == ruin.GetID())
+            //{
+
+            //    EventManager.instance.OnRespawn(id);
+            //    Debug.Log("Ruin");
+            //}
+
         }
 
-     else if (WorldSelection.SelectedObject == null)
+        else if (WorldSelection.SelectedObject == null)
         {
             //Debug.Log("FALSE");
             gameObjectUiUnitSelect.SetActive(false);
             gameObjectUnitPortrait.SetActive(false);
+            gameObjectUiRuinSelect.SetActive(false);
+        }
+    }
+
+    public void SpawnTypeUnit()
+    {
+
+        if (WorldSelection.SelectedObject is Ruin ruin)
+        {
+            ruin.SpawnUnit();
+        }
+    }
+
+    public void SpawnTankUnit()
+    {
+
+        if (WorldSelection.SelectedObject is Ruin ruin)
+        {
+            ruin.SpawnTank();
+        }
+    }
+
+
+    public void SpawnPlaneUnit()
+    {
+
+        if (WorldSelection.SelectedObject is Ruin ruin)
+        {
+            ruin.SpawnPlane();
         }
     }
 }
