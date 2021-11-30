@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
+using UnityEngine.UI;
 
 public class Unit : MonoBehaviour, ITileObject
 {
@@ -32,6 +33,9 @@ public class Unit : MonoBehaviour, ITileObject
         public int defaultDamage;
         public List<UnitDamage> damages;
         public int sight;
+        public int killCount;
+
+
 
         public int GetDamage(UnitTypes type)
         {
@@ -101,6 +105,35 @@ public class Unit : MonoBehaviour, ITileObject
     {
         unitStats.health = _health;
 	}
+    public int GetHealth()
+    {
+        return unitStats.health;
+    }
+
+    public int GetMovementSpeed()
+    {
+        return unitStats.movementSpeed;
+    }
+
+    public int GetSight()
+    {
+        return unitStats.sight;
+    }
+    public int GetDamage()
+    {
+        return unitStats.defaultDamage;
+    }
+
+    public string GetCurrentUnitType()
+    {
+        string unit;
+        unit = unitType.ToString();
+        return unit;
+    }
+    public int GetKillCount()
+    {
+        return unitStats.killCount;
+    }
 
     public void SetUpPlayerId(string _playerId)
     {
@@ -126,10 +159,15 @@ public class Unit : MonoBehaviour, ITileObject
         if (specialClick)
         {
             unitSprite.color = new Color(1, 0, 0);
+            Debug.Log("RED");
+
         }
         else
         {
             unitSprite.color = new Color(0, 1, 0);
+            Debug.Log("GREEN");
+
+
         }
     }
 
@@ -204,7 +242,6 @@ public class Unit : MonoBehaviour, ITileObject
     public void MoveToTile(Tile current)
     {
         Tile.UnSetTileObject();
-
         current.SetTileObject(this);
         HexCoordinates coord = Tile.Coordinates;
         transform.position = current.transform.position;
@@ -215,6 +252,8 @@ public class Unit : MonoBehaviour, ITileObject
         {
             tile.Discover();
         }
+
+        WorldSelection.ChangeSelection(null);
     }
 
     public void HasAttacked()
@@ -232,6 +271,7 @@ public class Unit : MonoBehaviour, ITileObject
             OnDeath(ruinId);
         }
         Debug.Log(unitStats.health + " : took " + dmg + " dmg");
+        //OnDeath(ruinId);
     }
 
     public void OnDeath(int id)
@@ -272,4 +312,5 @@ public class Unit : MonoBehaviour, ITileObject
         movementLeft = 0;
         attacksLeft = 0;
     }
+  
 }

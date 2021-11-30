@@ -150,6 +150,7 @@ public class WorldGenerator : MonoBehaviour
     private void Awake()
     {
         SingletonSetUp();
+        Generate();
     }
 
     public void Generate()

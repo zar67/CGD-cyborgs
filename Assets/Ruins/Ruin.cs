@@ -42,6 +42,7 @@ public class Ruin : MonoBehaviour, ITileObject
     public void Select()
     {
         m_ruinSpriteRenderer.color = new Color(1, 0, 0);
+        Debug.Log("Ruin selected");
     }
 
     public void Deselect()
@@ -125,7 +126,7 @@ public class Ruin : MonoBehaviour, ITileObject
         {
             if (id == this.unique_id)
             {
-                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.TANK, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
                 hasUnit = true;
             }
         }

@@ -84,7 +84,6 @@ public class UnitFactory : MonoBehaviour
         playerIds.Add("3");
 
         SetUpPlayers(playerIds);
-        SpawnUnits();
     }
 
     void SetUpDictionaries()
