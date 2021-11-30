@@ -17,14 +17,14 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public event UnityAction<int> Respawn;
+    public event UnityAction<int> UnitDied;
 
 
-    public void OnRespawn(int instanceId)
+    public void OnUnitLost(int instanceId)
     {
-        if (Respawn != null)
+        if (UnitDied != null)
         {
-            Respawn?.Invoke(instanceId);
+            UnitDied?.Invoke(instanceId);
         }
     }
 

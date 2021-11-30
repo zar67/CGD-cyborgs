@@ -282,8 +282,8 @@ public class Unit : MonoBehaviour, ITileObject
             }
         }
 
-        WorldSelection.ChangeSelection(null);
         XMLFormatter.AddPositionChange(this);
+        WorldSelection.ChangeSelection(null);
     }
 
     public void HasAttacked()
@@ -301,6 +301,8 @@ public class Unit : MonoBehaviour, ITileObject
             OnDeath(ruinId);
         }
         Debug.Log(unitStats.health + " : took " + dmg + " dmg");
+        //XMLFormatter.AddHealthChange(this);
+        
         //OnDeath(ruinId);
     }
 
@@ -312,7 +314,9 @@ public class Unit : MonoBehaviour, ITileObject
         isDead = true;
         if (id == ruinId)
         {
-            EventManager.instance.OnRespawn(id);
+            unitStats.health = 3;
+            XMLFormatter.AddHealthChange(this);
+            EventManager.instance.OnUnitLost(id);
             Destroy(gameObject);
         }
     }

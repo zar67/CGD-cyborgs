@@ -134,7 +134,6 @@ public class MyNetwork : MonoBehaviour
         m_clientButton.gameObject.SetActive(false);
         m_clientInfo.SetActive(true);
 
-
     }
 
     public void ConnectToHost(string _name, string _ip)
