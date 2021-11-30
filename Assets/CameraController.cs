@@ -5,6 +5,7 @@ public class CameraController : MonoBehaviour
     public float panSpeed = 20f;
     public float panBorderThickness = 10f;
     public Vector2 panLimit;
+    public Vector2 panLimit2;
     public float scroll = 8;
     public Camera m_OrthographicCamera;
 
@@ -46,8 +47,8 @@ public class CameraController : MonoBehaviour
         Camera.main.fieldOfView = FOV;
 
 
-        pos.x = Mathf.Clamp(pos.x, -panLimit.x, panLimit.x);
-        pos.y = Mathf.Clamp(pos.y, -panLimit.y, panLimit.y);
+        pos.x = Mathf.Clamp(pos.x, -panLimit2.x, panLimit.x);
+        pos.y = Mathf.Clamp(pos.y, -panLimit.y, panLimit2.y);
 
 
         transform.position = pos;

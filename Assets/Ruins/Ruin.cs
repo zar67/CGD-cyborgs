@@ -32,6 +32,7 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
         unique_id = ruinID;
         m_playerOwner = playerID;
+        EventManager.instance.Respawn += RespawnUnit;
     }
 
     public void Select()
@@ -117,6 +118,19 @@ public class Ruin : MonoBehaviour, ITileObject
         }
     }
 
+    public void RespawnUnit(int id)
+    {
+        if (Tile.TileObject != null)
+        {
+            if (id == this.unique_id)
+            {
+                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+                hasUnit = true;
+            }
+        }
+    }
+
+
     public void TakeOverRuin(string newPlayerOwner)
     {
         m_playerOwner = newPlayerOwner;
@@ -130,7 +144,7 @@ public class Ruin : MonoBehaviour, ITileObject
         }
         else
         {
-            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.PLANE, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
             hasUnit = true;
         }
     }

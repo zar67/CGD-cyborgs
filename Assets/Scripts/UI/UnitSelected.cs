@@ -8,7 +8,6 @@ public class UnitSelected : MonoBehaviour
 
     public GameObject gameObjectUiUnitSelect;
     public GameObject gameObjectUnitPortrait;
-    public SpriteRenderer spriteRenderer;
     public Image m_Image;
 
     private int health
@@ -28,12 +27,9 @@ public class UnitSelected : MonoBehaviour
         
     }
 
-
-
     // Update is called once per frame
     void Update()
     {
-
         if(WorldSelection.SelectedObject is Unit unit)
         {
             //Debug.Log("TRUE");
@@ -62,7 +58,4 @@ public class UnitSelected : MonoBehaviour
             gameObjectUnitPortrait.SetActive(false);
         }
     }
-
-
-
 }

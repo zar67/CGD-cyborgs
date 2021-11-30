@@ -66,10 +66,7 @@ public class GameplayManager : MonoBehaviour
             }
             else
             {
-                thisPlayerInputEnabled = false;
-
-                m_networkManager.NextPlayer();
-                image.SetActive(false);
+                EndTurn();
             }
         }
     }
@@ -83,5 +80,12 @@ public class GameplayManager : MonoBehaviour
         UnitFactory.Instance.ResetTurn();
         image.SetActive(true);
 
+    }
+
+    public void EndTurn()
+    {
+        thisPlayerInputEnabled = false;
+        m_networkManager.NextPlayer();
+        image.SetActive(false);
     }
 }
