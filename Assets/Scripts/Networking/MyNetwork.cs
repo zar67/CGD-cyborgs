@@ -33,7 +33,7 @@ public class MyNetwork : MonoBehaviour
     private static NetworkHost m_host;
     private static NetworkClient m_client;
     private string hostIP = "";
-    private string m_playerTurn = "";
+    private static string m_playerTurn = "";
     public static List<string> m_playerNames = new List<string>();
 
     private void Awake()
@@ -48,6 +48,8 @@ public class MyNetwork : MonoBehaviour
             ConnectToHost(m_nameInputClient.text, m_ipInput.text);
         });
     }
+
+    public static bool IsMyTurn => GetMyInstanceID() == m_playerTurn;
 
     public static string GetMyInstanceID()
     {
@@ -298,6 +300,7 @@ public class MyNetwork : MonoBehaviour
                         ruin.m_playerOwner = messageData;
                     }
                 }
+
                 GameplayManager.Instance.ResetTurn();
             }
             //HOST ONLY
@@ -355,7 +358,6 @@ public class MyNetwork : MonoBehaviour
                         tile.Initialise(i, x, z, 0.8f, 10, 10);
                         WorldGenerator.Instance.SetBiomeSprite(tile);
                         WorldGenerator.Instance.SetNeighbours(x, z, tile);
-
 
                         XmlNode itemNode = tileNode.ChildNodes[0];
                         string itemTileType = itemNode.Attributes["type"].Value;

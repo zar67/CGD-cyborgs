@@ -233,7 +233,7 @@ public class Unit : MonoBehaviour, ITileObject
             return;
         }
 
-        if (data.Previous == this && !specialClick && data.Current is Tile current && MyNetwork.GetMyInstanceID() == playerId)
+        if (data.Previous == this && !specialClick && data.Current is Tile current && MyNetwork.GetMyInstanceID() == playerId && MyNetwork.IsMyTurn)
         {
             if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(Tile, current, traversibleTerrain.ToList(), out List<Tile> path))
             {

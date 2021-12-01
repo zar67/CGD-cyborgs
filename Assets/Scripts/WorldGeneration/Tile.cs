@@ -198,7 +198,6 @@ public class Tile : MonoBehaviour, IWorldSelectable
         {
             if (CheckAndAttack())
             {
-                Debug.Log("ATTACKED TILES");
                 WorldSelection.ChangeSelection(null);
             }
             else if (TileObject == null && IsDiscovered)
@@ -296,7 +295,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     private bool CheckAndAttack()
     {
-        if (!IsDiscovered)
+        if (!IsDiscovered || !MyNetwork.IsMyTurn)
         {
             return false;
         }

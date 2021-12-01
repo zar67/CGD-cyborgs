@@ -41,7 +41,7 @@ public class UnitFactory : MonoBehaviour
 
     private Dictionary<string, int> spritesToUseForPlayer;
 
-    public List<Unit> allUnits = new List<Unit>();
+    [HideInInspector] public List<Unit> allUnits = new List<Unit>();
 
     #region Singleton Setup
     private static UnitFactory _instance;

@@ -75,7 +75,6 @@ public class GameplayManager : MonoBehaviour
         ui.SetTurnText(thisPlayerInputEnabled);
         ui.SetTimerText(timerCurrent);
         UnitFactory.Instance.ResetTurn();
-
     }
 
     public void EndTurn()
