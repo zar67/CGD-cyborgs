@@ -12,13 +12,18 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public string m_playerOwner = "";
     public int unique_id;
-    private bool test = false;
 
     public int unitCount = 0;
     public int maxUnitAmount = 3;
 
     private bool hasUnit = false;
     private Unit ruinUnit;
+
+    public Unit.UnitTypes UnitType
+    {
+        get;
+        set;
+    } = Unit.UnitTypes.SOLDIER;
 
     public Tile Tile
     {
@@ -120,31 +125,15 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public void SpawnUnit()
     {
-        if (Tile.TileObject != null && unitCount <= 2)
+        if (Tile.TileObject != null && unitCount < 1)
         {
-            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-            hasUnit = true;
-            unitCount++;
-        }
-    }
-
-    public void SpawnTank()
-    {
-        if (Tile.TileObject != null && unitCount <= 2)
-        {
-            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.TANK, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-            hasUnit = true;
-            unitCount++;
-        }
-    }
-
-    public void SpawnPlane()
-    {
-        if (Tile.TileObject != null && unitCount <= 2)
-        {
-            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.PLANE, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-            hasUnit = true;
-            unitCount++;
+            KeyValuePair<EHexDirection, Tile> tileToSpawn = Tile.GetRandomNeighbour();
+            if (tileToSpawn.Value != null)
+            {
+                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, tileToSpawn.Value, unique_id, m_playerOwner);
+                hasUnit = true;
+                unitCount++;
+            }
         }
     }
 
@@ -160,11 +149,9 @@ public class Ruin : MonoBehaviour, ITileObject
         }
     }
 
-
     public void TakeOverRuin(string newPlayerOwner)
     {
         m_playerOwner = newPlayerOwner;
-        Debug.Log("NEW PLAYER OWNER: " + newPlayerOwner);
         if (hasUnit)
         {
             if (ruinUnit != null)

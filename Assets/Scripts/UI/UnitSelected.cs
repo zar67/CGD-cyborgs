@@ -1,10 +1,20 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UnitSelected : MonoBehaviour
 {
+    [Serializable]
+    public struct RuinSelectAction
+    {
+        public Unit.UnitTypes UnitType;
+        public Button SelectButton;
+        public Image SelectedImage;
+    }
+
+    [SerializeField] private List<RuinSelectAction> m_unitTypeActions = new List<RuinSelectAction>();
 
     public GameObject gameObjectUiUnitSelect;
     public GameObject gameObjectUnitPortrait;
@@ -16,19 +26,20 @@ public class UnitSelected : MonoBehaviour
         get { return health; }
         set { health = value;}
     }
-    public Text healthText;
-    public Text movementText;
-    public Text sightText;
-    public Text attackText;
-    public Text nameText;
-    public Text confirmedKills;
-    // Start is called before the first frame update
-    void Start()
-    {
+    public TextMeshProUGUI healthText;
+    public TextMeshProUGUI movementText;
+    public TextMeshProUGUI sightText;
+    public TextMeshProUGUI attackText;
+    public TextMeshProUGUI nameText;
 
+    private void Awake()
+    {
+        foreach (RuinSelectAction action in m_unitTypeActions)
+        {
+            action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.SOLDIER;
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
         HUD();
@@ -38,15 +49,14 @@ public class UnitSelected : MonoBehaviour
     {
         if (WorldSelection.SelectedObject is Unit unit)
         {
-            //Debug.Log("TRUE");
             gameObjectUiUnitSelect.SetActive(true);
             gameObjectUnitPortrait.SetActive(true);
 
-            healthText.text = "HP: " + unit.GetHealth();
-            movementText.text = "Speed: " + unit.GetMovementSpeed();
-            sightText.text = "Sight: " + unit.GetSight();
-            attackText.text = "Attack: " + unit.GetDamage();
-            nameText.text = "" + unit.GetCurrentUnitType();
+            healthText.text = unit.GetHealth().ToString();
+            movementText.text = unit.GetMovementSpeed().ToString();
+            sightText.text = unit.GetSight().ToString();
+            attackText.text = unit.GetDamage().ToString();
+            nameText.text = unit.GetCurrentUnitType().ToString();
             m_Image.sprite = unit.GetComponent<SpriteRenderer>().sprite;
             m_Image.SetNativeSize();
         }
@@ -57,23 +67,10 @@ public class UnitSelected : MonoBehaviour
             gameObjectUiRuinSelect.SetActive(true);
             gameObjectUnitPortrait.SetActive(true);
             m_Image.sprite = ruin.GetComponent<SpriteRenderer>().sprite;
-            //ruin.RespawnUnit(ruin.GetID());
-            //ruin.SpawnUnit();
-
-
-
-            //if (id == ruin.GetID())
-            //{
-
-            //    EventManager.instance.OnRespawn(id);
-            //    Debug.Log("Ruin");
-            //}
-
         }
 
         else if (WorldSelection.SelectedObject == null)
         {
-            //Debug.Log("FALSE");
             gameObjectUiUnitSelect.SetActive(false);
             gameObjectUnitPortrait.SetActive(false);
             gameObjectUiRuinSelect.SetActive(false);
@@ -85,7 +82,12 @@ public class UnitSelected : MonoBehaviour
 
         if (WorldSelection.SelectedObject is Ruin ruin)
         {
-            ruin.SpawnUnit();
+            ruin.UnitType = Unit.UnitTypes.SOLDIER;
+
+            foreach (RuinSelectAction action in m_unitTypeActions)
+            {
+                action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.SOLDIER;
+            }
         }
     }
 
@@ -94,7 +96,12 @@ public class UnitSelected : MonoBehaviour
 
         if (WorldSelection.SelectedObject is Ruin ruin)
         {
-            ruin.SpawnTank();
+            ruin.UnitType = Unit.UnitTypes.TANK;
+
+            foreach (RuinSelectAction action in m_unitTypeActions)
+            {
+                action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.TANK;
+            }
         }
     }
 
@@ -104,7 +111,12 @@ public class UnitSelected : MonoBehaviour
 
         if (WorldSelection.SelectedObject is Ruin ruin)
         {
-            ruin.SpawnPlane();
+            ruin.UnitType = Unit.UnitTypes.PLANE;
+
+            foreach (RuinSelectAction action in m_unitTypeActions)
+            {
+                action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.PLANE;
+            }
         }
     }
 }
