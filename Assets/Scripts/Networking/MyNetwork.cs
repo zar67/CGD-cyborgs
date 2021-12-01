@@ -285,6 +285,10 @@ public class MyNetwork : MonoBehaviour
                             }
                         }
                         unit.SetHealth(int.Parse(messageData));
+                        if (int.Parse(messageData) <= 0)
+                        {
+                            unit.OnDeath(unit.GetID());
+                        }
                     }
                     else if (messageType == "ruin")
                     {
@@ -337,6 +341,7 @@ public class MyNetwork : MonoBehaviour
                 }
                 else if (root.Name == "map")
                 {
+                    m_uiHolder.SetActive(false);
                     int i = 0;
                     m_playerNames.Add(root.Attributes["host"].Value);
                     foreach (XmlNode tileNode in root.ChildNodes)

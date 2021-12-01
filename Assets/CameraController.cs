@@ -20,22 +20,22 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         Vector3 pos = transform.position;
-        if (Input.GetKey("w") || Input.mousePosition.y >= Screen.height - panBorderThickness)
+        if (Input.GetKey("w") /*|| Input.mousePosition.y >= Screen.height - panBorderThickness*/)
         {
             pos.y += panSpeed * Time.deltaTime;
         }
 
-        if (Input.GetKey("s") || Input.mousePosition.y <= panBorderThickness)
+        if (Input.GetKey("s") /*|| Input.mousePosition.y <= panBorderThickness*/)
         {
             pos.y -= panSpeed * Time.deltaTime;
         }
 
-        if (Input.GetKey("d") || Input.mousePosition.x >= Screen.width - panBorderThickness)
+        if (Input.GetKey("d") /*|| Input.mousePosition.x >= Screen.width - panBorderThickness*/)
         {
             pos.x += panSpeed * Time.deltaTime;
         }
 
-        if (Input.GetKey("a") || Input.mousePosition.x <= panBorderThickness)
+        if (Input.GetKey("a") /*|| Input.mousePosition.x <= panBorderThickness*/)
         {
             pos.x -= panSpeed * Time.deltaTime;
         }
@@ -46,9 +46,9 @@ public class CameraController : MonoBehaviour
         FOV = Mathf.Clamp(FOV, minFOV, maxFOV);
         Camera.main.fieldOfView = FOV;
 
-
-        pos.x = Mathf.Clamp(pos.x, -panLimit2.x, panLimit.x);
-        pos.y = Mathf.Clamp(pos.y, -panLimit.y, panLimit2.y);
+        //@@@ untill client clamp fixed
+        //pos.x = Mathf.Clamp(pos.x, -panLimit2.x, panLimit.x);
+        //pos.y = Mathf.Clamp(pos.y, -panLimit.y, panLimit2.y);
 
 
         transform.position = pos;
