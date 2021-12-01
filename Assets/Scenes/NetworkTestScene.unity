@@ -165,6 +165,7 @@ MonoBehaviour:
   m_nameInputClient: {fileID: 767603797}
   m_connectToHostBttn: {fileID: 1668090708}
   m_conectedTxt: {fileID: 611141678}
+  m_cameraController: {fileID: 1386352846}
 --- !u!4 &17377431
 Transform:
   m_ObjectHideFlags: 0
@@ -3116,7 +3117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panSpeed: 20
-  panBorderThickness: 10
+  panBorderThickness: 0
   panLimit: {x: 23, y: 10}
   panLimit2: {x: 3, y: 1}
   scroll: 0

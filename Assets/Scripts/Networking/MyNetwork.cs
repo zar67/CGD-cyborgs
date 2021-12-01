@@ -28,6 +28,9 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] private Button m_connectToHostBttn;
     [SerializeField] private TextMeshProUGUI m_conectedTxt;
 
+    [Header("Game References")]
+    [SerializeField] private CameraController m_cameraController;
+
     public static bool m_isHost = false;
     private Int32 m_port = 10000;
     private static NetworkHost m_host;
@@ -161,6 +164,7 @@ public class MyNetwork : MonoBehaviour
         WorldGenerator.Instance.SpawnUnitsOnStart();
         GameplayManager.Instance.ResetTurn();
 
+        m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
         m_uiHolder.SetActive(false);
     }
 
@@ -387,6 +391,7 @@ public class MyNetwork : MonoBehaviour
                     WorldGenerator.Instance.SpawnUnitsOnStart();
                     WorldGenerator.Instance.DiscoverRuinTiles();
 
+                    m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
                     m_uiHolder.SetActive(false);
                 }
             }
