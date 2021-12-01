@@ -16,6 +16,11 @@ public class CameraController : MonoBehaviour
 
     private Rect m_worldRect = new Rect(0, 0, 20, 10);
 
+    public void SetCameraPosition(Vector2 position)
+    {
+        transform.position = new Vector3(position.x, position.y, transform.position.z);
+    }
+
     public void SetWorldRect(Rect rect)
     {
         m_worldRect = rect;

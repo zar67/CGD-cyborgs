@@ -60,6 +60,19 @@ public class WorldGenerator : MonoBehaviour
         return new Rect(WorldTiles[0].transform.position, size);
     }
 
+    public Vector2 GetStartingPosition(string playerID)
+    {
+        foreach(Ruin ruin in AllRuins)
+        {
+            if (ruin.m_playerOwner == playerID)
+            {
+                return ruin.transform.position;
+            }
+        }
+
+        return Vector2.zero;
+    }
+
     public Tile GetAttackPattern(HexCoordinates start, EHexDirection direction, UnitFactory.AttackPattern attackPattern, out List<Tile> pattern)
     {
         pattern = new List<Tile>();

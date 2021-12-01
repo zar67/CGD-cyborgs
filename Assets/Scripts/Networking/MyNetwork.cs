@@ -165,6 +165,7 @@ public class MyNetwork : MonoBehaviour
         GameplayManager.Instance.ResetTurn();
 
         m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
+        m_cameraController.SetCameraPosition(WorldGenerator.Instance.GetStartingPosition(m_host.GetName()));
         m_uiHolder.SetActive(false);
     }
 
@@ -392,6 +393,7 @@ public class MyNetwork : MonoBehaviour
                     WorldGenerator.Instance.DiscoverRuinTiles();
 
                     m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
+                    m_cameraController.SetCameraPosition(WorldGenerator.Instance.GetStartingPosition(m_client.GetName()));
                     m_uiHolder.SetActive(false);
                 }
             }
