@@ -198,7 +198,6 @@ public class Tile : MonoBehaviour, IWorldSelectable
         {
             if (CheckAndAttack())
             {
-                Debug.Log("ATTACKED TILES");
                 WorldSelection.ChangeSelection(null);
             }
             else if (TileObject == null && IsDiscovered)
@@ -219,18 +218,18 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (TileObject != null)
-        {
-            return;
-        }
-
-        if (!IsDiscovered)
+        if (TileObject != null || !IsDiscovered)
         {
             return;
         }
 
         if (WorldSelection.SelectedObject is Unit unit)
         {
+            if (unit.GetPlayerId() != MyNetwork.GetMyInstanceID())
+            {
+                return;
+            }
+
             if (unit.Attacking)
             {
                 EHexDirection dir = HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates);
@@ -296,13 +295,18 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     private bool CheckAndAttack()
     {
-        if (!IsDiscovered)
+        if (!IsDiscovered || !MyNetwork.IsMyTurn)
         {
             return false;
         }
 
         if (WorldSelection.SelectedObject != null && WorldSelection.SelectedObject is Unit unit)
         {
+            if (unit.GetPlayerId() != MyNetwork.GetMyInstanceID())
+            {
+                return false;
+            }
+
             if (unit.Attacking)
             {
                 Tile toMove = WorldGenerator.Instance.GetAttackPattern(unit.Tile.Coordinates, HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates),

@@ -177,15 +177,10 @@ public class Unit : MonoBehaviour, ITileObject
         if (specialClick)
         {
             unitSprite.color = new Color(1, 0, 0);
-            Debug.Log("RED");
-
         }
         else
         {
             unitSprite.color = new Color(0, 1, 0);
-            Debug.Log("GREEN");
-
-
         }
     }
 
@@ -245,7 +240,7 @@ public class Unit : MonoBehaviour, ITileObject
             return;
         }
 
-        if (data.Previous == this && !specialClick && data.Current is Tile current)
+        if (data.Previous == this && !specialClick && data.Current is Tile current && MyNetwork.GetMyInstanceID() == playerId && MyNetwork.IsMyTurn)
         {
             if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(Tile, current, traversibleTerrain.ToList(), out List<Tile> path))
             {
@@ -281,7 +276,7 @@ public class Unit : MonoBehaviour, ITileObject
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
 
-        if (playerId == MyNetwork.GetMyInstacneID())
+        if (playerId == MyNetwork.GetMyInstanceID())
         {
             foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
             {

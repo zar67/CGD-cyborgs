@@ -9,52 +9,39 @@ using UnityEngine.UI;
 
 public class MyNetwork : MonoBehaviour
 {
+    [Header("Main Menu References")]
     [SerializeField] private GameObject m_uiHolder;
-    [SerializeField] private UnityEngine.UI.Button m_hostButton;
-    [SerializeField] private UnityEngine.UI.Button m_clientButton;
+    [SerializeField] private Button m_hostButton;
+    [SerializeField] private Button m_clientButton;
 
-    //host
+    [Header("Host Info References")]
     [SerializeField] private GameObject m_hostInfo;
     [SerializeField] private GameObject m_clientListContent;
     [SerializeField] private TextMeshProUGUI m_ipText;
     [SerializeField] private TMP_InputField m_nameInputHost;
-    [SerializeField] private UnityEngine.UI.Button m_startGameBttn;
+    [SerializeField] private Button m_startGameBttn;
 
-    //client
+    [Header("Client Info References")]
     [SerializeField] private GameObject m_clientInfo;
     [SerializeField] private TMP_InputField m_ipInput;
     [SerializeField] private TMP_InputField m_nameInputClient;
-    [SerializeField] private UnityEngine.UI.Button m_connectToHostBttn;
+    [SerializeField] private Button m_connectToHostBttn;
     [SerializeField] private TextMeshProUGUI m_conectedTxt;
-
-    //World gen
-    [SerializeField] private GameObject m_worldGeneration;
 
     public static bool m_isHost = false;
     private Int32 m_port = 10000;
     private static NetworkHost m_host;
     private static NetworkClient m_client;
     private string hostIP = "";
-    private string m_playerTurn = "";
+    private static string m_playerTurn = "";
     public static List<string> m_playerNames = new List<string>();
-    private string m_hostName = "host";
 
-    //
     private void Awake()
     {
-        m_hostButton.onClick.AddListener(delegate
-        {
-            SetHost();
-        });
-        m_clientButton.onClick.AddListener(delegate
-        {
-            SetClient();
-        });
+        m_hostButton.onClick.AddListener(SetHost);
+        m_clientButton.onClick.AddListener(SetClient);
 
-        m_startGameBttn.onClick.AddListener(delegate
-        {
-            StartGame();
-        });
+        m_startGameBttn.onClick.AddListener(StartGame);
 
         m_connectToHostBttn.onClick.AddListener(delegate
         {
@@ -62,7 +49,9 @@ public class MyNetwork : MonoBehaviour
         });
     }
 
-    public static string GetMyInstacneID()
+    public static bool IsMyTurn => GetMyInstanceID() == m_playerTurn;
+
+    public static string GetMyInstanceID()
     {
         string myID = "";
         if (m_host != null)
@@ -97,28 +86,15 @@ public class MyNetwork : MonoBehaviour
         ApplyRxQueue();
     }
 
-    private void TCPDisconnect()
-    {
-        // m_client.Close();
-    }
-
     public void SetHost()
     {
         m_isHost = true;
-        //m_hostButton.gameObject.GetComponent<Image>().color = Color.red;
         m_hostButton.gameObject.SetActive(false);
         m_clientButton.gameObject.SetActive(false);
         m_hostInfo.SetActive(true);
 
-        //StartCoroutine(run_cmd());
-        // m_host = new Host(m_nameInputHost.text, m_port, myIP, clientListContent, ref m_conectedTxt);
-        // hostIP = myIP.ToString();
-
-        //StartCoroutine(m_host.Listen());*/
-
         m_host = new NetworkHost(m_port.ToString());
         m_ipText.text = m_host.GetIP();
-
     }
 
     public NetworkHost GetHost()
@@ -133,7 +109,6 @@ public class MyNetwork : MonoBehaviour
         m_hostButton.gameObject.SetActive(false);
         m_clientButton.gameObject.SetActive(false);
         m_clientInfo.SetActive(true);
-
     }
 
     public void ConnectToHost(string _name, string _ip)
@@ -154,16 +129,13 @@ public class MyNetwork : MonoBehaviour
         }
         if (myIP == null)
         {
-            UnityEngine.Debug.LogError("MyNetwork::SetHost() -> could not find IP address");
+            Debug.LogError("MyNetwork::SetHost() -> could not find IP address");
             return;
         }
         _ip = hostIP;
         m_client = new NetworkClient(_ip, m_port.ToString());
         m_client.SetName(m_nameInputClient.text);
-        //m_playerNames.Add(m_client.GetName());
-
-        //m_client = new Client(_ip, m_port, _name, ref m_conectedTxt);
-        //StartCoroutine(m_client.ListenForMessage());
+        m_conectedTxt.text = "Connected: TRUE";
     }
 
     private void StartGame()
@@ -184,6 +156,7 @@ public class MyNetwork : MonoBehaviour
             XmlDocument mapDoc = XMLFormatter.ConstructMapMessage(WorldGenerator.Instance.GetTiles(), m_host.GetName());
             m_host.AddToTxQueue(mapDoc.OuterXml);
         }
+
         UnitFactory.Instance.SetUpPlayers(m_playerNames);
         WorldGenerator.Instance.SpawnUnitsOnStart();
         GameplayManager.Instance.ResetTurn();
@@ -327,6 +300,7 @@ public class MyNetwork : MonoBehaviour
                         ruin.m_playerOwner = messageData;
                     }
                 }
+
                 GameplayManager.Instance.ResetTurn();
             }
             //HOST ONLY
@@ -385,7 +359,6 @@ public class MyNetwork : MonoBehaviour
                         WorldGenerator.Instance.SetBiomeSprite(tile);
                         WorldGenerator.Instance.SetNeighbours(x, z, tile);
 
-
                         XmlNode itemNode = tileNode.ChildNodes[0];
                         string itemTileType = itemNode.Attributes["type"].Value;
                         string itemOwner = itemNode.Attributes["owner"].Value;
@@ -408,6 +381,8 @@ public class MyNetwork : MonoBehaviour
                     UnitFactory.Instance.SetUpPlayers(m_playerNames);
                     WorldGenerator.Instance.SpawnUnitsOnStart();
                     WorldGenerator.Instance.DiscoverRuinTiles();
+
+                    m_uiHolder.SetActive(false);
                 }
             }
         }

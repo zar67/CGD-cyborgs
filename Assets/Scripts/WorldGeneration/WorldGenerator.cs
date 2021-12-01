@@ -232,7 +232,7 @@ public class WorldGenerator : MonoBehaviour
     {
         foreach (Ruin ruin in AllRuins)
         {
-            if (ruin.m_playerOwner == MyNetwork.GetMyInstacneID())
+            if (ruin.m_playerOwner == MyNetwork.GetMyInstanceID())
             {
                 foreach (Tile tile in GetTilesInRange(ruin.Tile, Ruin.RUIN_SIGHT))
                 {
