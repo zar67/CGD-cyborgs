@@ -38,6 +38,7 @@ public class MyNetwork : MonoBehaviour
     private string hostIP = "";
     private static string m_playerTurn = "";
     public static List<string> m_playerNames = new List<string>();
+    public static bool GameStarted { get; private set; } = false;
 
     private void Awake()
     {
@@ -163,6 +164,7 @@ public class MyNetwork : MonoBehaviour
         UnitFactory.Instance.SetUpPlayers(m_playerNames);
         WorldGenerator.Instance.SpawnUnitsOnStart();
         GameplayManager.Instance.ResetTurn();
+        GameplayManager.Instance.ShowHUD();
 
         m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
         m_cameraController.SetCameraPosition(WorldGenerator.Instance.GetStartingPosition(m_host.GetName()));
@@ -389,6 +391,8 @@ public class MyNetwork : MonoBehaviour
 
                     m_playerNames.Add(m_client.GetName());
                     UnitFactory.Instance.SetUpPlayers(m_playerNames);
+                    GameplayManager.Instance.UpdateUI();
+                    GameplayManager.Instance.ShowHUD();
                     WorldGenerator.Instance.SpawnUnitsOnStart();
                     WorldGenerator.Instance.DiscoverRuinTiles();
 

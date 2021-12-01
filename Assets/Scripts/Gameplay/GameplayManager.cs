@@ -7,7 +7,6 @@ public class GameplayManager : MonoBehaviour
     private GameplayUI ui;
 
     //Timer
-    private bool thisPlayerInputEnabled = false;
     [SerializeField] private int turnTime = 90; //In seconds
     private float timerCurrent = 0;
     [SerializeField] private MyNetwork m_networkManager;
@@ -37,24 +36,13 @@ public class GameplayManager : MonoBehaviour
     private void Awake()
     {
         ui = UIObject.GetComponent<GameplayUI>();
+        timerCurrent = turnTime;
         SingletonSetUp();
-    }
-
-    private void Start()
-    {
-
     }
 
     private void Update()
     {
-        /*
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            thisPlayerInputEnabled = true;
-            ResetTurn(); //For Testing
-        }*/
-
-        if (thisPlayerInputEnabled)
+        if (MyNetwork.IsMyTurn)
         {
             if (timerCurrent > 0)
             {
@@ -68,18 +56,27 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
+    public void UpdateUI()
+    {
+        ui.UpdateTurnUI();
+        ui.SetTimerText(timerCurrent);
+    }
+
+    public void ShowHUD()
+    {
+        ui.Show();
+    }
+
     public void ResetTurn()
     {
-        thisPlayerInputEnabled = true;
         timerCurrent = turnTime;
-        ui.SetTurnText(thisPlayerInputEnabled);
-        ui.SetTimerText(timerCurrent);
+        UpdateUI();
         UnitFactory.Instance.ResetTurn();
     }
 
     public void EndTurn()
     {
-        thisPlayerInputEnabled = false;
         m_networkManager.NextPlayer();
+        UpdateUI();
     }
 }
