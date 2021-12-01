@@ -1307,17 +1307,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2443709874067591276, guid: 47cdf4f258e635d4e83d51873483f760, type: 3}
-      propertyPath: image
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2443709874067591276, guid: 47cdf4f258e635d4e83d51873483f760, type: 3}
       propertyPath: UIObject
       value: 
       objectReference: {fileID: 761495731}
-    - target: {fileID: 2443709874067591276, guid: 47cdf4f258e635d4e83d51873483f760, type: 3}
-      propertyPath: turnTime
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 2443709874067591276, guid: 47cdf4f258e635d4e83d51873483f760, type: 3}
       propertyPath: m_networkManager
       value: 
