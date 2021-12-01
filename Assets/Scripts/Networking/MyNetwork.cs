@@ -28,6 +28,9 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] private Button m_connectToHostBttn;
     [SerializeField] private TextMeshProUGUI m_conectedTxt;
 
+    [Header("Game References")]
+    [SerializeField] private CameraController m_cameraController;
+
     public static bool m_isHost = false;
     private Int32 m_port = 10000;
     private static NetworkHost m_host;
@@ -35,6 +38,7 @@ public class MyNetwork : MonoBehaviour
     private string hostIP = "";
     private static string m_playerTurn = "";
     public static List<string> m_playerNames = new List<string>();
+    public static bool GameStarted { get; private set; } = false;
 
     private void Awake()
     {
@@ -160,7 +164,10 @@ public class MyNetwork : MonoBehaviour
         UnitFactory.Instance.SetUpPlayers(m_playerNames);
         WorldGenerator.Instance.SpawnUnitsOnStart();
         GameplayManager.Instance.ResetTurn();
+        GameplayManager.Instance.ShowHUD();
 
+        m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
+        m_cameraController.SetCameraPosition(WorldGenerator.Instance.GetStartingPosition(m_host.GetName()));
         m_uiHolder.SetActive(false);
     }
 
@@ -384,9 +391,13 @@ public class MyNetwork : MonoBehaviour
 
                     m_playerNames.Add(m_client.GetName());
                     UnitFactory.Instance.SetUpPlayers(m_playerNames);
+                    GameplayManager.Instance.UpdateUI();
+                    GameplayManager.Instance.ShowHUD();
                     WorldGenerator.Instance.SpawnUnitsOnStart();
                     WorldGenerator.Instance.DiscoverRuinTiles();
 
+                    m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
+                    m_cameraController.SetCameraPosition(WorldGenerator.Instance.GetStartingPosition(m_client.GetName()));
                     m_uiHolder.SetActive(false);
                 }
             }

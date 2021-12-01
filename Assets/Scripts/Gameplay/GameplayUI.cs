@@ -7,6 +7,10 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerDescriptionText;
     [SerializeField] private TextMeshProUGUI turnText;
 
+    [SerializeField] private GameObject m_turnHolder;
+    [SerializeField] private GameObject m_timerHolder;
+    [SerializeField] private GameObject m_turnButtonObject;
+
     [SerializeField] private int alertTime = 1;
     [SerializeField] private Animation animAlertTick;
 
@@ -15,12 +19,22 @@ public class GameplayUI : MonoBehaviour
 
     private int previousTime = -1;
 
-
     private void Awake()
     {
         timerText.color = defaultTextColor;
         timerDescriptionText.color = defaultTextColor;
         turnText.color = defaultTextColor;
+
+        Show(false);
+    }
+
+    public void Show(bool value = true)
+    {
+        m_timerHolder.SetActive(value);
+        m_turnButtonObject.SetActive(value);
+        m_turnHolder.SetActive(value);
+
+        UpdateTurnUI();
     }
 
     public void SetTimerText(float value)
@@ -47,9 +61,10 @@ public class GameplayUI : MonoBehaviour
         previousTime = i;
     }
 
-    public void SetTurnText(bool value)
+    public void UpdateTurnUI()
     {
-        string output = value ? "Mine" : "Opponent";
-        turnText.text = "Turn: " + output;
+        m_turnButtonObject.SetActive(MyNetwork.IsMyTurn);
+        m_timerHolder.SetActive(MyNetwork.IsMyTurn);
+        turnText.text = MyNetwork.IsMyTurn ? "Mine" : "Opponent";
     }
 }

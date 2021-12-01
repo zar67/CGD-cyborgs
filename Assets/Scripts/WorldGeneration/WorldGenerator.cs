@@ -52,6 +52,27 @@ public class WorldGenerator : MonoBehaviour
 
     #endregion
 
+    public Rect GetWorldRect()
+    {
+        Vector2 size = WorldTiles[WorldTiles.Count - 1].transform.position - WorldTiles[0].transform.position;
+        size = new Vector2(Mathf.Abs(size.x), Mathf.Abs(size.y));
+
+        return new Rect(WorldTiles[0].transform.position, size);
+    }
+
+    public Vector2 GetStartingPosition(string playerID)
+    {
+        foreach(Ruin ruin in AllRuins)
+        {
+            if (ruin.m_playerOwner == playerID)
+            {
+                return ruin.transform.position;
+            }
+        }
+
+        return Vector2.zero;
+    }
+
     public Tile GetAttackPattern(HexCoordinates start, EHexDirection direction, UnitFactory.AttackPattern attackPattern, out List<Tile> pattern)
     {
         pattern = new List<Tile>();
