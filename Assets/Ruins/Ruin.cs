@@ -164,6 +164,7 @@ public class Ruin : MonoBehaviour, ITileObject
         {
             ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
             hasUnit = true;
+            XMLFormatter.AddRuinOwnerChange(this, ruinUnit.GetPlayerId()); 
         }
     }
 

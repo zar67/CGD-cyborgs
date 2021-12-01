@@ -185,7 +185,7 @@ public class XMLFormatter
             else if (tile.TileObject is Unit)
             {
                 var unit = (Unit)tile.TileObject;
-                itemTypeAttrib.Value = "soldier";
+                itemTypeAttrib.Value = Unit.unitTypesLookUp[unit.Type];
                 idAttrib.Value = unit.GetID().ToString();
             }
 
