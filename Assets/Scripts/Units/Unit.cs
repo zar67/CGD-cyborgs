@@ -83,6 +83,13 @@ public class Unit : MonoBehaviour, ITileObject
         set;
     }
 
+    public static Dictionary<UnitTypes, string> unitTypesLookUp = new Dictionary<UnitTypes, string>() 
+    { 
+        {UnitTypes.SOLDIER, "soldier" }, 
+        {UnitTypes.TANK, "tank" }, 
+        {UnitTypes.PLANE, "plane" }, 
+	}; 
+
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
     public int GetID()
