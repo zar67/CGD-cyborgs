@@ -42,19 +42,10 @@ public class MyNetwork : MonoBehaviour
     //
     private void Awake()
     {
-        m_hostButton.onClick.AddListener(delegate
-        {
-            SetHost();
-        });
-        m_clientButton.onClick.AddListener(delegate
-        {
-            SetClient();
-        });
+        m_hostButton.onClick.AddListener(SetHost);
+        m_clientButton.onClick.AddListener(SetClient);
 
-        m_startGameBttn.onClick.AddListener(delegate
-        {
-            StartGame();
-        });
+        m_startGameBttn.onClick.AddListener(StartGame);
 
         m_connectToHostBttn.onClick.AddListener(delegate
         {
@@ -62,7 +53,7 @@ public class MyNetwork : MonoBehaviour
         });
     }
 
-    public static string GetMyInstacneID()
+    public static string GetMyInstanceID()
     {
         string myID = "";
         if (m_host != null)
@@ -408,6 +399,8 @@ public class MyNetwork : MonoBehaviour
                     UnitFactory.Instance.SetUpPlayers(m_playerNames);
                     WorldGenerator.Instance.SpawnUnitsOnStart();
                     WorldGenerator.Instance.DiscoverRuinTiles();
+
+                    m_uiHolder.SetActive(false);
                 }
             }
         }

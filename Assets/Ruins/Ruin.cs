@@ -88,7 +88,8 @@ public class Ruin : MonoBehaviour, ITileObject
     private bool CheckCanTakeOver()
     {
         if (WorldSelection.SelectedObject is Unit unit &&
-            WorldSelection.SelectedObject != this)
+            MyNetwork.GetMyInstanceID() != m_playerOwner && 
+            MyNetwork.GetMyInstanceID() == unit.GetPlayerId())
         {
             if (!unit.isPlayer(m_playerOwner) && WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true))
             {
@@ -177,5 +178,4 @@ public class Ruin : MonoBehaviour, ITileObject
             unitCount--;
         }
     }
-
 }
