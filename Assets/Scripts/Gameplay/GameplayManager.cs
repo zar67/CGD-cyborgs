@@ -12,9 +12,6 @@ public class GameplayManager : MonoBehaviour
     private float timerCurrent = 0;
     [SerializeField] private MyNetwork m_networkManager;
 
-    //for turntesting
-    [SerializeField] private GameObject image;
-
     #region Singleton Setup
     private static GameplayManager _instance;
     private GameplayManager()
@@ -78,7 +75,6 @@ public class GameplayManager : MonoBehaviour
         ui.SetTurnText(thisPlayerInputEnabled);
         ui.SetTimerText(timerCurrent);
         UnitFactory.Instance.ResetTurn();
-        image.SetActive(true);
 
     }
 
@@ -86,6 +82,5 @@ public class GameplayManager : MonoBehaviour
     {
         thisPlayerInputEnabled = false;
         m_networkManager.NextPlayer();
-        image.SetActive(false);
     }
 }

@@ -170,15 +170,10 @@ public class Unit : MonoBehaviour, ITileObject
         if (specialClick)
         {
             unitSprite.color = new Color(1, 0, 0);
-            Debug.Log("RED");
-
         }
         else
         {
             unitSprite.color = new Color(0, 1, 0);
-            Debug.Log("GREEN");
-
-
         }
     }
 

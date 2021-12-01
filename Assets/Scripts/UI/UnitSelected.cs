@@ -51,6 +51,7 @@ public class UnitSelected : MonoBehaviour
         {
             gameObjectUiUnitSelect.SetActive(true);
             gameObjectUnitPortrait.SetActive(true);
+            gameObjectUiRuinSelect.SetActive(false);
 
             healthText.text = unit.GetHealth().ToString();
             movementText.text = unit.GetMovementSpeed().ToString();
