@@ -310,6 +310,19 @@ public class MyNetwork : MonoBehaviour
                         }
                         ruin.m_playerOwner = messageData;
                     }
+                    else if(messageType == "unitchange")
+                    {
+                        Ruin ruin = null;
+                        foreach (Ruin r in WorldGenerator.Instance.AllRuins)
+                        {
+                            if (r.unique_id.ToString() == messageID)
+                            {
+                                ruin = r;
+                                break;
+                            }
+                        }
+                        ruin.UnitType = Unit.unitTypesLookUpStr[messageData];
+					}
                 }
 
                 GameplayManager.Instance.ResetTurn();

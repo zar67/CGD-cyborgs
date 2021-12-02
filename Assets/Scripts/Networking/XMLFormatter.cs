@@ -23,14 +23,16 @@ public class XMLFormatter
     {
         ttPOSITION, //unit position change
         ttHEALTH, //unit health change
-        ttRUIN   //ruin owner change
+        ttRUIN,   //ruin owner change
+        ttUnitChange
     }
 
     private static Dictionary<TurnType, string> turnTypeLookUp = new Dictionary<TurnType, string>()
     {
         {TurnType.ttPOSITION, "position"},
         {TurnType.ttHEALTH, "health"},
-        {TurnType.ttRUIN, "ruin"}
+        {TurnType.ttRUIN, "ruin"},
+        {TurnType.ttUnitChange, "unitchange"}
     };//;
 
     //Turn Types
@@ -75,6 +77,14 @@ public class XMLFormatter
         string data = _owner;
         m_TurnHistory.Add(new TurnData(typeStr, id, data));
     }
+
+    public static void AddUnitTypeChange(Ruin _ruin, Unit.UnitTypes _unitType)
+    {
+        string typeStr = turnTypeLookUp[TurnType.ttUnitChange];
+        string id = _ruin.unique_id.ToString();
+        string data = Unit.unitTypesLookUp[_unitType];
+        m_TurnHistory.Add(new TurnData(typeStr, id, data));
+	}
 
     private static void ConstructTurnXML(ref XmlDocument _xmlDoc, ref XmlElement _xmlParent)
     {
