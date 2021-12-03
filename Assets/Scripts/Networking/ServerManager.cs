@@ -35,10 +35,8 @@ public class ServerManager : MonoBehaviour
 
     public void MainMenu()
     {
-        child.SetActive(false);
-        mainMenuBttn.SetActive(false);
-        refreshBttn.SetActive(false);
         mainMenu.SetActive(true);
+        gameObject.SetActive(false);
 	}
 
     public void Resfresh()
