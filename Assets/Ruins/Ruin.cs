@@ -13,9 +13,6 @@ public class Ruin : MonoBehaviour, ITileObject
     public string m_playerOwner = "";
     public int unique_id;
 
-    public int unitCount = 0;
-    public int maxUnitAmount = 3;
-
     private bool hasUnit = false;
     private Unit ruinUnit;
 
@@ -45,7 +42,6 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
         unique_id = ruinID;
         m_playerOwner = playerID;
-        EventManager.instance.UnitDied += UnitLost;
     }
 
     public void Select()
@@ -126,27 +122,30 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public void SpawnUnit()
     {
-        if (Tile.TileObject != null && unitCount < 1)
+        if (Tile.TileObject != null && !hasUnit)
         {
             KeyValuePair<EHexDirection, Tile> tileToSpawn = Tile.GetRandomNeighbour();
             if (tileToSpawn.Value != null)
             {
                 ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, tileToSpawn.Value, unique_id, m_playerOwner);
+                ruinUnit.OnDeath += RespawnUnit;
                 hasUnit = true;
-                unitCount++;
             }
         }
     }
 
-    public void RespawnUnit(int id)
+    public void RespawnUnit()
     {
         if (Tile.TileObject != null)
         {
-            if (id == this.unique_id)
+            if (hasUnit)
             {
-                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-                hasUnit = true;
+                ruinUnit.ForceKill();
             }
+
+            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            ruinUnit.OnDeath += RespawnUnit;
+            hasUnit = true;
         }
     }
 
@@ -157,7 +156,9 @@ public class Ruin : MonoBehaviour, ITileObject
 
         //need to add this messae to queue before unit is created local side
         if(_sendMessage)
-            XMLFormatter.AddRuinOwnerChange(this, m_playerOwner); 
+        {
+            XMLFormatter.AddRuinOwnerChange(this, m_playerOwner);
+        }
 
         if (hasUnit)
         {
@@ -169,8 +170,8 @@ public class Ruin : MonoBehaviour, ITileObject
         else
         {
             ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
+            ruinUnit.OnDeath += RespawnUnit;
             hasUnit = true;
-            
         }
     }
 
@@ -178,11 +179,13 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         m_ruinSpriteRenderer.enabled = show;
     }
+
     public void UnitLost(int id)
     {
-        if (id == this.unique_id)
+        if (id == unique_id)
         {
-            unitCount--;
+            hasUnit = false;
+            RespawnUnit();
         }
     }
 }

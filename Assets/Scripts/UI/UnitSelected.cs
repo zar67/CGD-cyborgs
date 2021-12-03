@@ -37,6 +37,11 @@ public class UnitSelected : MonoBehaviour
         foreach (RuinSelectAction action in m_unitTypeActions)
         {
             action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.SOLDIER;
+            action.SelectButton.interactable = action.UnitType != Unit.UnitTypes.SOLDIER;
+            action.SelectButton.onClick.AddListener(delegate
+            {
+                ChangeRuinUnitType(action.UnitType);
+            });
         }
     }
 
@@ -78,51 +83,20 @@ public class UnitSelected : MonoBehaviour
         }
     }
 
-    public void SpawnTypeUnit()
+    private void ChangeRuinUnitType(Unit.UnitTypes type)
     {
-
         if (WorldSelection.SelectedObject is Ruin ruin)
         {
-            ruin.UnitType = Unit.UnitTypes.SOLDIER;
+            ruin.UnitType = type;
 
             foreach (RuinSelectAction action in m_unitTypeActions)
             {
-                action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.SOLDIER;
+                action.SelectedImage.enabled = action.UnitType == type;
+                action.SelectButton.interactable = action.UnitType != type;
             }
 
-            XMLFormatter.AddUnitTypeChange(ruin, Unit.UnitTypes.SOLDIER);
-        }
-        
-    }
-
-    public void SpawnTankUnit()
-    {
-
-        if (WorldSelection.SelectedObject is Ruin ruin)
-        {
-            ruin.UnitType = Unit.UnitTypes.TANK;
-
-            foreach (RuinSelectAction action in m_unitTypeActions)
-            {
-                action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.TANK;
-            }
-            XMLFormatter.AddUnitTypeChange(ruin, Unit.UnitTypes.TANK);
-        }
-    }
-
-
-    public void SpawnPlaneUnit()
-    {
-
-        if (WorldSelection.SelectedObject is Ruin ruin)
-        {
-            ruin.UnitType = Unit.UnitTypes.PLANE;
-
-            foreach (RuinSelectAction action in m_unitTypeActions)
-            {
-                action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.PLANE;
-            }
-            XMLFormatter.AddUnitTypeChange(ruin, Unit.UnitTypes.PLANE);
+            XMLFormatter.AddUnitTypeChange(ruin, type);
+            ruin.RespawnUnit();
         }
     }
 }
