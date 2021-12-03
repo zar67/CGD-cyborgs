@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
+    [SerializeField] GameObject leaderBoard;
     // Start is called before the first frame update
     private void Start()
     {
@@ -14,6 +15,12 @@ public class Menu : MonoBehaviour
     {
 
     }
+
+    public void ShowLeaderBoards()
+    {
+        leaderBoard.SetActive(true);
+        this.gameObject.SetActive(false);
+	}
 
     public void loadLobby()
     {
