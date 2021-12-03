@@ -50,6 +50,8 @@ public class Unit : MonoBehaviour, ITileObject
 
     #endregion
 
+    public event Action OnDeath;
+
     [Header("Sprites")]
     [SerializeField] private SpriteRenderer unitSprite;
     [SerializeField] private List<Sprite> playerSprites;
@@ -130,7 +132,6 @@ public class Unit : MonoBehaviour, ITileObject
         return unitStats.health;
     }
 
-
     public int GetMovementSpeed()
     {
         return unitStats.movementSpeed;
@@ -140,6 +141,7 @@ public class Unit : MonoBehaviour, ITileObject
     {
         return unitStats.sight;
     }
+
     public int GetDamage()
     {
         return unitStats.defaultDamage;
@@ -219,7 +221,7 @@ public class Unit : MonoBehaviour, ITileObject
         {
             WorldSelection.ChangeSelection(null);
         }
-        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0 && Tile.IsDiscovered)
+        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0 && Tile.IsDiscovered && MyNetwork.IsMyTurn)
         {
             specialClick = true;
             WorldSelection.ChangeSelection(this);
@@ -232,6 +234,11 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerExit(PointerEventData eventData)
     {
+    }
+
+    private void OnDestroy()
+    {
+        OnDeath = null;
     }
 
     private void Awake()
@@ -275,7 +282,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void MoveToTile(Tile current, bool sendMsg = true)
     {
-        Tile.UnSetTileObject();
+        Tile.SetTileObject(null);
         current.SetTileObject(this);
         HexCoordinates coord = Tile.Coordinates;
         transform.position = current.transform.position;
@@ -290,7 +297,10 @@ public class Unit : MonoBehaviour, ITileObject
             }
         }
         if(sendMsg)
+        {
             XMLFormatter.AddPositionChange(this);
+        }
+
         WorldSelection.ChangeSelection(null);
     }
 
@@ -306,25 +316,33 @@ public class Unit : MonoBehaviour, ITileObject
         XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)
         {
-            OnDeath(ruinId);
+            HandleDeath(ruinId);
         }
-        Debug.Log(unitStats.health + " : took " + dmg + " dmg");
-        //XMLFormatter.AddHealthChange(this);
-        
-        //OnDeath(ruinId);
     }
 
-    public void OnDeath(int id)
+    public void ForceKill()
     {
-        Tile.UnSetTileObject();
+        unitStats.health = 0;
+        XMLFormatter.AddHealthChange(this);
+
+        Tile.SetTileObject(null);
+        unitSprite.color = new Color(0, 0, 0, 0);
+        unitSprite.sortingOrder = -1;
+        isDead = true;
+
+        UnitFactory.Instance.allUnits.Remove(this);
+        Destroy(gameObject);
+    }
+
+    public void HandleDeath(int id)
+    {
+        Tile.SetTileObject(null);
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
         if (id == ruinId)
         {
-            unitStats.health = 3;
-            
-            EventManager.instance.OnUnitLost(id);
+            OnDeath?.Invoke();
             Destroy(gameObject);
         }
     }
@@ -359,5 +377,4 @@ public class Unit : MonoBehaviour, ITileObject
     {
         unitSprite.enabled = show;
     }
-
 }
