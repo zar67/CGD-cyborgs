@@ -5,7 +5,11 @@ app = Flask(__name__)
 #key = players name
 #value = score
 highscores = dict()
-highscores["liam"] = "50"
+highscores["liam"] = "5000"
+highscores["zoe"] = "-1000"
+highscores["ed"] = "-325"
+highscores["matt"] = "45"
+highscores["stan"] = "0"
 
 @app.route("/")
 def hello_world():
@@ -40,3 +44,7 @@ def decrementScore(name :str, score : str):
     
     reply = f"Score Decremented {name} : {score}"
     return reply
+
+@app.route("/GetAllScores")
+def getAllScores():
+    return str(highscores)
