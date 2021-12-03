@@ -222,10 +222,16 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (!Tile.IsDiscovered) return;
+
+        TileInformationUI.Instance.SetText(unitType, MyNetwork.GetMyInstanceID() == playerId);
+
+        WorldGenerator.Instance.GetRuinFromID(ruinId).Tile.ShowPathSprite(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        WorldGenerator.Instance.GetRuinFromID(ruinId).Tile.HidePathSprite();
     }
 
     private void Awake()
@@ -272,7 +278,9 @@ public class Unit : MonoBehaviour, ITileObject
         Tile.UnSetTileObject();
         current.SetTileObject(this);
         HexCoordinates coord = Tile.Coordinates;
-        transform.position = current.transform.position;
+        Vector3 pos = current.transform.position;
+        pos.y -= 0.3f;
+        transform.position = pos;
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
 

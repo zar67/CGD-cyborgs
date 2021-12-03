@@ -60,6 +60,19 @@ public class WorldGenerator : MonoBehaviour
         return new Rect(WorldTiles[0].transform.position, size);
     }
 
+    public Ruin GetRuinFromID(int ruinId)
+    {
+        foreach (Ruin ruin in AllRuins)
+        {
+            if (ruin.GetID() == ruinId)
+            {
+                return ruin;
+            }
+        }
+        Debug.LogError("COULD NOT FIND RUIN WITH ID: " + ruinId);
+        return AllRuins[0];
+    }
+
     public Vector2 GetStartingPosition(string playerID)
     {
         foreach(Ruin ruin in AllRuins)

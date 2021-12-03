@@ -218,6 +218,8 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        TileInformationUI.Instance.SetText(Terrain, IsDiscovered);
+
         if (TileObject != null || !IsDiscovered)
         {
             return;
