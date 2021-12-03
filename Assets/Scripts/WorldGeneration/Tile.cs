@@ -215,7 +215,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (TileObject != null || !IsDiscovered)
+        if (TileObject != null || !IsDiscovered || !MyNetwork.IsMyTurn)
         {
             return;
         }

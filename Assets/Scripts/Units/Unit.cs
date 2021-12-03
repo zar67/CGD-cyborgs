@@ -341,8 +341,6 @@ public class Unit : MonoBehaviour, ITileObject
         isDead = true;
         if (id == ruinId)
         {
-            unitStats.health = 3;
-
             OnDeath?.Invoke();
             Destroy(gameObject);
         }
