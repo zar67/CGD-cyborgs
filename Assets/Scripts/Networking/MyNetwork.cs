@@ -222,7 +222,7 @@ public class MyNetwork : MonoBehaviour
         {
             messages = m_client.GetRxQueueCopyAndClear();
         }
-
+        
         foreach (string msg in messages)
         {
             var doc = new XmlDocument();
@@ -278,7 +278,7 @@ public class MyNetwork : MonoBehaviour
                                 break;
                             }
                         }
-                        unit.MoveToTile(tileToMoveTo);
+                        unit.MoveToTile(tileToMoveTo, false);
                     }
                     else if (messageType == "health")
                     {
@@ -308,8 +308,21 @@ public class MyNetwork : MonoBehaviour
                                 break;
                             }
                         }
-                        ruin.m_playerOwner = messageData;
+                        ruin.TakeOverRuin(messageData , false);
                     }
+                    else if(messageType == "unitchange")
+                    {
+                        Ruin ruin = null;
+                        foreach (Ruin r in WorldGenerator.Instance.AllRuins)
+                        {
+                            if (r.unique_id.ToString() == messageID)
+                            {
+                                ruin = r;
+                                break;
+                            }
+                        }
+                        ruin.UnitType = Unit.unitTypesLookUpStr[messageData];
+					}
                 }
 
                 GameplayManager.Instance.ResetTurn();

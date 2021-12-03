@@ -89,7 +89,10 @@ public class UnitSelected : MonoBehaviour
             {
                 action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.SOLDIER;
             }
+
+            XMLFormatter.AddUnitTypeChange(ruin, Unit.UnitTypes.SOLDIER);
         }
+        
     }
 
     public void SpawnTankUnit()
@@ -103,6 +106,7 @@ public class UnitSelected : MonoBehaviour
             {
                 action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.TANK;
             }
+            XMLFormatter.AddUnitTypeChange(ruin, Unit.UnitTypes.TANK);
         }
     }
 
@@ -118,6 +122,7 @@ public class UnitSelected : MonoBehaviour
             {
                 action.SelectedImage.enabled = action.UnitType == Unit.UnitTypes.PLANE;
             }
+            XMLFormatter.AddUnitTypeChange(ruin, Unit.UnitTypes.PLANE);
         }
     }
 }

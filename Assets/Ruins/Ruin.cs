@@ -67,7 +67,7 @@ public class Ruin : MonoBehaviour, ITileObject
         {
             if (WorldSelection.SelectedObject is Unit unit && CheckCanTakeOver())
             {
-                TakeOverRuin(unit.GetPlayerId());
+                TakeOverRuin(unit.GetPlayerId(), true);
                 WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true);
                 unit.MoveToTile(path[path.Count - 2]);
                 unit.NullTurn();
@@ -150,9 +150,15 @@ public class Ruin : MonoBehaviour, ITileObject
         }
     }
 
-    public void TakeOverRuin(string newPlayerOwner)
+    //send message bool is to prevent constant bounce messaging 
+    public void TakeOverRuin(string newPlayerOwner, bool _sendMessage)
     {
         m_playerOwner = newPlayerOwner;
+
+        //need to add this messae to queue before unit is created local side
+        if(_sendMessage)
+            XMLFormatter.AddRuinOwnerChange(this, m_playerOwner); 
+
         if (hasUnit)
         {
             if (ruinUnit != null)
@@ -164,7 +170,7 @@ public class Ruin : MonoBehaviour, ITileObject
         {
             ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
             hasUnit = true;
-            XMLFormatter.AddRuinOwnerChange(this, ruinUnit.GetPlayerId()); 
+            
         }
     }
 

@@ -89,6 +89,12 @@ public class Unit : MonoBehaviour, ITileObject
         {UnitTypes.TANK, "tank" }, 
         {UnitTypes.PLANE, "plane" }, 
 	}; 
+    public static Dictionary<string, UnitTypes> unitTypesLookUpStr = new Dictionary<string, UnitTypes>() 
+    { 
+        {"soldier", UnitTypes.SOLDIER}, 
+        {"tank" , UnitTypes.TANK}, 
+        {"plane" , UnitTypes.PLANE}, 
+	}; 
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
@@ -267,7 +273,7 @@ public class Unit : MonoBehaviour, ITileObject
         return false;
     }
 
-    public void MoveToTile(Tile current)
+    public void MoveToTile(Tile current, bool sendMsg = true)
     {
         Tile.UnSetTileObject();
         current.SetTileObject(this);
@@ -283,8 +289,8 @@ public class Unit : MonoBehaviour, ITileObject
                 tile.Discover();
             }
         }
-
-        XMLFormatter.AddPositionChange(this);
+        if(sendMsg)
+            XMLFormatter.AddPositionChange(this);
         WorldSelection.ChangeSelection(null);
     }
 
@@ -317,7 +323,7 @@ public class Unit : MonoBehaviour, ITileObject
         if (id == ruinId)
         {
             unitStats.health = 3;
-            XMLFormatter.AddHealthChange(this);
+            
             EventManager.instance.OnUnitLost(id);
             Destroy(gameObject);
         }
