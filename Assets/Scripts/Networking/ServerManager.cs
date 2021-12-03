@@ -112,8 +112,8 @@ public class ServerManager : MonoBehaviour
 
                         string[] playerSplit = player.Split(':');
                         LeaderBoardItem itemStuff = playerItem.GetComponent<LeaderBoardItem>();
-                        itemStuff.nameText.text = playerSplit[0];
-                        itemStuff.scoreText.text = playerSplit[1];
+                        itemStuff.nameText.text = playerSplit[0].Replace("'","");
+                        itemStuff.scoreText.text = playerSplit[1].Replace("'","");
 					}
                     
                     break;
