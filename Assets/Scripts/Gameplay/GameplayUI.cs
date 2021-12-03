@@ -34,7 +34,10 @@ public class GameplayUI : MonoBehaviour
         m_turnButtonObject.SetActive(value);
         m_turnHolder.SetActive(value);
 
-        UpdateTurnUI();
+        if (value)
+        {
+            UpdateTurnUI();
+        }
     }
 
     public void SetTimerText(float value)

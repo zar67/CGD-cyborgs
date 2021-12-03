@@ -294,7 +294,7 @@ public class MyNetwork : MonoBehaviour
                         unit.SetHealth(int.Parse(messageData));
                         if (int.Parse(messageData) <= 0)
                         {
-                            unit.OnDeath(unit.GetID());
+                            unit.HandleDeath(unit.GetID());
                         }
                     }
                     else if (messageType == "ruin")

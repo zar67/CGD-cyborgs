@@ -98,14 +98,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void SetTileObject(ITileObject obj)
     {
+        if (obj != null)
+        {
+            obj.Tile = this;
+        }
         TileObject = obj;
-        obj.Tile = this;
-    }
-
-    public void UnSetTileObject()
-    {
-        TileObject.Tile = null;
-        TileObject = null;
     }
 
     public int GetSortingOrderOfTile()
