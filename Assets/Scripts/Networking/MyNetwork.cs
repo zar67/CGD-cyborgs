@@ -222,7 +222,7 @@ public class MyNetwork : MonoBehaviour
         {
             messages = m_client.GetRxQueueCopyAndClear();
         }
-
+        
         foreach (string msg in messages)
         {
             var doc = new XmlDocument();
@@ -308,7 +308,7 @@ public class MyNetwork : MonoBehaviour
                                 break;
                             }
                         }
-                        ruin.m_playerOwner = messageData;
+                        ruin.TakeOverRuin(messageData , false);
                     }
                     else if(messageType == "unitchange")
                     {

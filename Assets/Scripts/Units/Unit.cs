@@ -323,7 +323,7 @@ public class Unit : MonoBehaviour, ITileObject
         if (id == ruinId)
         {
             unitStats.health = 3;
-            XMLFormatter.AddHealthChange(this);
+            
             EventManager.instance.OnUnitLost(id);
             Destroy(gameObject);
         }

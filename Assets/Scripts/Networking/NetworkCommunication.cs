@@ -35,7 +35,6 @@ public class NetworkCommunication
 
         m_rxQueue = new List<string>();
         m_txQueue = new List<string>();
-
     }
 
     public void AddToRxQueue(string _message)

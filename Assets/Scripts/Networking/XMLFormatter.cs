@@ -103,7 +103,6 @@ public class XMLFormatter
 
             _xmlParent.AppendChild(cNode);
         }
-
         m_TurnHistory.Clear();
     }
 
