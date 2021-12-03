@@ -278,7 +278,7 @@ public class MyNetwork : MonoBehaviour
                                 break;
                             }
                         }
-                        unit.MoveToTile(tileToMoveTo);
+                        unit.MoveToTile(tileToMoveTo, false);
                     }
                     else if (messageType == "health")
                     {

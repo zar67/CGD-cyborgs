@@ -273,7 +273,7 @@ public class Unit : MonoBehaviour, ITileObject
         return false;
     }
 
-    public void MoveToTile(Tile current)
+    public void MoveToTile(Tile current, bool sendMsg = true)
     {
         Tile.UnSetTileObject();
         current.SetTileObject(this);
@@ -289,8 +289,8 @@ public class Unit : MonoBehaviour, ITileObject
                 tile.Discover();
             }
         }
-
-        XMLFormatter.AddPositionChange(this);
+        if(sendMsg)
+            XMLFormatter.AddPositionChange(this);
         WorldSelection.ChangeSelection(null);
     }
 
