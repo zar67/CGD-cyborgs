@@ -329,7 +329,8 @@ public class Unit : MonoBehaviour, ITileObject
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
-        
+
+        UnitFactory.Instance.allUnits.Remove(this);
         Destroy(gameObject);
     }
 
