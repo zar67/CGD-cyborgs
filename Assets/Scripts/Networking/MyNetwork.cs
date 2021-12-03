@@ -119,7 +119,7 @@ public class MyNetwork : MonoBehaviour
     {
         string hostName = Dns.GetHostName(); // Retrive the Name of HOST
         // Get the IP
-        IPAddress[] allIPs = Dns.GetHostAddresses(hostName);
+        /*IPAddress[] allIPs = Dns.GetHostAddresses(hostName);
         IPAddress myIP = null;
         foreach (IPAddress ip in allIPs)
         {
@@ -136,7 +136,7 @@ public class MyNetwork : MonoBehaviour
             Debug.LogError("MyNetwork::SetHost() -> could not find IP address");
             return;
         }
-        _ip = hostIP;
+        _ip = hostIP;*/
         m_client = new NetworkClient(_ip, m_port.ToString());
         m_client.SetName(m_nameInputClient.text);
         m_conectedTxt.text = "Connected: TRUE";
