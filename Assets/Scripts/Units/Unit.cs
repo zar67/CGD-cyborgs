@@ -54,6 +54,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     [Header("Sprites")]
     [SerializeField] private SpriteRenderer unitSprite;
+    [SerializeField] private UnitVisuals unitVisualsHandler;
     [SerializeField] private List<Sprite> playerSprites;
 
     [Header("Unit type")]
@@ -320,6 +321,7 @@ public class Unit : MonoBehaviour, ITileObject
     public void TakeDamage(int dmg)
     {
         unitStats.health -= dmg;
+        unitVisualsHandler.TookDamage(dmg);
 
         XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)

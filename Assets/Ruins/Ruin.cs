@@ -28,6 +28,11 @@ public class Ruin : MonoBehaviour, ITileObject
         set;
     }
 
+    public bool GetHasUnit()
+    {
+        return hasUnit;
+    }
+
     public int GetID()
     {
         return unique_id;

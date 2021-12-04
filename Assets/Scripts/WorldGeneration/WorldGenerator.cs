@@ -73,6 +73,20 @@ public class WorldGenerator : MonoBehaviour
         return AllRuins[0];
     }
 
+    public (bool, string) GetGameOver()
+    {
+        string lastName = "";
+        foreach (Ruin ruin in AllRuins)
+        {
+            if (lastName != "" && ruin.GetHasUnit() && ruin.m_playerOwner != lastName)
+            {
+                return (false, "");
+            }
+            lastName = ruin.GetHasUnit() ? ruin.m_playerOwner : lastName;
+        }
+        return (true, lastName);
+    }
+
     public Vector2 GetStartingPosition(string playerID)
     {
         foreach(Ruin ruin in AllRuins)
@@ -128,7 +142,7 @@ public class WorldGenerator : MonoBehaviour
 
                 if ((!scoreMap.ContainsKey(neighbour.Value) || distance < scoreMap[neighbour.Value]) &&
                     (neighbour.Value.TileObject == null || (isRuin && neighbour.Value.TileObject is Ruin)) &&
-                    validTerrain.Contains(neighbour.Value.Terrain))
+                    (validTerrain.Contains(neighbour.Value.Terrain) || (isRuin && neighbour.Value == destination)))
                 {
                     previousMap[neighbour.Value] = current;
                     scoreMap[neighbour.Value] = distance;

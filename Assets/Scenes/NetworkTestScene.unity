@@ -3113,6 +3113,10 @@ PrefabInstance:
       propertyPath: t_WG
       value: 
       objectReference: {fileID: 1751784704}
+    - target: {fileID: 6481813103354764840, guid: 9d0cd60ddc3171b4392f7f73be7c5c78, type: 3}
+      propertyPath: stats.Array.data[0].stats.defaultDamage
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6481813103354764841, guid: 9d0cd60ddc3171b4392f7f73be7c5c78, type: 3}
       propertyPath: m_RootOrder
       value: 5
