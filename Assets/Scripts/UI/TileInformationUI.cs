@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TileInformationUI : MonoBehaviour
 {
-    [SerializeField] private Text terrainText;
+    [SerializeField] private TextMeshProUGUI terrainText;
 
     #region Singleton Setup
     private static TileInformationUI _instance;
@@ -32,12 +30,12 @@ public class TileInformationUI : MonoBehaviour
 
     public void SetText(bool isAbandonned, bool isPlayers)
     {
-        terrainText.text = (isAbandonned ? "Abandonned ruin" : (isPlayers ? "Ruin" : "Ennemies ruin"));
+        terrainText.text = (isAbandonned ? "Abandonned ruin" : (isPlayers ? "Colonised Ruin" : "Enemy ruin"));
     }
 
     public void SetText(Unit.UnitTypes unit_type, bool isPlayers)
     {
-        terrainText.text += "\nUnit: " + (isPlayers ? "" : " Ennemy ") + unit_type.ToString();
+        terrainText.text += "\nUnit: " + (isPlayers ? "" : " Enemy ") + unit_type.ToString();
     }
 
     public void SetText(TerrainType terrain, bool discovered = true)
