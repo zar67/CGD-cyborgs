@@ -97,15 +97,27 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        TileInformationUI.Instance.SetText(!hasUnit, MyNetwork.GetMyInstanceID() == m_playerOwner);
+
         if (CheckCanTakeOver())
         {
             m_takeOverSpriteRenderer.enabled = true;
+        }
+
+        if (ruinUnit != null)
+        {
+            ruinUnit.Tile.ShowPathSprite(true);
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         m_takeOverSpriteRenderer.enabled = false;
+
+        if (ruinUnit != null)
+        {
+            ruinUnit.Tile.HidePathSprite();
+        }
     }
 
     private void Awake()
@@ -119,7 +131,6 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.enabled = false;
     }
     
-
     public void SpawnUnit()
     {
         if (Tile.TileObject != null && !hasUnit)
