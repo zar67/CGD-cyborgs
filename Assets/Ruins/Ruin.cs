@@ -10,8 +10,10 @@ public class Ruin : MonoBehaviour, ITileObject
     [SerializeField] private SpriteRenderer m_ruinSpriteRenderer = default;
     [SerializeField] private SpriteRenderer m_takeOverSpriteRenderer = default;
 
-    public string m_playerOwner = "";
-    public int unique_id;
+    [SerializeField] private List<Sprite> playerSprites;
+
+    [HideInInspector] public string m_playerOwner = "";
+    [HideInInspector] public int unique_id;
 
     private bool hasUnit = false;
     private Unit ruinUnit;
@@ -47,6 +49,13 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
         unique_id = ruinID;
         m_playerOwner = playerID;
+
+        m_ruinSpriteRenderer.sprite = playerSprites[0];
+    }
+
+    public void UpdateSprite()
+    {
+        m_ruinSpriteRenderer.sprite = playerSprites[UnitFactory.Instance.GetUnitSpriteInt(m_playerOwner) + 1];
     }
 
     public void Select()
@@ -176,6 +185,7 @@ public class Ruin : MonoBehaviour, ITileObject
             XMLFormatter.AddRuinOwnerChange(this, m_playerOwner);
         }
 
+        UpdateSprite();
         if (hasUnit)
         {
             if (ruinUnit != null)

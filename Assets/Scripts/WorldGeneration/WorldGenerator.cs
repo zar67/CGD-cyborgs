@@ -322,6 +322,7 @@ public class WorldGenerator : MonoBehaviour
     {
         foreach (Ruin ruin in AllRuins)
         {
+            ruin.UpdateSprite();
             if (ruin.m_playerOwner != "")
             {
                 ruin.SpawnUnit();

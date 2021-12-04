@@ -49,56 +49,12 @@ MonoBehaviour:
   WorldTiles: []
   AllRuins: []
   m_waterSprites:
-  - {fileID: 21300000, guid: 3df3aae32c31258408b6430047d5a2c6, type: 3}
-  - {fileID: 21300000, guid: bd2a801ad1752904aabc1eeb5f6a39ef, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
-  - {fileID: 21300000, guid: 7d3073bc91562dc438d916822e5b517a, type: 3}
+  - {fileID: 21300000, guid: 256033503611e924f9ffc6f0485ab867, type: 3}
   m_grassSprites:
-  - {fileID: 21300000, guid: 802ea09db218fd04ebfaada95219a868, type: 3}
-  - {fileID: 21300000, guid: 97add218f53c17248aa909efd5e3aabc, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
-  - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
   - {fileID: 21300000, guid: 855f250a5596fd140b23cfbba49ed4e2, type: 3}
   m_mountainSprites:
-  - {fileID: 21300000, guid: 456738e4e08609e4dabff99ff907573d, type: 3}
-  - {fileID: 21300000, guid: c1ca65be61bd1fd4e986b78713c05864, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
-  - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
   - {fileID: 21300000, guid: deff6712b85c90347a839a0c4057d9d1, type: 3}
   m_desertSprites:
-  - {fileID: 21300000, guid: 09d2995197757c14896d64ef80949cd7, type: 3}
-  - {fileID: 21300000, guid: 09d2995197757c14896d64ef80949cd7, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
-  - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
   - {fileID: 21300000, guid: 08fcd19288305b749927907bb341ca5a, type: 3}
   m_worldWidth: 30
   m_worldHeight: 30
