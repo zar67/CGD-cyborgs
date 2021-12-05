@@ -3,8 +3,11 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
-    [SerializeField] public Tile m_tilePrefab = default;
-    [SerializeField] public Ruin m_ruinPrefab = default;
+    public Tile TilePrefab = default;
+    public Ruin RuinPrefab = default;
+
+    public List<Tile> WorldTiles = new List<Tile>();
+    public List<Ruin> AllRuins = new List<Ruin>();
 
     [Header("Sprite References")]
     [SerializeField] private Sprite[] m_waterSprites = { };
@@ -26,26 +29,19 @@ public class WorldGenerator : MonoBehaviour
     [Header("Ruin Generation Values")]
     [SerializeField] private int m_ruinNumber = 10;
 
-    public List<Tile> m_worldTiles = new List<Tile>();
-    public List<Ruin> m_allRuins = new List<Ruin>();
-
     #region Singleton Setup
     private static WorldGenerator _instance;
-    private WorldGenerator() { }
-
-    public static WorldGenerator Instance
+    private WorldGenerator()
     {
-        get
-        {
-            return _instance;
-        }
     }
+
+    public static WorldGenerator Instance => _instance;
 
     private void SingletonSetUp()
     {
         if (_instance != null && _instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         else
         {
@@ -56,6 +52,53 @@ public class WorldGenerator : MonoBehaviour
 
     #endregion
 
+    public Rect GetWorldRect()
+    {
+        Vector2 size = WorldTiles[WorldTiles.Count - 1].transform.position - WorldTiles[0].transform.position;
+        size = new Vector2(Mathf.Abs(size.x), Mathf.Abs(size.y));
+
+        return new Rect(WorldTiles[0].transform.position, size);
+    }
+
+    public Ruin GetRuinFromID(int ruinId)
+    {
+        foreach (Ruin ruin in AllRuins)
+        {
+            if (ruin.GetID() == ruinId)
+            {
+                return ruin;
+            }
+        }
+        Debug.LogError("COULD NOT FIND RUIN WITH ID: " + ruinId);
+        return AllRuins[0];
+    }
+
+    public (bool, string) GetGameOver()
+    {
+        string lastName = "";
+        foreach (Ruin ruin in AllRuins)
+        {
+            if (lastName != "" && ruin.GetHasUnit() && ruin.m_playerOwner != lastName)
+            {
+                return (false, "");
+            }
+            lastName = ruin.GetHasUnit() ? ruin.m_playerOwner : lastName;
+        }
+        return (true, lastName);
+    }
+
+    public Vector2 GetStartingPosition(string playerID)
+    {
+        foreach(Ruin ruin in AllRuins)
+        {
+            if (ruin.m_playerOwner == playerID)
+            {
+                return ruin.transform.position;
+            }
+        }
+
+        return Vector2.zero;
+    }
 
     public Tile GetAttackPattern(HexCoordinates start, EHexDirection direction, UnitFactory.AttackPattern attackPattern, out List<Tile> pattern)
     {
@@ -99,7 +142,7 @@ public class WorldGenerator : MonoBehaviour
 
                 if ((!scoreMap.ContainsKey(neighbour.Value) || distance < scoreMap[neighbour.Value]) &&
                     (neighbour.Value.TileObject == null || (isRuin && neighbour.Value.TileObject is Ruin)) &&
-                    validTerrain.Contains(neighbour.Value.Terrain))
+                    (validTerrain.Contains(neighbour.Value.Terrain) || (isRuin && neighbour.Value == destination)))
                 {
                     previousMap[neighbour.Value] = current;
                     scoreMap[neighbour.Value] = distance;
@@ -133,12 +176,12 @@ public class WorldGenerator : MonoBehaviour
     public Tile GetTileAtCoordinate(HexCoordinates coordinates)
     {
         int x = coordinates.X + (coordinates.Z / 2);
-        return m_worldTiles[(coordinates.Z * m_worldWidth) + x];
+        return WorldTiles[(coordinates.Z * m_worldWidth) + x];
     }
 
     public IEnumerable<Tile> GetTilesInRange(Tile startingTile, int range)
     {
-        foreach(var tile in m_worldTiles)
+        foreach (Tile tile in WorldTiles)
         {
             if (HexCoordinates.Distance(startingTile, tile) <= range)
             {
@@ -154,18 +197,18 @@ public class WorldGenerator : MonoBehaviour
 
     public void Generate()
     {
-        m_worldTiles = new List<Tile>();
+        WorldTiles = new List<Tile>();
         int i = 0;
         for (int z = 0; z < m_worldHeight; z++)
         {
             for (int x = 0; x < m_worldWidth; x++)
             {
-                var newTile = Instantiate(m_tilePrefab, transform);
+                Tile newTile = Instantiate(TilePrefab, transform);
                 newTile.Initialise(i++, x - (z / 2), z, m_tileOuterRadius, m_worldWidth, m_worldHeight);
 
                 SetNeighbours(x - (z / 2), z, newTile);
 
-                m_worldTiles.Add(newTile);
+                WorldTiles.Add(newTile);
             }
         }
 
@@ -193,7 +236,7 @@ public class WorldGenerator : MonoBehaviour
 
     private int GenerateLandChunk(int size, int landBudget, TerrainType type)
     {
-        Tile startingTile = m_worldTiles[Random.Range(0, m_worldTiles.Count)];
+        Tile startingTile = WorldTiles[Random.Range(0, WorldTiles.Count)];
 
         var tileQueue = new Queue<Tile>();
         tileQueue.Enqueue(startingTile);
@@ -233,24 +276,56 @@ public class WorldGenerator : MonoBehaviour
         return landBudget;
     }
 
+    public void DiscoverRuinTiles()
+    {
+        foreach (Ruin ruin in AllRuins)
+        {
+            if (ruin.m_playerOwner == MyNetwork.GetMyInstanceID())
+            {
+                foreach (Tile tile in GetTilesInRange(ruin.Tile, Ruin.RUIN_SIGHT))
+                {
+                    tile.Discover();
+                }
+            }
+            else
+            {
+                ruin.Show(false);
+            }
+        }
+    }
+
     private void GenerateRuins()
     {
         for (int i = 0; i < m_ruinNumber; i++)
         {
-            int index = Random.Range(0, m_worldTiles.Count - 1);
-            while (m_worldTiles[index].Terrain == TerrainType.WATER && m_worldTiles[index].TileObject != null)
+            int index = Random.Range(0, WorldTiles.Count - 1);
+            while (WorldTiles[index].Terrain == TerrainType.WATER && WorldTiles[index].TileObject != null)
             {
-                index = Random.Range(0, m_worldTiles.Count - 1);
+                index = Random.Range(0, WorldTiles.Count - 1);
             }
-
-            Ruin newRuin = Instantiate(m_ruinPrefab, transform);
-            newRuin.Initialise(m_worldTiles[index].transform.position, m_worldTiles[index].Coordinates.Z, m_worldHeight, i);
-            m_worldTiles[index].SetTileObject(newRuin);
-            m_allRuins.Add(newRuin);
-
-            foreach (var tile in GetTilesInRange(newRuin.Tile, Ruin.RUIN_SIGHT))
+            string playerName = "";
+            if (i < MyNetwork.m_playerNames.Count)
             {
-                tile.Discover();
+                playerName = MyNetwork.m_playerNames[i];
+            }
+            Ruin newRuin = Instantiate(RuinPrefab, transform);
+            newRuin.Initialise(WorldTiles[index].transform.position, WorldTiles[index].Coordinates.Z, m_worldHeight, i, playerName);
+            WorldTiles[index].SetTileObject(newRuin);
+            AllRuins.Add(newRuin);
+
+        }
+
+        DiscoverRuinTiles();
+    }
+
+    public void SpawnUnitsOnStart()
+    {
+        foreach (Ruin ruin in AllRuins)
+        {
+            ruin.UpdateSprite();
+            if (ruin.m_playerOwner != "")
+            {
+                ruin.SpawnUnit();
             }
         }
     }
@@ -321,5 +396,8 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    public List<Tile> GetTiles(){return m_worldTiles;}
+    public List<Tile> GetTiles()
+    {
+        return WorldTiles;
+    }
 }

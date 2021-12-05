@@ -81,14 +81,34 @@ public struct HexCoordinates
         coordinates.X -= center.X;
         coordinates.Z -= center.Z;
 
-        Vector2 dir = new Vector2(coordinates.X, coordinates.Z);
+        var dir = new Vector2(coordinates.X, coordinates.Z);
         dir.Normalize();
 
-        if (dir.x > -0.4f && dir.x < 0.8f && dir.y > 0.5f) return EHexDirection.NE;
-        if (dir.x > 0.5f && dir.y < 0.5f && dir.y > -0.4f) return EHexDirection.E;
-        if (dir.x > 0.4f && dir.y < -0.4f) return EHexDirection.SE;
-        if (dir.x < 0.4f && dir.x > -0.8f && dir.y < -0.4f) return EHexDirection.SW;
-        if (dir.x < -0.5f && dir.y > -0.4f && dir.y < 0.4f) return EHexDirection.W;
+        if (dir.x > -0.4f && dir.x < 0.8f && dir.y > 0.5f)
+        {
+            return EHexDirection.NE;
+        }
+
+        if (dir.x > 0.5f && dir.y < 0.5f && dir.y > -0.4f)
+        {
+            return EHexDirection.E;
+        }
+
+        if (dir.x > 0.4f && dir.y < -0.4f)
+        {
+            return EHexDirection.SE;
+        }
+
+        if (dir.x < 0.4f && dir.x > -0.8f && dir.y < -0.4f)
+        {
+            return EHexDirection.SW;
+        }
+
+        if (dir.x < -0.5f && dir.y > -0.4f && dir.y < 0.4f)
+        {
+            return EHexDirection.W;
+        }
+
         return EHexDirection.NW;
     }
 
@@ -121,6 +141,13 @@ public struct HexCoordinates
         return new HexCoordinates(hc1.X + hc2.X, hc1.Z + hc2.Z);
     }
 
-    public static bool operator ==(HexCoordinates lhs, HexCoordinates rhs) => lhs.Equals(rhs);
-    public static bool operator !=(HexCoordinates lhs, HexCoordinates rhs) => !(lhs.Equals(rhs));
+    public static bool operator ==(HexCoordinates lhs, HexCoordinates rhs)
+    {
+        return lhs.Equals(rhs);
+    }
+
+    public static bool operator !=(HexCoordinates lhs, HexCoordinates rhs)
+    {
+        return !(lhs.Equals(rhs));
+    }
 }

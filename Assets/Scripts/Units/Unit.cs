@@ -1,9 +1,8 @@
-using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Linq;
 
 public class Unit : MonoBehaviour, ITileObject
 {
@@ -32,6 +31,9 @@ public class Unit : MonoBehaviour, ITileObject
         public int defaultDamage;
         public List<UnitDamage> damages;
         public int sight;
+        public int killCount;
+
+
 
         public int GetDamage(UnitTypes type)
         {
@@ -48,8 +50,11 @@ public class Unit : MonoBehaviour, ITileObject
 
     #endregion
 
+    public event Action OnDeath;
+
     [Header("Sprites")]
     [SerializeField] private SpriteRenderer unitSprite;
+    [SerializeField] private UnitVisuals unitVisualsHandler;
     [SerializeField] private List<Sprite> playerSprites;
 
     [Header("Unit type")]
@@ -81,9 +86,25 @@ public class Unit : MonoBehaviour, ITileObject
         set;
     }
 
+    public static Dictionary<UnitTypes, string> unitTypesLookUp = new Dictionary<UnitTypes, string>() 
+    { 
+        {UnitTypes.SOLDIER, "soldier" }, 
+        {UnitTypes.TANK, "tank" }, 
+        {UnitTypes.PLANE, "plane" }, 
+	}; 
+    public static Dictionary<string, UnitTypes> unitTypesLookUpStr = new Dictionary<string, UnitTypes>() 
+    { 
+        {"soldier", UnitTypes.SOLDIER}, 
+        {"tank" , UnitTypes.TANK}, 
+        {"plane" , UnitTypes.PLANE}, 
+	}; 
+
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
-    public int GetID(){return ruinId;}
+    public int GetID()
+    {
+        return ruinId;
+    }
     public void SetUpUnit(Tile tile, int _ruinId, string _playerId = "", int spriteToUse = 0)
     {
         ruinId = _ruinId;
@@ -95,12 +116,48 @@ public class Unit : MonoBehaviour, ITileObject
 
         //Testing
         ResetTurn();
+
+        if (!Tile.IsDiscovered)
+        {
+            Show(false);
+        }
     }
 
     public void SetHealth(int _health)
     {
         unitStats.health = _health;
-	}
+    }
+
+    public int GetHealth()
+    {
+        return unitStats.health;
+    }
+
+    public int GetMovementSpeed()
+    {
+        return unitStats.movementSpeed;
+    }
+
+    public int GetSight()
+    {
+        return unitStats.sight;
+    }
+
+    public int GetDamage()
+    {
+        return unitStats.defaultDamage;
+    }
+
+    public string GetCurrentUnitType()
+    {
+        string unit;
+        unit = unitType.ToString();
+        return unit;
+    }
+    public int GetKillCount()
+    {
+        return unitStats.killCount;
+    }
 
     public void SetUpPlayerId(string _playerId)
     {
@@ -121,7 +178,10 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void Select()
     {
-        if (isDead) return;
+        if (isDead || !Tile.IsDiscovered)
+        {
+            return;
+        }
 
         if (specialClick)
         {
@@ -140,18 +200,29 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
+
         if (eventData.button == PointerEventData.InputButton.Left && !(WorldSelection.SelectedObject is Unit && ((Unit)WorldSelection.SelectedObject).Attacking))
         {
             specialClick = false;
-            WorldSelection.ChangeSelection(WorldSelection.SelectedObject == this ? null : this);
+            if (WorldSelection.SelectedObject != this && Tile.IsDiscovered)
+            {
+                WorldSelection.ChangeSelection(this);
+            }
+            else
+            {
+                WorldSelection.ChangeSelection(null);
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right &&
             WorldSelection.SelectedObject == this)
         {
             WorldSelection.ChangeSelection(null);
         }
-        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0)
+        else if (eventData.button == PointerEventData.InputButton.Right && attacksLeft > 0 && Tile.IsDiscovered && MyNetwork.IsMyTurn)
         {
             specialClick = true;
             WorldSelection.ChangeSelection(this);
@@ -160,10 +231,21 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (!Tile.IsDiscovered) return;
+
+        TileInformationUI.Instance.SetText(unitType, MyNetwork.GetMyInstanceID() == playerId);
+
+        WorldGenerator.Instance.GetRuinFromID(ruinId).Tile.ShowPathSprite(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        WorldGenerator.Instance.GetRuinFromID(ruinId).Tile.HidePathSprite();
+    }
+
+    private void OnDestroy()
+    {
+        OnDeath = null;
     }
 
     private void Awake()
@@ -173,8 +255,12 @@ public class Unit : MonoBehaviour, ITileObject
 
     private void OnSelectionChange(object sender, WorldSelection.SelectionChangedData data)
     {
-        if (isDead) return;
-        if (data.Previous == this && !specialClick && data.Current is Tile current)
+        if (isDead)
+        {
+            return;
+        }
+
+        if (data.Previous == this && !specialClick && data.Current is Tile current && MyNetwork.GetMyInstanceID() == playerId && MyNetwork.IsMyTurn)
         {
             if (CanGoOnTile(current.Terrain) && WorldGenerator.GetPath(Tile, current, traversibleTerrain.ToList(), out List<Tile> path))
             {
@@ -189,7 +275,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     #endregion
 
-    bool CanGoOnTile(TerrainType terrainType)
+    private bool CanGoOnTile(TerrainType terrainType)
     {
         foreach (TerrainType t in traversibleTerrain)
         {
@@ -201,20 +287,30 @@ public class Unit : MonoBehaviour, ITileObject
         return false;
     }
 
-    public void MoveToTile(Tile current)
+    public void MoveToTile(Tile current, bool sendMsg = true)
     {
-        Tile.UnSetTileObject();
-
+        Tile.SetTileObject(null);
         current.SetTileObject(this);
         HexCoordinates coord = Tile.Coordinates;
-        transform.position = current.transform.position;
+        Vector3 pos = current.transform.position;
+        pos.y -= 0.3f;
+        transform.position = pos;
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
 
-        foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+        if (playerId == MyNetwork.GetMyInstanceID())
         {
-            tile.Discover();
+            foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+            {
+                tile.Discover();
+            }
         }
+        if(sendMsg)
+        {
+            XMLFormatter.AddPositionChange(this);
+        }
+
+        WorldSelection.ChangeSelection(null);
     }
 
     public void HasAttacked()
@@ -225,24 +321,38 @@ public class Unit : MonoBehaviour, ITileObject
     public void TakeDamage(int dmg)
     {
         unitStats.health -= dmg;
+        unitVisualsHandler.TookDamage(dmg);
 
         XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)
         {
-            OnDeath(ruinId);
+            HandleDeath(ruinId);
         }
-        Debug.Log(unitStats.health + " : took " + dmg + " dmg");
     }
 
-    public void OnDeath(int id)
+    public void ForceKill()
     {
-        Tile.UnSetTileObject();
+        unitStats.health = 0;
+        XMLFormatter.AddHealthChange(this);
+
+        Tile.SetTileObject(null);
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
-        if (id == this.ruinId)
+
+        UnitFactory.Instance.allUnits.Remove(this);
+        Destroy(gameObject);
+    }
+
+    public void HandleDeath(int id)
+    {
+        Tile.SetTileObject(null);
+        unitSprite.color = new Color(0, 0, 0, 0);
+        unitSprite.sortingOrder = -1;
+        isDead = true;
+        if (id == ruinId)
         {
-            EventManager.instance.OnRespawn(id);
+            OnDeath?.Invoke();
             Destroy(gameObject);
         }
     }
@@ -271,5 +381,10 @@ public class Unit : MonoBehaviour, ITileObject
     {
         movementLeft = 0;
         attacksLeft = 0;
+    }
+
+    public void Show(bool show)
+    {
+        unitSprite.enabled = show;
     }
 }

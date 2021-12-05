@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIObject: {fileID: 0}
-  turnTime: 90
+  turnTime: 60
+  m_networkManager: {fileID: 0}
 --- !u!114 &2443709874067591266
 MonoBehaviour:
   m_ObjectHideFlags: 0

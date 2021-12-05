@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class GameplayUI : MonoBehaviour
 {
@@ -9,27 +7,44 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerDescriptionText;
     [SerializeField] private TextMeshProUGUI turnText;
 
+    [SerializeField] private GameObject m_turnHolder;
+    [SerializeField] private GameObject m_timerHolder;
+    [SerializeField] private GameObject m_turnButtonObject;
+
     [SerializeField] private int alertTime = 1;
-    [SerializeField] Animation animAlertTick;
+    [SerializeField] private Animation animAlertTick;
 
     [SerializeField] private Color defaultTextColor;
     [SerializeField] private Color alertTextColor;
 
     private int previousTime = -1;
 
-
     private void Awake()
     {
         timerText.color = defaultTextColor;
         timerDescriptionText.color = defaultTextColor;
         turnText.color = defaultTextColor;
+
+        Show(false);
+    }
+
+    public void Show(bool value = true)
+    {
+        m_timerHolder.SetActive(value);
+        m_turnButtonObject.SetActive(value);
+        m_turnHolder.SetActive(value);
+
+        if (value)
+        {
+            UpdateTurnUI();
+        }
     }
 
     public void SetTimerText(float value)
     {
         int i = Mathf.CeilToInt(value);
 
-        if(i != previousTime)
+        if (i != previousTime)
         {
             //Set text color
             if (i <= alertTime && i > 0)
@@ -49,9 +64,10 @@ public class GameplayUI : MonoBehaviour
         previousTime = i;
     }
 
-    public void SetTurnText(bool value)
+    public void UpdateTurnUI()
     {
-        string output = value ? "Mine" : "Opponent";
-        turnText.text = "Turn: " + output;
+        m_turnButtonObject.SetActive(MyNetwork.IsMyTurn);
+        m_timerHolder.SetActive(MyNetwork.IsMyTurn);
+        turnText.text = MyNetwork.IsMyTurn ? "Mine" : "Opponent";
     }
 }

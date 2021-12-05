@@ -1,50 +1,48 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
-using System;
 using TMPro;
+using UnityEngine;
 
 public class Host : MonoBehaviour
 {
-    TcpListener m_listener;
-    Byte[] bytes;
-    String data;
-    GameObject m_listContent;
-
-    static List<Client> m_allCLients = new List<Client>();
-
-    const int m_MAX_PLAYER_COUNT = 1;
-    public Host(string _name, Int32 _port, IPAddress _ip, GameObject _listContent, ref TextMeshProUGUI _connectedTxt) 
+    private TcpListener m_listener;
+    private Byte[] bytes;
+    private String data;
+    private GameObject m_listContent;
+    private static List<Client> m_allCLients = new List<Client>();
+    private const int m_MAX_PLAYER_COUNT = 1;
+    public Host(string _name, Int32 _port, IPAddress _ip, GameObject _listContent, ref TextMeshProUGUI _connectedTxt)
     {
         m_listContent = _listContent;
         //set up server
         try
-		{
+        {
             //_ip = IPAddress.Parse(_ip);
             //IPEndPoint hostEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 10000);
             //Socket hostSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //hostSock.Blocking = false;
             //hostSock.ConnectAsync(hostEp);
             m_listener = new TcpListener(_ip, _port);
-            
+
 
             // Buffer for reading data
             bytes = new Byte[256];
             data = null;
-		}
-		catch
-		{
+        }
+        catch
+        {
             Debug.Log("Host::Host() -> Error creating listener");
-			throw;
-		}
-	}
+            throw;
+        }
+    }
 
     public IEnumerator Listen()
     {
         try
-        { 
+        {
             // Start listening for client requests.
             m_listener.Start();
             //while(m_allCLients.Count < m_MAX_PLAYER_COUNT)
@@ -54,9 +52,9 @@ public class Host : MonoBehaviour
             // Perform a blocking call to accept requests.
             // You could also use server.AcceptSocket() here.
             //StartCoroutine(m_listener.AcceptTcpClient());
-           // m_listener.BeginAcceptTcpClient();
+            // m_listener.BeginAcceptTcpClient();
             TcpClient c = m_listener.AcceptTcpClient();
-                
+
             Debug.Log("Connected!");
             data = null;
 
@@ -66,7 +64,7 @@ public class Host : MonoBehaviour
             int i;
             string name = "";
             // Loop to receive all the data sent by the client.
-            while((i = stream.Read(bytes, 0, bytes.Length))!=0)
+            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
                 // Translate data bytes to a ASCII string.
                 data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
@@ -84,21 +82,21 @@ public class Host : MonoBehaviour
                 //Debug.Log("Sent: " + data);
             }
             //m_listener.a
-            Client client = new Client(c, name);
+            var client = new Client(c, name);
             m_allCLients.Add(client);
 
-            GameObject item = GameObject.Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
+            var item = GameObject.Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
             item.transform.SetParent(m_listContent.transform);
             item.GetComponent<TextMeshProUGUI>().text = name;
-            item.transform.localPosition= new Vector3(0.0f, 0.0f, 0.0f);
-		//}
+            item.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+            //}
         }
 
-        catch(SocketException e)
+        catch (SocketException e)
         {
             Debug.Log("SocketException: " + e);
         }
-       //if(m_allCLients.Count == m_MAX_PLAYER_COUNT)
+        //if(m_allCLients.Count == m_MAX_PLAYER_COUNT)
         {
             // Stop listening for new clients.
             m_listener.Stop();
@@ -108,15 +106,17 @@ public class Host : MonoBehaviour
 
     public void SendMsg(string _message)
     {
-        if(m_allCLients[0].getClient().Connected == false)
-             Debug.Log("SendMsg() -> client not connected");
+        if (m_allCLients[0].getClient().Connected == false)
+        {
+            Debug.Log("SendMsg() -> client not connected");
+        }
 
         NetworkStream stream = m_allCLients[0].GetStream();
-        if(stream.CanWrite)
+        if (stream.CanWrite)
         {
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(_message);
             stream.Write(msg, 0, msg.Length);
-		}
+        }
         else
         {
             Debug.Log("SendMsg() -> cant write to stream");
@@ -124,12 +124,12 @@ public class Host : MonoBehaviour
 
             // Closing the tcpClient instance does not close the network stream.
             //m_allCLients[0].GetStream().Close();
-		}
-	}
+        }
+    }
 
     public void AddClient(String _ip, Int32 _port, string _name, ref TextMeshProUGUI _connectedTxt)
     {
-        Client client = new Client(_ip, _port, _name, ref _connectedTxt);
+        var client = new Client(_ip, _port, _name, ref _connectedTxt);
         m_allCLients.Add(client);
-	}
+    }
 }
