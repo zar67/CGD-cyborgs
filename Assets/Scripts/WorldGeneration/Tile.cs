@@ -217,7 +217,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
     {
         TileInformationUI.Instance.SetText(Terrain, IsDiscovered);
 
-        if (TileObject != null || !IsDiscovered || !MyNetwork.IsMyTurn)
+        if (!MyNetwork.IsMyTurn)
         {
             return;
         }
@@ -242,23 +242,28 @@ public class Tile : MonoBehaviour, IWorldSelectable
                 m_hightlightedTiles.Add(toMove);
                 toMove.ShowPathSprite(true);
             }
-            else
+            else if (IsDiscovered && TileObject == null)
             {
-                if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path))
-                {
-                    bool valid = path.Count - 1 <= unit.Movement;
-
-                    foreach (Tile tile in path)
-                    {
-                        m_hightlightedTiles.Add(tile);
-                        tile.ShowPathSprite(valid);
-                    }
-                }
+                GetAndShowPath(unit);
             }
         }
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    public void GetAndShowPath(Unit unit, bool isRuin = false)
+    {
+        if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path, isRuin))
+        {
+            bool valid = path.Count - 1 <= unit.Movement;
+
+            foreach (Tile tile in path)
+            {
+                m_hightlightedTiles.Add(tile);
+                tile.ShowPathSprite(valid);
+            }
+        }
+    }
+
+    public void HidePath()
     {
         foreach (Tile tile in m_hightlightedTiles)
         {
@@ -266,6 +271,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
         }
 
         m_hightlightedTiles = new List<Tile>();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HidePath();
     }
 
     private void Awake()
@@ -317,7 +327,9 @@ public class Tile : MonoBehaviour, IWorldSelectable
                     {
                         if (tile.TileObject is Unit aUnit)
                         {
-                            aUnit.TakeDamage(unit.Stats.GetDamage(aUnit.Type));
+                            aUnit.TakeDamage(unit.Stats.GetDamage(aUnit.Type), HexCoordinates.Add(
+                                    HexCoordinates.GetCoordinateRotatedInDirection(UnitFactory.Instance.GetUnitAttackPattern(unit.Type).ennemyMove, 
+                                    (int)HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates)), aUnit.Tile.Coordinates));
                         }
                     }
                     unit.MoveToTile(toMove);
