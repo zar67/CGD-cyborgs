@@ -43,4 +43,17 @@ public abstract class Challenge : ScriptableObject
             completed = true;
         }
     }
+
+    public void ClaimReward()
+    {
+        if(completed)
+        {
+            //add to leaderboard info, etc
+            Debug.Log("Reward has been claimed!");
+        }
+        else
+        {
+            Debug.Log("Challenge not yet completed");
+        }
+    }
 }
