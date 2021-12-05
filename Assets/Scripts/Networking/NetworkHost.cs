@@ -18,7 +18,7 @@ public class NetworkHost : NetworkCommunication
         // sets host IP to the computer IP
         SetIP();
 
-        m_server = new TcpListener(IPAddress.Parse(m_ip), int.Parse(m_port));
+        m_server = new TcpListener(IPAddress.Any, int.Parse(m_port));
 
         var serverThread = new Thread(new ThreadStart(Listen));
         serverThread.Start();
