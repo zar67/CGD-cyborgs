@@ -152,16 +152,29 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.enabled = false;
     }
     
-    public void SpawnUnit()
+    public void SpawnUnit(bool nullTurn = false)
     {
-        if (Tile.TileObject != null && !hasUnit)
+        if (Tile.TileObject != null)
         {
-            KeyValuePair<EHexDirection, Tile> tileToSpawn = Tile.GetRandomNeighbour();
-            if (tileToSpawn.Value != null)
+            (int, KeyValuePair<EHexDirection, Tile>) tileToSpawn = Tile.GetRandomNeighbourWithIndex();
+            Tile tile = tileToSpawn.Item2.Value;
+
+            if (!UnitFactory.Instance.GetTraversableTerrain(UnitType).Contains(tile.Terrain))
             {
-                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, tileToSpawn.Value, unique_id, m_playerOwner);
+                tile = Tile.GetNextNeighbour(tileToSpawn.Item1, UnitFactory.Instance.GetTraversableTerrain(UnitType));
+            }
+
+            if (tile != null)
+            {
+                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, tile, unique_id, m_playerOwner);
                 ruinUnit.OnDeath += RespawnUnit;
                 hasUnit = true;
+
+                if (nullTurn) ruinUnit.NullTurn();
+            }
+            else
+            {
+                Debug.Log("Couldnt spawn unit of type: " + UnitType.ToString());
             }
         }
     }
@@ -175,10 +188,7 @@ public class Ruin : MonoBehaviour, ITileObject
                 ruinUnit.ForceKill();
             }
 
-            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-            ruinUnit.OnDeath += RespawnUnit;
-            ruinUnit.NullTurn();
-            hasUnit = true;
+            SpawnUnit(true);
         }
     }
 
@@ -203,10 +213,7 @@ public class Ruin : MonoBehaviour, ITileObject
         }
         else
         {
-            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-            ruinUnit.OnDeath += RespawnUnit;
-            ruinUnit.NullTurn();
-            hasUnit = true;
+            SpawnUnit(true);
         }
     }
 

@@ -139,6 +139,20 @@ public class Tile : MonoBehaviour, IWorldSelectable
         tile.Neighbours[oppositeDir] = this;
     }
 
+    public (int, KeyValuePair<EHexDirection, Tile>) GetRandomNeighbourWithIndex()
+    {
+        int index = UnityEngine.Random.Range(0, Neighbours.Count);
+        KeyValuePair<EHexDirection, Tile> pair = Neighbours.ElementAt(index);
+
+        while (pair.Value == null)
+        {
+            index = UnityEngine.Random.Range(0, Neighbours.Count);
+            pair = Neighbours.ElementAt(index);
+        }
+
+        return (index, pair);
+    }
+
     public KeyValuePair<EHexDirection, Tile> GetRandomNeighbour()
     {
         int index = UnityEngine.Random.Range(0, Neighbours.Count);
@@ -151,6 +165,19 @@ public class Tile : MonoBehaviour, IWorldSelectable
         }
 
         return pair;
+    }
+
+    public Tile GetNextNeighbour(int previous, List<TerrainType> validTerrain, int iterations = 7)
+    {
+        int index = (previous + 1) % Neighbours.Count;
+        KeyValuePair<EHexDirection, Tile> pair = Neighbours.ElementAt(index);
+
+        if (iterations <= 0)
+        {
+            return null;
+        }
+
+        return (pair.Value == null || !validTerrain.Contains(pair.Value.Terrain) ? GetNextNeighbour(index, validTerrain, iterations-1) : pair.Value);
     }
 
     public Tile GetClosestNeighbour(Tile data)
