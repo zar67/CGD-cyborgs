@@ -60,6 +60,33 @@ public class WorldGenerator : MonoBehaviour
         return new Rect(WorldTiles[0].transform.position, size);
     }
 
+    public Ruin GetRuinFromID(int ruinId)
+    {
+        foreach (Ruin ruin in AllRuins)
+        {
+            if (ruin.GetID() == ruinId)
+            {
+                return ruin;
+            }
+        }
+        Debug.LogError("COULD NOT FIND RUIN WITH ID: " + ruinId);
+        return AllRuins[0];
+    }
+
+    public (bool, string) GetGameOver()
+    {
+        string lastName = "";
+        foreach (Ruin ruin in AllRuins)
+        {
+            if (lastName != "" && ruin.GetHasUnit() && ruin.m_playerOwner != lastName)
+            {
+                return (false, "");
+            }
+            lastName = ruin.GetHasUnit() ? ruin.m_playerOwner : lastName;
+        }
+        return (true, lastName);
+    }
+
     public Vector2 GetStartingPosition(string playerID)
     {
         foreach(Ruin ruin in AllRuins)
@@ -115,7 +142,7 @@ public class WorldGenerator : MonoBehaviour
 
                 if ((!scoreMap.ContainsKey(neighbour.Value) || distance < scoreMap[neighbour.Value]) &&
                     (neighbour.Value.TileObject == null || (isRuin && neighbour.Value.TileObject is Ruin)) &&
-                    validTerrain.Contains(neighbour.Value.Terrain))
+                    (validTerrain.Contains(neighbour.Value.Terrain) || (isRuin && neighbour.Value == destination)))
                 {
                     previousMap[neighbour.Value] = current;
                     scoreMap[neighbour.Value] = distance;
@@ -144,6 +171,12 @@ public class WorldGenerator : MonoBehaviour
 
         path.Reverse();
         return true;
+    }
+
+    public bool IsThereTileAtLocation(HexCoordinates coordinates)
+    {
+        int x = coordinates.X + (coordinates.Z / 2);
+        return WorldTiles.Count > (coordinates.Z * m_worldWidth) + x;
     }
 
     public Tile GetTileAtCoordinate(HexCoordinates coordinates)
@@ -295,6 +328,7 @@ public class WorldGenerator : MonoBehaviour
     {
         foreach (Ruin ruin in AllRuins)
         {
+            ruin.UpdateSprite();
             if (ruin.m_playerOwner != "")
             {
                 ruin.SpawnUnit();

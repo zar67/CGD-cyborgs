@@ -130,7 +130,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ruinSpriteRenderer: {fileID: 8760726990172856733}
   m_takeOverSpriteRenderer: {fileID: 2550329166584408198}
-  m_traversableTerrains: 010000000200000003000000
+  playerSprites:
+  - {fileID: 21300000, guid: d34f909025d6d1842b5bee77a649bbfa, type: 3}
+  - {fileID: 21300000, guid: 4fb3e2e35acd6c344b32c73f824061cf, type: 3}
+  - {fileID: 21300000, guid: 5d2ec7aef2ad6084ab33707eaf175248, type: 3}
+  m_playerOwner: 
+  unique_id: 0
 --- !u!212 &8760726990172856733
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
 using System.Xml;
 using TMPro;
 using UnityEngine;
@@ -13,6 +11,7 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] private GameObject m_uiHolder;
     [SerializeField] private Button m_hostButton;
     [SerializeField] private Button m_clientButton;
+    [SerializeField] private Button m_leaderboardButton;
 
     [Header("Host Info References")]
     [SerializeField] private GameObject m_hostInfo;
@@ -51,6 +50,9 @@ public class MyNetwork : MonoBehaviour
         {
             ConnectToHost(m_nameInputClient.text, m_ipInput.text);
         });
+
+        m_conectedTxt.gameObject.SetActive(false);
+        m_connectToHostBttn.gameObject.SetActive(true);
     }
 
     public static bool IsMyTurn => GetMyInstanceID() == m_playerTurn;
@@ -95,6 +97,7 @@ public class MyNetwork : MonoBehaviour
         m_isHost = true;
         m_hostButton.gameObject.SetActive(false);
         m_clientButton.gameObject.SetActive(false);
+        m_leaderboardButton.gameObject.SetActive(false);
         m_hostInfo.SetActive(true);
 
         m_host = new NetworkHost(m_port.ToString());
@@ -109,37 +112,19 @@ public class MyNetwork : MonoBehaviour
     public void SetClient()
     {
         m_isHost = false;
-        m_clientButton.gameObject.GetComponent<Image>().color = Color.red;
         m_hostButton.gameObject.SetActive(false);
         m_clientButton.gameObject.SetActive(false);
+        m_leaderboardButton.gameObject.SetActive(false);
         m_clientInfo.SetActive(true);
     }
 
     public void ConnectToHost(string _name, string _ip)
     {
-        string hostName = Dns.GetHostName(); // Retrive the Name of HOST
-        // Get the IP
-        /*IPAddress[] allIPs = Dns.GetHostAddresses(hostName);
-        IPAddress myIP = null;
-        foreach (IPAddress ip in allIPs)
-        {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
-            {
-                m_ipText.text = ip.ToString();
-                myIP = ip;
-                hostIP = myIP.ToString();
-
-            }
-        }
-        if (myIP == null)
-        {
-            Debug.LogError("MyNetwork::SetHost() -> could not find IP address");
-            return;
-        }
-        _ip = hostIP;*/
         m_client = new NetworkClient(_ip, m_port.ToString());
         m_client.SetName(m_nameInputClient.text);
-        m_conectedTxt.text = "Connected: TRUE";
+
+        m_conectedTxt.gameObject.SetActive(true);
+        m_connectToHostBttn.gameObject.SetActive(false);
     }
 
     private void StartGame()
@@ -334,7 +319,7 @@ public class MyNetwork : MonoBehaviour
                 {
                     if (messageType == "connection")
                     {
-                        var item = GameObject.Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
+                        var item = Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
                         item.transform.SetParent(m_clientListContent.transform);
                         item.GetComponent<TextMeshProUGUI>().text = messageID;
                         item.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);

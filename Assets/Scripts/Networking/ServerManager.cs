@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,9 +6,6 @@ using UnityEngine.Networking;
 
 public class ServerManager : MonoBehaviour
 {
-    [SerializeField] GameObject child;
-    [SerializeField] GameObject mainMenuBttn;
-    [SerializeField] GameObject refreshBttn;
     [SerializeField] GameObject prefabItem;
     [SerializeField] GameObject contents;
     [SerializeField] GameObject mainMenu;
@@ -97,23 +95,40 @@ public class ServerManager : MonoBehaviour
                 case UnityWebRequest.Result.Success:
                     Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
 
+                    foreach (Transform child in contents.transform)
+                    {
+                        Destroy(child.gameObject);
+                    }
+
                     string formatted = webRequest.downloadHandler.text.Replace("{", "");
                     formatted = formatted.Replace("}", "");
-                    foreach(var player in formatted.Split(','))
+
+                    var playerNames = new List<string>();
+                    var playerScores = new List<int>();
+                    foreach (string player in formatted.Split(','))
                     {
-                        GameObject playerItem = GameObject.Instantiate(prefabItem);
+                        string[] playerSplit = player.Split(':');
+                        playerNames.Add(playerSplit[0].Replace("'", "").Trim());
+                        playerScores.Add(int.Parse(playerSplit[1].Replace("'", "").Trim()));
+                    }
+
+                    string[] namesArray = playerNames.ToArray();
+                    int[] scoresArray = playerScores.ToArray();
+
+                    Array.Sort(scoresArray, namesArray);
+
+                    for (int i = namesArray.Length - 1; i >= 0; i--)
+                    {
+                        GameObject playerItem = Instantiate(prefabItem);
                         playerItem.transform.SetParent(contents.transform);
                         playerItem.transform.localPosition = Vector3.zero;
                         playerItem.transform.localScale = Vector3.one;
 
-                        playerItem.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 35);//width is set using vertical layout
-
-                        string[] playerSplit = player.Split(':');
                         LeaderBoardItem itemStuff = playerItem.GetComponent<LeaderBoardItem>();
-                        itemStuff.nameText.text = playerSplit[0].Replace("'","");
-                        itemStuff.scoreText.text = playerSplit[1].Replace("'","");
-					}
-                    
+                        itemStuff.nameText.text = namesArray[i];
+                        itemStuff.scoreText.text = scoresArray[i].ToString();
+                    }
+
                     break;
             }
         }

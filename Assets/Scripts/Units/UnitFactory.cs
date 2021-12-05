@@ -150,6 +150,11 @@ public class UnitFactory : MonoBehaviour
 
     public int GetUnitSpriteInt(string playerId)
     {
-        return spritesToUseForPlayer[playerId];
+        if (spritesToUseForPlayer.ContainsKey(playerId))
+        {
+            return spritesToUseForPlayer[playerId];
+        }
+
+        return -1;
     }
 }

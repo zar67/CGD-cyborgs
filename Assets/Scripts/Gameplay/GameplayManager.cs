@@ -69,14 +69,34 @@ public class GameplayManager : MonoBehaviour
 
     public void ResetTurn()
     {
+        CheckGameOver();
         timerCurrent = turnTime;
         UpdateUI();
         UnitFactory.Instance.ResetTurn();
     }
 
+    bool CheckGameOver()
+    {
+        (bool, string) end = WorldGenerator.Instance.GetGameOver();
+
+        if (end.Item1)
+        {
+            GameOver(end.Item2);
+        }
+        return end.Item1;
+    }
+
     public void EndTurn()
     {
+        CheckGameOver();
+
         m_networkManager.NextPlayer();
         UpdateUI();
+    }
+
+    public void GameOver(string winner)
+    {
+        Debug.Log("GAME OVER. Winner is " + winner);
+        // TODO go to game over screen!
     }
 }

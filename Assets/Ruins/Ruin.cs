@@ -10,8 +10,10 @@ public class Ruin : MonoBehaviour, ITileObject
     [SerializeField] private SpriteRenderer m_ruinSpriteRenderer = default;
     [SerializeField] private SpriteRenderer m_takeOverSpriteRenderer = default;
 
-    public string m_playerOwner = "";
-    public int unique_id;
+    [SerializeField] private List<Sprite> playerSprites;
+
+    [HideInInspector] public string m_playerOwner = "";
+    [HideInInspector] public int unique_id;
 
     private bool hasUnit = false;
     private Unit ruinUnit;
@@ -28,6 +30,11 @@ public class Ruin : MonoBehaviour, ITileObject
         set;
     }
 
+    public bool GetHasUnit()
+    {
+        return hasUnit;
+    }
+
     public int GetID()
     {
         return unique_id;
@@ -42,6 +49,13 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.sortingOrder = ((worldHeight - z) * 3) + 2;
         unique_id = ruinID;
         m_playerOwner = playerID;
+
+        m_ruinSpriteRenderer.sprite = playerSprites[0];
+    }
+
+    public void UpdateSprite()
+    {
+        m_ruinSpriteRenderer.sprite = playerSprites[UnitFactory.Instance.GetUnitSpriteInt(m_playerOwner) + 1];
     }
 
     public void Select()
@@ -97,15 +111,34 @@ public class Ruin : MonoBehaviour, ITileObject
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        TileInformationUI.Instance.SetText(!hasUnit, MyNetwork.GetMyInstanceID() == m_playerOwner);
+
         if (CheckCanTakeOver())
         {
             m_takeOverSpriteRenderer.enabled = true;
+        }
+
+        if (ruinUnit != null)
+        {
+            ruinUnit.Tile.ShowPathSprite(true);
+        }
+
+        if (WorldSelection.SelectedObject is Unit unit)
+        {
+            Tile.GetAndShowPath(unit, true);
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         m_takeOverSpriteRenderer.enabled = false;
+
+        if (ruinUnit != null)
+        {
+            ruinUnit.Tile.HidePathSprite();
+        }
+
+        Tile.HidePath();
     }
 
     private void Awake()
@@ -119,17 +152,29 @@ public class Ruin : MonoBehaviour, ITileObject
         m_takeOverSpriteRenderer.enabled = false;
     }
     
-
-    public void SpawnUnit()
+    public void SpawnUnit(bool nullTurn = false)
     {
-        if (Tile.TileObject != null && !hasUnit)
+        if (Tile.TileObject != null)
         {
-            KeyValuePair<EHexDirection, Tile> tileToSpawn = Tile.GetRandomNeighbour();
-            if (tileToSpawn.Value != null)
+            (int, KeyValuePair<EHexDirection, Tile>) tileToSpawn = Tile.GetRandomNeighbourWithIndex();
+            Tile tile = tileToSpawn.Item2.Value;
+
+            if (!UnitFactory.Instance.GetTraversableTerrain(UnitType).Contains(tile.Terrain))
             {
-                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, tileToSpawn.Value, unique_id, m_playerOwner);
+                tile = Tile.GetNextNeighbour(tileToSpawn.Item1, UnitFactory.Instance.GetTraversableTerrain(UnitType));
+            }
+
+            if (tile != null)
+            {
+                ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, tile, unique_id, m_playerOwner);
                 ruinUnit.OnDeath += RespawnUnit;
                 hasUnit = true;
+
+                if (nullTurn) ruinUnit.NullTurn();
+            }
+            else
+            {
+                Debug.Log("Couldnt spawn unit of type: " + UnitType.ToString());
             }
         }
     }
@@ -143,9 +188,7 @@ public class Ruin : MonoBehaviour, ITileObject
                 ruinUnit.ForceKill();
             }
 
-            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-            ruinUnit.OnDeath += RespawnUnit;
-            hasUnit = true;
+            SpawnUnit(true);
         }
     }
 
@@ -160,6 +203,7 @@ public class Ruin : MonoBehaviour, ITileObject
             XMLFormatter.AddRuinOwnerChange(this, m_playerOwner);
         }
 
+        UpdateSprite();
         if (hasUnit)
         {
             if (ruinUnit != null)
@@ -169,9 +213,7 @@ public class Ruin : MonoBehaviour, ITileObject
         }
         else
         {
-            ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
-            ruinUnit.OnDeath += RespawnUnit;
-            hasUnit = true;
+            SpawnUnit(true);
         }
     }
 
@@ -184,7 +226,7 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         if (id == unique_id)
         {
-            hasUnit = false;
+            //hasUnit = false;
             RespawnUnit();
         }
     }

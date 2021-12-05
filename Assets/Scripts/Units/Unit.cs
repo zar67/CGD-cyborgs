@@ -54,6 +54,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     [Header("Sprites")]
     [SerializeField] private SpriteRenderer unitSprite;
+    [SerializeField] private UnitVisuals unitVisualsHandler;
     [SerializeField] private List<Sprite> playerSprites;
 
     [Header("Unit type")]
@@ -230,10 +231,16 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (!Tile.IsDiscovered) return;
+
+        TileInformationUI.Instance.SetText(unitType, MyNetwork.GetMyInstanceID() == playerId);
+
+        WorldGenerator.Instance.GetRuinFromID(ruinId).Tile.ShowPathSprite(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        WorldGenerator.Instance.GetRuinFromID(ruinId).Tile.HidePathSprite();
     }
 
     private void OnDestroy()
@@ -285,7 +292,9 @@ public class Unit : MonoBehaviour, ITileObject
         Tile.SetTileObject(null);
         current.SetTileObject(this);
         HexCoordinates coord = Tile.Coordinates;
-        transform.position = current.transform.position;
+        Vector3 pos = current.transform.position;
+        pos.y -= 0.3f;
+        transform.position = pos;
 
         unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
 
@@ -309,9 +318,20 @@ public class Unit : MonoBehaviour, ITileObject
         attacksLeft--;
     }
 
-    public void TakeDamage(int dmg)
+    public void TakeDamage(int dmg, HexCoordinates move)
     {
         unitStats.health -= dmg;
+        unitVisualsHandler.TookDamage(dmg);
+
+        if (!WorldGenerator.Instance.IsThereTileAtLocation(move) || WorldGenerator.Instance.GetTileAtCoordinate(move).TileObject != null)
+        {
+            unitStats.health -= 1;
+            unitVisualsHandler.TookDamage(dmg+1);
+        }
+        else
+        {
+            MoveToTile(WorldGenerator.Instance.GetTileAtCoordinate(move));
+        }
 
         XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)

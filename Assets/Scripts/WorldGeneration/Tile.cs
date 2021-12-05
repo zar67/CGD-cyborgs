@@ -139,6 +139,20 @@ public class Tile : MonoBehaviour, IWorldSelectable
         tile.Neighbours[oppositeDir] = this;
     }
 
+    public (int, KeyValuePair<EHexDirection, Tile>) GetRandomNeighbourWithIndex()
+    {
+        int index = UnityEngine.Random.Range(0, Neighbours.Count);
+        KeyValuePair<EHexDirection, Tile> pair = Neighbours.ElementAt(index);
+
+        while (pair.Value == null)
+        {
+            index = UnityEngine.Random.Range(0, Neighbours.Count);
+            pair = Neighbours.ElementAt(index);
+        }
+
+        return (index, pair);
+    }
+
     public KeyValuePair<EHexDirection, Tile> GetRandomNeighbour()
     {
         int index = UnityEngine.Random.Range(0, Neighbours.Count);
@@ -151,6 +165,19 @@ public class Tile : MonoBehaviour, IWorldSelectable
         }
 
         return pair;
+    }
+
+    public Tile GetNextNeighbour(int previous, List<TerrainType> validTerrain, int iterations = 7)
+    {
+        int index = (previous + 1) % Neighbours.Count;
+        KeyValuePair<EHexDirection, Tile> pair = Neighbours.ElementAt(index);
+
+        if (iterations <= 0)
+        {
+            return null;
+        }
+
+        return (pair.Value == null || !validTerrain.Contains(pair.Value.Terrain) ? GetNextNeighbour(index, validTerrain, iterations-1) : pair.Value);
     }
 
     public Tile GetClosestNeighbour(Tile data)
@@ -215,7 +242,9 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (TileObject != null || !IsDiscovered || !MyNetwork.IsMyTurn)
+        TileInformationUI.Instance.SetText(Terrain, IsDiscovered);
+
+        if (!MyNetwork.IsMyTurn)
         {
             return;
         }
@@ -240,23 +269,28 @@ public class Tile : MonoBehaviour, IWorldSelectable
                 m_hightlightedTiles.Add(toMove);
                 toMove.ShowPathSprite(true);
             }
-            else
+            else if (IsDiscovered && TileObject == null)
             {
-                if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path))
-                {
-                    bool valid = path.Count - 1 <= unit.Movement;
-
-                    foreach (Tile tile in path)
-                    {
-                        m_hightlightedTiles.Add(tile);
-                        tile.ShowPathSprite(valid);
-                    }
-                }
+                GetAndShowPath(unit);
             }
         }
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    public void GetAndShowPath(Unit unit, bool isRuin = false)
+    {
+        if (WorldGenerator.GetPath(unit.Tile, this, unit.TraversibleTerrains.ToList(), out List<Tile> path, isRuin))
+        {
+            bool valid = path.Count - 1 <= unit.Movement;
+
+            foreach (Tile tile in path)
+            {
+                m_hightlightedTiles.Add(tile);
+                tile.ShowPathSprite(valid);
+            }
+        }
+    }
+
+    public void HidePath()
     {
         foreach (Tile tile in m_hightlightedTiles)
         {
@@ -264,6 +298,11 @@ public class Tile : MonoBehaviour, IWorldSelectable
         }
 
         m_hightlightedTiles = new List<Tile>();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HidePath();
     }
 
     private void Awake()
@@ -315,7 +354,9 @@ public class Tile : MonoBehaviour, IWorldSelectable
                     {
                         if (tile.TileObject is Unit aUnit)
                         {
-                            aUnit.TakeDamage(unit.Stats.GetDamage(aUnit.Type));
+                            aUnit.TakeDamage(unit.Stats.GetDamage(aUnit.Type), HexCoordinates.Add(
+                                    HexCoordinates.GetCoordinateRotatedInDirection(UnitFactory.Instance.GetUnitAttackPattern(unit.Type).ennemyMove, 
+                                    (int)HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates)), aUnit.Tile.Coordinates));
                         }
                     }
                     unit.MoveToTile(toMove);
