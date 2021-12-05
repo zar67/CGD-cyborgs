@@ -173,6 +173,12 @@ public class WorldGenerator : MonoBehaviour
         return true;
     }
 
+    public bool IsThereTileAtLocation(HexCoordinates coordinates)
+    {
+        int x = coordinates.X + (coordinates.Z / 2);
+        return WorldTiles.Count > (coordinates.Z * m_worldWidth) + x;
+    }
+
     public Tile GetTileAtCoordinate(HexCoordinates coordinates)
     {
         int x = coordinates.X + (coordinates.Z / 2);

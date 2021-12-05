@@ -122,6 +122,11 @@ public class Ruin : MonoBehaviour, ITileObject
         {
             ruinUnit.Tile.ShowPathSprite(true);
         }
+
+        if (WorldSelection.SelectedObject is Unit unit)
+        {
+            Tile.GetAndShowPath(unit, true);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -132,6 +137,8 @@ public class Ruin : MonoBehaviour, ITileObject
         {
             ruinUnit.Tile.HidePathSprite();
         }
+
+        Tile.HidePath();
     }
 
     private void Awake()
@@ -170,6 +177,7 @@ public class Ruin : MonoBehaviour, ITileObject
 
             ruinUnit = UnitFactory.Instance.CreateUnitOnTile(UnitType, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
             ruinUnit.OnDeath += RespawnUnit;
+            ruinUnit.NullTurn();
             hasUnit = true;
         }
     }
@@ -197,6 +205,7 @@ public class Ruin : MonoBehaviour, ITileObject
         {
             ruinUnit = UnitFactory.Instance.CreateUnitOnTile(Unit.UnitTypes.SOLDIER, Tile.GetClosestNeighbour(Tile), unique_id, m_playerOwner);
             ruinUnit.OnDeath += RespawnUnit;
+            ruinUnit.NullTurn();
             hasUnit = true;
         }
     }
@@ -210,7 +219,7 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         if (id == unique_id)
         {
-            hasUnit = false;
+            //hasUnit = false;
             RespawnUnit();
         }
     }

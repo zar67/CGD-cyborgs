@@ -318,10 +318,20 @@ public class Unit : MonoBehaviour, ITileObject
         attacksLeft--;
     }
 
-    public void TakeDamage(int dmg)
+    public void TakeDamage(int dmg, HexCoordinates move)
     {
         unitStats.health -= dmg;
         unitVisualsHandler.TookDamage(dmg);
+
+        if (!WorldGenerator.Instance.IsThereTileAtLocation(move) || WorldGenerator.Instance.GetTileAtCoordinate(move).TileObject != null)
+        {
+            unitStats.health -= 1;
+            unitVisualsHandler.TookDamage(dmg+1);
+        }
+        else
+        {
+            MoveToTile(WorldGenerator.Instance.GetTileAtCoordinate(move));
+        }
 
         XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)
