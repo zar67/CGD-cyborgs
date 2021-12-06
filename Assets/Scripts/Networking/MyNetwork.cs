@@ -288,11 +288,13 @@ public class MyNetwork : MonoBehaviour
                         {
                             Debug.LogError("MyNetwork::281 -> no unit found for setting health");
 						}
+                        XMLFormatter.disableComms = true;
                         unit.SetHealth(int.Parse(messageData));
                         if (int.Parse(messageData) <= 0)
                         {
                             unit.HandleDeath(unit.GetID());
                         }
+                        XMLFormatter.disableComms = false;
                     }
                     else if (messageType == "ruin")
                     {

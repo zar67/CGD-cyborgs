@@ -314,7 +314,7 @@ public class Unit : MonoBehaviour, ITileObject
 
         Show(Tile.IsDiscovered);
     }
-
+    
     public void HasAttacked()
     {
         attacksLeft--;
@@ -325,7 +325,7 @@ public class Unit : MonoBehaviour, ITileObject
         unitStats.health -= dmg;
         unitVisualsHandler.TookDamage(dmg);
 
-        if (!WorldGenerator.Instance.IsThereTileAtLocation(move) || WorldGenerator.Instance.GetTileAtCoordinate(move).TileObject != null)
+        if (!WorldGenerator.Instance.IsThereTileAtLocation(move) || (WorldGenerator.Instance.GetTileAtCoordinate(move).TileObject != null && WorldGenerator.Instance.GetTileAtCoordinate(move).TileObject != this))
         {
             unitStats.health -= 1;
             unitVisualsHandler.TookDamage(dmg+1);
