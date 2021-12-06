@@ -311,6 +311,8 @@ public class Unit : MonoBehaviour, ITileObject
         }
 
         WorldSelection.ChangeSelection(null);
+
+        Show(Tile.IsDiscovered);
     }
 
     public void HasAttacked()
