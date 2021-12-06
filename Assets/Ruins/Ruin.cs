@@ -159,7 +159,7 @@ public class Ruin : MonoBehaviour, ITileObject
             (int, KeyValuePair<EHexDirection, Tile>) tileToSpawn = Tile.GetRandomNeighbourWithIndex();
             Tile tile = tileToSpawn.Item2.Value;
 
-            if (!UnitFactory.Instance.GetTraversableTerrain(UnitType).Contains(tile.Terrain))
+            if (!UnitFactory.Instance.GetTraversableTerrain(UnitType).Contains(tile.Terrain) || tile.TileObject != null)
             {
                 tile = Tile.GetNextNeighbour(tileToSpawn.Item1, UnitFactory.Instance.GetTraversableTerrain(UnitType));
             }

@@ -177,7 +177,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
             return null;
         }
 
-        return (pair.Value == null || !validTerrain.Contains(pair.Value.Terrain) ? GetNextNeighbour(index, validTerrain, iterations-1) : pair.Value);
+        return ((pair.Value == null || !validTerrain.Contains(pair.Value.Terrain) || pair.Value.TileObject != null) ? GetNextNeighbour(index, validTerrain, iterations-1) : pair.Value);
     }
 
     public Tile GetClosestNeighbour(Tile data)
