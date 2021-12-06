@@ -41,6 +41,8 @@ public class XMLFormatter
     public const string m_RUIN_OWNERSHIP = "ruin";
     private static List<TurnData> m_TurnHistory = new List<TurnData>();
 
+    public static bool disableComms = false;
+
     private struct TurnData
     {
         public string m_turnType;
@@ -56,6 +58,8 @@ public class XMLFormatter
 
     public static void AddPositionChange(Unit _unit)
     {
+        if(disableComms)
+            return;
         string typeStr = turnTypeLookUp[TurnType.ttPOSITION];
         string id = _unit.GetID().ToString();
         string data = _unit.Tile.Coordinates.ToString();
@@ -64,6 +68,8 @@ public class XMLFormatter
 
     public static void AddHealthChange(Unit _unit)
     {
+        if(disableComms)
+            return;
         string typeStr = turnTypeLookUp[TurnType.ttHEALTH];
         string id = _unit.GetID().ToString();
         string data = _unit.Stats.health.ToString();
@@ -72,6 +78,8 @@ public class XMLFormatter
 
     public static void AddRuinOwnerChange(Ruin _ruin, string _owner)
     {
+        if(disableComms)
+            return;
         string typeStr = turnTypeLookUp[TurnType.ttRUIN];
         string id = _ruin.unique_id.ToString();
         string data = _owner;
@@ -80,6 +88,8 @@ public class XMLFormatter
 
     public static void AddUnitTypeChange(Ruin _ruin, Unit.UnitTypes _unitType)
     {
+        if(disableComms)
+            return;
         string typeStr = turnTypeLookUp[TurnType.ttUnitChange];
         string id = _ruin.unique_id.ToString();
         string data = Unit.unitTypesLookUp[_unitType];

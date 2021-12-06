@@ -31,7 +31,7 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] private CameraController m_cameraController;
 
     public static bool m_isHost = false;
-    private Int32 m_port = 10000;
+    private Int32 m_port = 15000;
     private static NetworkHost m_host;
     private static NetworkClient m_client;
     private string hostIP = "";
@@ -276,6 +276,10 @@ public class MyNetwork : MonoBehaviour
                                 break;
                             }
                         }
+                        if(unit == null)
+                        {
+                            Debug.LogError("MyNetwork::281 -> no unit found for setting health");
+						}
                         unit.SetHealth(int.Parse(messageData));
                         if (int.Parse(messageData) <= 0)
                         {
@@ -306,7 +310,9 @@ public class MyNetwork : MonoBehaviour
                                 break;
                             }
                         }
+                        XMLFormatter.disableComms = true;
                         ruin.UnitType = Unit.unitTypesLookUpStr[messageData];
+                        XMLFormatter.disableComms = false;
 					}
                 }
 
@@ -346,6 +352,7 @@ public class MyNetwork : MonoBehaviour
                 }
                 else if (root.Name == "map")
                 {
+                    XMLFormatter.disableComms = true;
                     m_uiHolder.SetActive(false);
                     int i = 0;
                     m_playerNames.Add(root.Attributes["host"].Value);
@@ -382,7 +389,6 @@ public class MyNetwork : MonoBehaviour
                             newRuin.unique_id = int.Parse(itemID);
                             tile.SetTileObject(newRuin);
                             WorldGenerator.Instance.AllRuins.Add(newRuin);
-
                         }
                         i++;
                     }
@@ -397,6 +403,7 @@ public class MyNetwork : MonoBehaviour
                     m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
                     m_cameraController.SetCameraPosition(WorldGenerator.Instance.GetStartingPosition(m_client.GetName()));
                     m_uiHolder.SetActive(false);
+                    XMLFormatter.disableComms = false;
                 }
             }
         }
