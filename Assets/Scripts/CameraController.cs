@@ -54,10 +54,10 @@ public class CameraController : MonoBehaviour
         }
 
 
-        FOV = Camera.main.fieldOfView;
+        FOV = Camera.main.orthographicSize;
         FOV += Input.GetAxis("Mouse ScrollWheel") * sensitivity * -1;
         FOV = Mathf.Clamp(FOV, minFOV, maxFOV);
-        Camera.main.fieldOfView = FOV;
+        Camera.main.orthographicSize = FOV;
 
         pos.x = Mathf.Clamp(pos.x, m_worldRect.min.x, m_worldRect.max.x);
         pos.y = Mathf.Clamp(pos.y, m_worldRect.min.y, m_worldRect.max.y);

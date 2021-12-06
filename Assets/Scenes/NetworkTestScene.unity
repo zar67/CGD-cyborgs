@@ -4645,10 +4645,10 @@ MonoBehaviour:
   panBorderThickness: 0
   scroll: 0
   m_OrthographicCamera: {fileID: 1386352844}
-  minFOV: 15
-  maxFOV: 80
+  minFOV: 3
+  maxFOV: 15
   sensitivity: 20
-  FOV: 50
+  FOV: 5
   scrollSpeed: 1
 --- !u!114 &1386352847
 MonoBehaviour:
