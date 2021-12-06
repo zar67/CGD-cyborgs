@@ -4556,6 +4556,7 @@ GameObject:
   - component: {fileID: 1386352843}
   - component: {fileID: 1386352846}
   - component: {fileID: 1386352847}
+  - component: {fileID: 1386352848}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4665,6 +4666,47 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
+--- !u!114 &1386352848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1386352842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adfff618a64d73c45bbe9e16ec7f95e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: UnitLost
+    clip: {fileID: 8300000, guid: 1c0ceca73d2bc5d4881636cdac3ec8c6, type: 3}
+    volume: 1
+    pitch: 1
+    isLoop: 0
+    hasCooldown: 0
+    source: {fileID: 0}
+  - name: UnitSelect
+    clip: {fileID: 8300000, guid: a6c272830e662634094e3d6ed9436e17, type: 3}
+    volume: 1
+    pitch: 1
+    isLoop: 0
+    hasCooldown: 0
+    source: {fileID: 0}
+  - name: UnitMove
+    clip: {fileID: 8300000, guid: fde1c1783fdb4b44ba8d20d22baa12d6, type: 3}
+    volume: 1
+    pitch: 1
+    isLoop: 0
+    hasCooldown: 0
+    source: {fileID: 0}
+  - name: Button
+    clip: {fileID: 8300000, guid: 64e755647844e314ea7771f11fcae2f5, type: 3}
+    volume: 1
+    pitch: 1
+    isLoop: 0
+    hasCooldown: 0
+    source: {fileID: 0}
 --- !u!1 &1433715218
 GameObject:
   m_ObjectHideFlags: 0
