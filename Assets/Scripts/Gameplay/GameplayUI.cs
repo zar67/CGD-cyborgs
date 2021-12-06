@@ -51,6 +51,7 @@ public class GameplayUI : MonoBehaviour
             {
                 timerText.color = alertTextColor;
                 animAlertTick.Play();
+                FindObjectOfType<SoundManager>().Play("CountDown");
             }
             else
             {

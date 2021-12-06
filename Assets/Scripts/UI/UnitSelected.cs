@@ -88,11 +88,12 @@ public class UnitSelected : MonoBehaviour
         if (WorldSelection.SelectedObject is Ruin ruin)
         {
             ruin.UnitType = type;
-
+  
             foreach (RuinSelectAction action in m_unitTypeActions)
             {
                 action.SelectedImage.enabled = action.UnitType == type;
                 action.SelectButton.interactable = action.UnitType != type;
+                FindObjectOfType<SoundManager>().Play("Button");
             }
 
             XMLFormatter.AddUnitTypeChange(ruin, type);

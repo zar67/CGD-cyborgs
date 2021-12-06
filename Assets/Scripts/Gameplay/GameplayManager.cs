@@ -69,6 +69,7 @@ public class GameplayManager : MonoBehaviour
 
     public void ResetTurn()
     {
+        FindObjectOfType<SoundManager>().Play("YourTurn");
         CheckGameOver();
         timerCurrent = turnTime;
         UpdateUI();
