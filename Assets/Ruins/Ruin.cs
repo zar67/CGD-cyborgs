@@ -209,6 +209,7 @@ public class Ruin : MonoBehaviour, ITileObject
             if (ruinUnit != null)
             {
                 ruinUnit.RuinTakenOver(newPlayerOwner, UnitFactory.Instance.GetUnitSpriteInt(newPlayerOwner));
+                ruinUnit.NullTurn();
             }
         }
         else
