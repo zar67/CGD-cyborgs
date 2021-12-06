@@ -12,6 +12,7 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] private Button m_hostButton;
     [SerializeField] private Button m_clientButton;
     [SerializeField] private Button m_leaderboardButton;
+    [SerializeField] private Button m_challengesButton;
 
     [Header("Host Info References")]
     [SerializeField] private GameObject m_hostInfo;
@@ -98,6 +99,7 @@ public class MyNetwork : MonoBehaviour
         m_hostButton.gameObject.SetActive(false);
         m_clientButton.gameObject.SetActive(false);
         m_leaderboardButton.gameObject.SetActive(false);
+        m_challengesButton.gameObject.SetActive(false);
         m_hostInfo.SetActive(true);
 
         m_host = new NetworkHost(m_port.ToString());
@@ -115,6 +117,7 @@ public class MyNetwork : MonoBehaviour
         m_hostButton.gameObject.SetActive(false);
         m_clientButton.gameObject.SetActive(false);
         m_leaderboardButton.gameObject.SetActive(false);
+        m_challengesButton.gameObject.SetActive(false);
         m_clientInfo.SetActive(true);
     }
 
@@ -154,6 +157,11 @@ public class MyNetwork : MonoBehaviour
         m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
         m_cameraController.SetCameraPosition(WorldGenerator.Instance.GetStartingPosition(m_host.GetName()));
         m_uiHolder.SetActive(false);
+    }
+
+    public void CopyIPToClipboard()
+    {
+        GUIUtility.systemCopyBuffer = m_host.GetIP();
     }
 
     public void NextPlayer()
