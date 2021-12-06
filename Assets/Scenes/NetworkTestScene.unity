@@ -193,10 +193,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Daily Challenge UI
       objectReference: {fileID: 0}
-    - target: {fileID: 2341778678140891928, guid: b10974775338ee14f9689b1005908908, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2341778678140891930, guid: b10974775338ee14f9689b1005908908, type: 3}
       propertyPath: gameManager
       value: 
@@ -1390,14 +1386,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.62352943}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4fccbe57cafa5f44ba7c6ea3a4835b90, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1fe7eb868f5549f40afbd50c701961ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2936,14 +2932,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.62352943}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4fccbe57cafa5f44ba7c6ea3a4835b90, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1fe7eb868f5549f40afbd50c701961ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5647,6 +5643,10 @@ PrefabInstance:
     - target: {fileID: 764188636731487136, guid: 2c809dc87a4796c4ab24b26927b1bba0, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1130300180210801396, guid: 2c809dc87a4796c4ab24b26927b1bba0, type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1885340603769142033, guid: 2c809dc87a4796c4ab24b26927b1bba0, type: 3}
       propertyPath: m_AnchorMax.y
