@@ -393,7 +393,6 @@ public class MyNetwork : MonoBehaviour
 
                         if (itemTileType == "ruin")
                         {
-
                             Ruin newRuin = Instantiate(WorldGenerator.Instance.RuinPrefab, transform);
                             newRuin.Initialise(tile.transform.position, z, 10, i, itemOwner);
                             newRuin.unique_id = int.Parse(itemID);

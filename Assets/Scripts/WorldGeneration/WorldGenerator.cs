@@ -309,16 +309,11 @@ public class WorldGenerator : MonoBehaviour
             {
                 index = Random.Range(0, WorldTiles.Count - 1);
             }
-            string playerName = "";
-            if (i < MyNetwork.m_playerNames.Count)
-            {
-                playerName = MyNetwork.m_playerNames[i];
-            }
+            
             Ruin newRuin = Instantiate(RuinPrefab, transform);
-            newRuin.Initialise(WorldTiles[index].transform.position, WorldTiles[index].Coordinates.Z, m_worldHeight, i, playerName);
+            newRuin.Initialise(WorldTiles[index].transform.position, WorldTiles[index].Coordinates.Z, m_worldHeight, i, "");
             WorldTiles[index].SetTileObject(newRuin);
             AllRuins.Add(newRuin);
-
         }
 
         DiscoverRuinTiles();
@@ -326,14 +321,28 @@ public class WorldGenerator : MonoBehaviour
 
     public void SpawnUnitsOnStart()
     {
-        foreach (Ruin ruin in AllRuins)
+        Ruin largestFirst = AllRuins[0];
+        Ruin largestSecond = AllRuins[0];
+        float distance = float.MinValue;
+
+        for (int i = 0; i < m_ruinNumber; i++)
         {
-            ruin.UpdateSprite();
-            if (ruin.m_playerOwner != "")
+            for (int j = 0; j < m_ruinNumber; j++)
             {
-                ruin.SpawnUnit();
+                if (AllRuins[i].Tile.Coordinates.DistanceTo(AllRuins[j].Tile.Coordinates) > distance)
+                {
+                    largestFirst = AllRuins[i];
+                    largestSecond = AllRuins[j];
+                    distance = AllRuins[i].Tile.Coordinates.DistanceTo(AllRuins[j].Tile.Coordinates);
+                }
             }
         }
+
+        largestFirst.m_playerOwner = MyNetwork.m_playerNames[0];
+        largestSecond.m_playerOwner = MyNetwork.m_playerNames[1];
+
+        largestFirst.SpawnUnit();
+        largestSecond.SpawnUnit();
     }
 
     public void SetBiomeSprite(Tile tile)

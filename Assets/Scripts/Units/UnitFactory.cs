@@ -141,6 +141,7 @@ public class UnitFactory : MonoBehaviour
         }
 
         GameObject u = Instantiate(unitPrefabs[unitType]);
+
         u.GetComponent<Unit>().SetUpUnit(tile, ruinId, playerId, spritesToUseForPlayer[playerId]);
 
         allUnits.Add(u.GetComponent<Unit>());
