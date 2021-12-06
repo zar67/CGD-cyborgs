@@ -189,6 +189,7 @@ public class Unit : MonoBehaviour, ITileObject
         }
         else
         {
+            FindObjectOfType<SoundManager>().Play("UnitSelect");
             unitSprite.color = new Color(0, 1, 0);
         }
     }
@@ -267,6 +268,7 @@ public class Unit : MonoBehaviour, ITileObject
                 if (path.Count - 1 <= movementLeft)
                 {
                     movementLeft -= path.Count - 1;
+                    FindObjectOfType<SoundManager>().Play("UnitMove");
                     MoveToTile(current);
                 }
             }
@@ -318,6 +320,7 @@ public class Unit : MonoBehaviour, ITileObject
     public void HasAttacked()
     {
         attacksLeft--;
+        FindObjectOfType<SoundManager>().Play("Melee");
     }
 
     public void TakeDamage(int dmg, HexCoordinates move)
@@ -329,6 +332,7 @@ public class Unit : MonoBehaviour, ITileObject
         {
             unitStats.health -= 1;
             unitVisualsHandler.TookDamage(dmg+1);
+
         }
         else
         {
@@ -364,6 +368,7 @@ public class Unit : MonoBehaviour, ITileObject
         isDead = true;
         if (id == ruinId)
         {
+            FindObjectOfType<SoundManager>().Play("UnitLost");
             OnDeath?.Invoke();
             Destroy(gameObject);
         }
