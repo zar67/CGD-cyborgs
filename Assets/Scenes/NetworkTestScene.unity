@@ -3793,7 +3793,6 @@ GameObject:
   m_Component:
   - component: {fileID: 909470775}
   - component: {fileID: 909470774}
-  - component: {fileID: 909470776}
   m_Layer: 0
   m_Name: AudioController
   m_TagString: Untagged
@@ -3817,24 +3816,24 @@ MonoBehaviour:
   tracks:
   - source: {fileID: 579426308}
     audio:
-    - type: 5
-      clip: {fileID: 8300000, guid: 47da99e2a1e1e984893bce7ed72b9d41, type: 3}
-    - type: 6
-      clip: {fileID: 8300000, guid: 4cf3d5b3bdeb85b45941815c943b66be, type: 3}
     - type: 7
-      clip: {fileID: 8300000, guid: dc1eda2c3d557ed46afe0fdf2ea8a4e1, type: 3}
+      clip: {fileID: 8300000, guid: 47da99e2a1e1e984893bce7ed72b9d41, type: 3}
     - type: 8
+      clip: {fileID: 8300000, guid: 4cf3d5b3bdeb85b45941815c943b66be, type: 3}
+    - type: 9
+      clip: {fileID: 8300000, guid: dc1eda2c3d557ed46afe0fdf2ea8a4e1, type: 3}
+    - type: 10
       clip: {fileID: 8300000, guid: 7853a59c82ce32a4b99b42f78d1a8305, type: 3}
   - source: {fileID: 1499746573}
     audio:
     - type: 1
       clip: {fileID: 8300000, guid: a6c272830e662634094e3d6ed9436e17, type: 3}
-    - type: 2
-      clip: {fileID: 8300000, guid: 64e755647844e314ea7771f11fcae2f5, type: 3}
-    - type: 3
-      clip: {fileID: 8300000, guid: 9255f462462315a4fa3b1630b170d934, type: 3}
     - type: 4
       clip: {fileID: 8300000, guid: fde1c1783fdb4b44ba8d20d22baa12d6, type: 3}
+    - type: 5
+      clip: {fileID: 8300000, guid: 1c0ceca73d2bc5d4881636cdac3ec8c6, type: 3}
+    - type: 6
+      clip: {fileID: 8300000, guid: 433d49dee9db64349bb16cc344ab1b90, type: 3}
   - source: {fileID: 1499746573}
     audio:
     - type: 2
@@ -3857,19 +3856,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &909470776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909470773}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e0c34316d92cb845adf537e4b8f6640, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioController: {fileID: 909470774}
 --- !u!1 &912735338
 GameObject:
   m_ObjectHideFlags: 0

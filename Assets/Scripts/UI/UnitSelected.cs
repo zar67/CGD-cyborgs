@@ -101,8 +101,6 @@ using AudioType = Audio.AudioType;
                 {
                     action.SelectedImage.enabled = action.UnitType == type;
                     action.SelectButton.interactable = action.UnitType != type;
-                // FindObjectOfType<SoundManager>().Play("Button");
-                //audioController.PlayAudio(AudioType.SFX_02, true);
                 FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_02, true);
             }
 

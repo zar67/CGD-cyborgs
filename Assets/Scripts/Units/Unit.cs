@@ -327,8 +327,9 @@ public class Unit : MonoBehaviour, ITileObject
     
     public void HasAttacked()
     {
+        FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_06, true);
         attacksLeft--;
-       // audioController.PlayAudio(AudioType.SFX_01, true);
+
         //FindObjectOfType<SoundManager>().Play("Melee");
     }
 
@@ -351,6 +352,7 @@ public class Unit : MonoBehaviour, ITileObject
         XMLFormatter.AddHealthChange(this);
         if (unitStats.health <= 0)
         {
+            //FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_05, false);
             HandleDeath(ruinId);
         }
     }
@@ -371,14 +373,15 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void HandleDeath(int id)
     {
+       
         Tile.SetTileObject(null);
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
         if (id == ruinId)
         {
-            //FindObjectOfType<SoundManager>().Play("UnitLost");
-            //audioController.PlayAudio(AudioType.SFX_01, true);
+        
+          
             OnDeath?.Invoke();
             Destroy(gameObject);
         }
