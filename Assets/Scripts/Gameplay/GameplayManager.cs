@@ -81,7 +81,7 @@ public class GameplayManager : MonoBehaviour
     public void ShowHUD()
     {
         ui.Show(true);
-        //FindObjectOfType<AudioController>().PlayAudio(AudioType.ST_01, true, 5);
+        FindObjectOfType<AudioController>().PlayAudio(AudioType.ST_01, true, 5);
     }
 
     public void ResetTurn()

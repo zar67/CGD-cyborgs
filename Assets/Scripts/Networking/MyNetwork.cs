@@ -12,6 +12,7 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] private Button m_clientButton;
     [SerializeField] private Button m_leaderboardButton;
     [SerializeField] private Button m_challengesButton;
+    [SerializeField] private Button m_optionsButton;
 
     [Header("Host Info References")]
     [SerializeField] private GameObject m_hostInfo;
@@ -100,6 +101,7 @@ public class MyNetwork : MonoBehaviour
         m_clientButton.gameObject.SetActive(false);
         m_leaderboardButton.gameObject.SetActive(false);
         m_challengesButton.gameObject.SetActive(false);
+        m_optionsButton.gameObject.SetActive(false);
         m_hostInfo.SetActive(true);
 
         m_host = new NetworkHost(m_port.ToString());
@@ -119,6 +121,7 @@ public class MyNetwork : MonoBehaviour
         m_leaderboardButton.gameObject.SetActive(false);
         m_challengesButton.gameObject.SetActive(false);
         m_clientInfo.SetActive(true);
+        m_optionsButton.gameObject.SetActive(false);
     }
 
     public void ConnectToHost(string _name, string _ip)
