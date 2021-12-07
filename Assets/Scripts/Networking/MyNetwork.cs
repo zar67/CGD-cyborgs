@@ -4,7 +4,6 @@ using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
 public class MyNetwork : MonoBehaviour
 {
     [Header("Main Menu References")]
@@ -38,7 +37,8 @@ public class MyNetwork : MonoBehaviour
     private string hostIP = "";
     private static string m_playerTurn = "";
     public static List<string> m_playerNames = new List<string>();
-    public static bool GameStarted { get; private set; } = false;
+    public static bool GameStarted { get; set; } = false;
+
 
     private void Awake()
     {
@@ -161,6 +161,7 @@ public class MyNetwork : MonoBehaviour
         m_cameraController.SetWorldRect(WorldGenerator.Instance.GetWorldRect());
         m_cameraController.SetCameraPosition(WorldGenerator.Instance.GetStartingPosition(m_host.GetName()));
         m_uiHolder.SetActive(false);
+        //GameStarted = true;
     }
 
     public void CopyIPToClipboard()
@@ -219,7 +220,7 @@ public class MyNetwork : MonoBehaviour
         {
             messages = m_client.GetRxQueueCopyAndClear();
         }
-        
+
         foreach (string msg in messages)
         {
             var doc = new XmlDocument();
@@ -288,10 +289,10 @@ public class MyNetwork : MonoBehaviour
                                 break;
                             }
                         }
-                        if(unit == null)
+                        if (unit == null)
                         {
                             Debug.LogError("MyNetwork::281 -> no unit found for setting health");
-						}
+                        }
                         XMLFormatter.disableComms = true;
                         unit.SetHealth(int.Parse(messageData));
                         if (int.Parse(messageData) <= 0)
@@ -311,9 +312,9 @@ public class MyNetwork : MonoBehaviour
                                 break;
                             }
                         }
-                        ruin.TakeOverRuin(messageData , false);
+                        ruin.TakeOverRuin(messageData, false);
                     }
-                    else if(messageType == "unitchange")
+                    else if (messageType == "unitchange")
                     {
                         Ruin ruin = null;
                         foreach (Ruin r in WorldGenerator.Instance.AllRuins)
@@ -327,7 +328,7 @@ public class MyNetwork : MonoBehaviour
                         XMLFormatter.disableComms = true;
                         ruin.UnitType = Unit.unitTypesLookUpStr[messageData];
                         XMLFormatter.disableComms = false;
-					}
+                    }
                 }
 
                 GameplayManager.Instance.ResetTurn();

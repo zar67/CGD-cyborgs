@@ -1,7 +1,6 @@
 using UnityEngine;
 
-namespace UnityCore
-{
+
 
     namespace Audio
     {
@@ -37,4 +36,3 @@ namespace UnityCore
             #endregion
         }
     }
-}

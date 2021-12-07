@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Audio;
+using AudioType = Audio.AudioType;
 
 public class Unit : MonoBehaviour, ITileObject
 {
@@ -67,6 +69,8 @@ public class Unit : MonoBehaviour, ITileObject
     private int attacksLeft = 0;
 
     private bool isDead = false;
+    public AudioController audioController;
+
 
     // Ids
     private int ruinId = -1;
@@ -178,6 +182,7 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void Select()
     {
+
         if (isDead || !Tile.IsDiscovered)
         {
             return;
@@ -186,11 +191,13 @@ public class Unit : MonoBehaviour, ITileObject
         if (specialClick)
         {
             unitSprite.color = new Color(1, 0, 0);
+            //FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_01, true);
         }
         else
         {
-            FindObjectOfType<SoundManager>().Play("UnitSelect");
+            FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_01, true);
             unitSprite.color = new Color(0, 1, 0);
+
         }
     }
 
@@ -268,7 +275,8 @@ public class Unit : MonoBehaviour, ITileObject
                 if (path.Count - 1 <= movementLeft)
                 {
                     movementLeft -= path.Count - 1;
-                    FindObjectOfType<SoundManager>().Play("UnitMove");
+                
+                    FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_04, true);
                     MoveToTile(current);
                 }
             }
@@ -320,7 +328,8 @@ public class Unit : MonoBehaviour, ITileObject
     public void HasAttacked()
     {
         attacksLeft--;
-        FindObjectOfType<SoundManager>().Play("Melee");
+       // audioController.PlayAudio(AudioType.SFX_01, true);
+        //FindObjectOfType<SoundManager>().Play("Melee");
     }
 
     public void TakeDamage(int dmg, HexCoordinates move)
@@ -368,7 +377,8 @@ public class Unit : MonoBehaviour, ITileObject
         isDead = true;
         if (id == ruinId)
         {
-            FindObjectOfType<SoundManager>().Play("UnitLost");
+            //FindObjectOfType<SoundManager>().Play("UnitLost");
+            //audioController.PlayAudio(AudioType.SFX_01, true);
             OnDeath?.Invoke();
             Destroy(gameObject);
         }

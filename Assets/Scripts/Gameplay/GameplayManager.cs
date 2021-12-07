@@ -1,10 +1,18 @@
 using UnityEngine;
+using Audio;
+using AudioType = Audio.AudioType;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class GameplayManager : MonoBehaviour
 {
     //UI
     [SerializeField] private GameObject UIObject;
+    public GameObject gameOverUI;
     private GameplayUI ui;
+    [SerializeField] private Button restartButton;
+    public TextMeshProUGUI winnerText;
 
     //Timer
     [SerializeField] private int turnTime = 90; //In seconds
@@ -35,9 +43,17 @@ public class GameplayManager : MonoBehaviour
 
     private void Awake()
     {
+
         ui = UIObject.GetComponent<GameplayUI>();
         timerCurrent = turnTime;
         SingletonSetUp();
+        //ui.Show(false);
+
+    }
+
+    private void Start()
+    {
+        FindObjectOfType<AudioController>().PlayAudio(AudioType.ST_03, true);
     }
 
     private void Update()
@@ -64,12 +80,13 @@ public class GameplayManager : MonoBehaviour
 
     public void ShowHUD()
     {
-        ui.Show();
+        ui.Show(true);
+        //FindObjectOfType<AudioController>().PlayAudio(AudioType.ST_01, true, 5);
     }
 
     public void ResetTurn()
     {
-        FindObjectOfType<SoundManager>().Play("YourTurn");
+        FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_02, true);
         CheckGameOver();
         timerCurrent = turnTime;
         UpdateUI();
@@ -97,7 +114,21 @@ public class GameplayManager : MonoBehaviour
 
     public void GameOver(string winner)
     {
+        //MyNetwork.GameStarted = false;
+        ui.Show(false);
+        ui.Disable();
+        gameOverUI.SetActive(true);
+        FindObjectOfType<AudioController>().StopAudio(AudioType.ST_01, true);
+        FindObjectOfType<AudioController>().StopAudio(AudioType.ST_03, true);
+        FindObjectOfType<AudioController>().PlayAudio(AudioType.ST_04, true, 5);
         Debug.Log("GAME OVER. Winner is " + winner);
+        winnerText.text = winner + " is the winner!";
+        restartButton.onClick.AddListener(RestartScene);
         // TODO go to game over screen!
+    }
+
+    public void RestartScene()
+    {
+        Application.LoadLevel(Application.loadedLevel);
     }
 }
