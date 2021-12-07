@@ -1,5 +1,7 @@
 using TMPro;
 using UnityEngine;
+using Audio;
+using AudioType = Audio.AudioType;
 
 public class GameplayUI : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private Color defaultTextColor;
     [SerializeField] private Color alertTextColor;
 
+    public AudioController audioController;
     private int previousTime = -1;
 
     private void Awake()
@@ -28,16 +31,22 @@ public class GameplayUI : MonoBehaviour
         Show(false);
     }
 
-    public void Show(bool value = true)
+    public void Show(bool value)
     {
         m_timerHolder.SetActive(value);
         m_turnButtonObject.SetActive(value);
         m_turnHolder.SetActive(value);
-
-        if (value)
+        if (value == true)
         {
             UpdateTurnUI();
         }
+    }
+
+    public void Disable()
+    {
+        m_timerHolder.SetActive(false);
+        m_turnButtonObject.SetActive(false);
+        m_turnHolder.SetActive(false);
     }
 
     public void SetTimerText(float value)
@@ -51,7 +60,7 @@ public class GameplayUI : MonoBehaviour
             {
                 timerText.color = alertTextColor;
                 animAlertTick.Play();
-                FindObjectOfType<SoundManager>().Play("CountDown");
+                audioController.PlayAudio(AudioType.SFX_03, true);
             }
             else
             {
