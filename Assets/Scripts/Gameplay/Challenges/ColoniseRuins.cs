@@ -6,6 +6,6 @@ public class ColoniseRuins : Challenge
 {
     public override string GetDescription()
     {
-        return $"Colonise {requiredAmount} ruins.";
+        return $"Colonise ruins.";
     }
 }
