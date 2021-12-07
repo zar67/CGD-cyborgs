@@ -372,6 +372,8 @@ public class Unit : MonoBehaviour, ITileObject
             OnDeath?.Invoke();
             Destroy(gameObject);
         }
+
+        GlobalData.UpdateDailyChallenge(unitType);
     }
 
     public void Respawn(Tile tile)
@@ -392,6 +394,8 @@ public class Unit : MonoBehaviour, ITileObject
     {
         playerId = newPlayerId;
         unitSprite.sprite = playerSprites[newSprite];
+
+        if (newPlayerId == MyNetwork.GetMyInstanceID()) GlobalData.UpdateDailyChallenge<ColoniseRuins>();
     }
 
     public void NullTurn()

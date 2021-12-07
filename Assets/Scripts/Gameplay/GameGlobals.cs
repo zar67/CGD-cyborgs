@@ -1,11 +1,5 @@
 using System.Collections.Generic;
 
-public class GlobalStats
-{
-    private int xp = 0;
-    private int rank = 1;
-}
-
 public class GlobalData
 {
     public static List<Challenge> dailyChallenges = new List<Challenge>();

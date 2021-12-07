@@ -134,8 +134,6 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-
-
     IEnumerator Upload()
     {
         WWWForm form = new WWWForm();

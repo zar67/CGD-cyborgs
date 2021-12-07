@@ -126,6 +126,8 @@ public class MyNetwork : MonoBehaviour
         m_client = new NetworkClient(_ip, m_port.ToString());
         m_client.SetName(m_nameInputClient.text);
 
+        SaveReadWrite.data.name = m_client.GetName();
+
         m_conectedTxt.gameObject.SetActive(true);
         m_connectToHostBttn.gameObject.SetActive(false);
     }
@@ -137,6 +139,8 @@ public class MyNetwork : MonoBehaviour
         {
             return;
         }
+
+        SaveReadWrite.data.name = m_host.GetName();
 
         m_playerTurn = m_host.GetName();
         m_playerNames.Add(m_host.GetName());

@@ -24,6 +24,7 @@ public class DailyChallengeUI : MonoBehaviour
         foreach (Challenge c in GlobalData.dailyChallenges)
         {
             GameObject button = Instantiate(buttonElement, elementList.transform);
+            button.GetComponent<Button>().onClick.AddListener(c.ClaimReward);
             TextMeshProUGUI[] buttonText = button.GetComponentsInChildren<TextMeshProUGUI>();
             buttonText[0].text = c.GetDescription();
             buttonText[1].text = c.currentAmount.ToString() + " / " + c.requiredAmount.ToString();

@@ -6,12 +6,11 @@ public abstract class Challenge : ScriptableObject
     [System.Serializable]
     public struct Reward
     {
-        public int currency;
-        public int XP;
+        public uint score;
     }
 
     [Header("Rewards")]
-    public Reward reward = new Reward { currency = 10, XP = 10 };
+    public Reward reward = new Reward { score = 10 };
 
     [Header("Requirements")]
     public int requiredAmount = 1;
@@ -24,6 +23,8 @@ public abstract class Challenge : ScriptableObject
         get; protected set;
     }
 
+    private bool rewardClaimed = false;
+
     private string description;
 
     public virtual string GetDescription()
@@ -33,7 +34,21 @@ public abstract class Challenge : ScriptableObject
 
     public void IncreaseCurrentAmount()
     {
-        currentAmount++;
+        if(!completed)
+        {
+            currentAmount++;
+        }
+    }
+
+    public void ClaimReward()
+    {
+        if(!rewardClaimed && completed)
+        {
+            SaveReadWrite.data.score += reward.score;
+            rewardClaimed = true;
+            ServerManager sm = new ServerManager();
+            sm.SetScore(SaveReadWrite.data.name, SaveReadWrite.data.score.ToString());
+        }
     }
 
     protected void Evaluate()
@@ -41,19 +56,6 @@ public abstract class Challenge : ScriptableObject
         if (currentAmount >= requiredAmount)
         {
             completed = true;
-        }
-    }
-
-    public void ClaimReward()
-    {
-        if(completed)
-        {
-            //add to leaderboard info, etc
-            Debug.Log("Reward has been claimed!");
-        }
-        else
-        {
-            Debug.Log("Challenge not yet completed");
         }
     }
 }

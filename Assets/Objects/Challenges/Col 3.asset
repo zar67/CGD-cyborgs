@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: Col 3
   m_EditorClassIdentifier: 
   reward:
-    currency: 50
-    XP: 300
+    score: 400
   requiredAmount: 20

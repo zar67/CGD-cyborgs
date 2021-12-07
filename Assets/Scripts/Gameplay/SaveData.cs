@@ -31,4 +31,6 @@ public class SaveData
 {
     public int previousLoginDate;
     public List<Challenge> dailyChallenges;
+    public uint score = 0;
+    public string name = "Anon";
 }

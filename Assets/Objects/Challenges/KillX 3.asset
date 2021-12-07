@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: KillX 3
   m_EditorClassIdentifier: 
   reward:
-    currency: 10
-    XP: 100
+    score: 150
   requiredAmount: 10
   unitType: 2
