@@ -329,7 +329,7 @@ public class WorldGenerator : MonoBehaviour
         {
             for (int j = 0; j < m_ruinNumber; j++)
             {
-                if (AllRuins[i].Tile.Coordinates.DistanceTo(AllRuins[j].Tile.Coordinates) > distance)
+                if (AllRuins[i].Tile.Coordinates.DistanceTo(AllRuins[j].Tile.Coordinates) > distance && i != j)
                 {
                     largestFirst = AllRuins[i];
                     largestSecond = AllRuins[j];
