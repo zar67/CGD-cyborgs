@@ -17,8 +17,10 @@ def hello_world():
 
 @app.route("/SetScore/<name>/<score>")
 def setScore(name :str, score : str):
-    highscores[name] = score
-    reply = f"Score Added {name} : {score}"
+    reply = "score is not int"
+    if(score is int):
+        highscores[name] = score
+        reply = f"Score Added {name} : {score}"
     return reply
 
 @app.route("/GetScore/<name>")
