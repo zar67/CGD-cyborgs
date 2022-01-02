@@ -117,8 +117,14 @@ public class Tile : MonoBehaviour, IWorldSelectable
 
     public void ShowPathSprite(bool valid)
     {
-        m_selectedSpriteRenderer.color = valid ? m_validColour : m_invalidColour;
-        m_selectedSpriteRenderer.enabled = true;
+        if (valid)
+        {
+            m_selectedSpriteRenderer.enabled = true;
+        }
+        else
+        {
+            m_selectedSpriteRenderer.enabled = false;
+        }
     }
 
     public void HidePathSprite()
