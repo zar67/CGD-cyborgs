@@ -1,5 +1,7 @@
 using Audio;
+using DG.Tweening;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -103,7 +105,7 @@ public class Unit : MonoBehaviour, ITileObject
         unitStats = UnitFactory.Instance.GetBaseUnitStats(unitType);
         traversibleTerrain = UnitFactory.Instance.GetTraversableTerrain(unitType).ToArray();
         RuinTakenOver(_playerId, spriteToUse);
-        MoveToTile(tile);
+        MoveToTile(tile, null, false);
 
         //Testing
         ResetTurn();
@@ -267,7 +269,7 @@ public class Unit : MonoBehaviour, ITileObject
                     movementLeft -= path.Count - 1;
 
                     FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_04, true);
-                    MoveToTile(current);
+                    MoveToTile(current, path);
                 }
             }
         }
@@ -287,40 +289,54 @@ public class Unit : MonoBehaviour, ITileObject
         return false;
     }
 
-    public void MoveToTile(Tile current, bool sendMsg = true)
+    public void MoveToTile(Tile current, List<Tile> path = null, bool doMoveAnimation = true, bool sendMsg = true)
     {
         Tile.SetTileObject(null);
         current.SetTileObject(this);
-        HexCoordinates coord = Tile.Coordinates;
-        Vector3 pos = current.transform.position;
-        pos.y -= 0.3f;
-        transform.position = pos;
 
-        unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
-
-        if (playerId == MyNetwork.GetMyInstanceID())
+        if (doMoveAnimation)
         {
-            foreach (Tile tile in WorldGenerator.Instance.GetTilesInRange(Tile, Stats.sight))
+            if (path == null)
             {
-                tile.Discover();
+                WorldGenerator.GetPath(Tile, current, TraversibleTerrains.ToList(), out path);
+            }
+
+            if (path != null)
+            {
+                StartCoroutine(DoMoveAnimation(path, current));
             }
         }
+        else
+        {
+            Vector3 endPosition = current.transform.position;
+            endPosition.y -= 0.3f;
+            transform.position = endPosition;
+
+            if (playerId == MyNetwork.GetMyInstanceID())
+            {
+                foreach (Tile neighbour in WorldGenerator.Instance.GetTilesInRange(current, Stats.sight))
+                {
+                    neighbour.Discover();
+                }
+            }
+
+            unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
+
+            Show(Tile.IsDiscovered);
+        }
+
         if (sendMsg)
         {
             XMLFormatter.AddPositionChange(this);
         }
 
         WorldSelection.ChangeSelection(null);
-
-        Show(Tile.IsDiscovered);
     }
 
     public void HasAttacked()
     {
         FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_06, true);
         attacksLeft--;
-
-        //FindObjectOfType<SoundManager>().Play("Melee");
     }
 
     public void TakeDamage(int dmg, HexCoordinates move)
@@ -413,5 +429,43 @@ public class Unit : MonoBehaviour, ITileObject
     public void Show(bool show)
     {
         unitSprite.enabled = show;
+    }
+
+    private IEnumerator DoMoveAnimation(List<Tile> path, Tile endTile)
+    {
+        unitSprite.sortingOrder = 999;
+
+        foreach (Tile tile in path)
+        {
+            Vector3 position = tile.transform.position;
+            position.y -= 0.3f;
+
+            yield return transform.DOMove(position, 0.3f).WaitForCompletion();
+
+            if (playerId == MyNetwork.GetMyInstanceID())
+            {
+                foreach (Tile neighbour in WorldGenerator.Instance.GetTilesInRange(tile, Stats.sight))
+                {
+                    neighbour.Discover();
+                }
+            }
+        }
+
+        Vector3 endPosition = endTile.transform.position;
+        endPosition.y -= 0.3f;
+
+        yield return transform.DOMove(endPosition, 0.3f).WaitForCompletion();
+
+        if (playerId == MyNetwork.GetMyInstanceID())
+        {
+            foreach (Tile neighbour in WorldGenerator.Instance.GetTilesInRange(endTile, Stats.sight))
+            {
+                neighbour.Discover();
+            }
+        }
+
+        unitSprite.sortingOrder = Tile.GetSortingOrderOfTile() + 1;
+
+        Show(Tile.IsDiscovered);
     }
 }

@@ -81,7 +81,7 @@ public class Ruin : MonoBehaviour, ITileObject
             {
                 TakeOverRuin(unit.GetPlayerId(), true);
                 WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true);
-                unit.MoveToTile(path[path.Count - 2]);
+                unit.MoveToTile(path[path.Count - 2], path);
                 unit.NullTurn();
                 WorldSelection.ChangeSelection(null);
             }
