@@ -33,7 +33,7 @@ public class TileInformationUI : MonoBehaviour
         terrainText.text = (isAbandonned ? "Abandonned ruin" : (isPlayers ? "Colonised Ruin" : "Enemy ruin"));
     }
 
-    public void SetText(Unit.UnitTypes unit_type, bool isPlayers)
+    public void SetText(Unit.EUnitType unit_type, bool isPlayers)
     {
         terrainText.text += "\nUnit: " + (isPlayers ? "" : " Enemy ") + unit_type.ToString();
     }

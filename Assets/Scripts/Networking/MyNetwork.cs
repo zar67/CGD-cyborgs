@@ -333,7 +333,7 @@ public class MyNetwork : MonoBehaviour
                             }
                         }
                         XMLFormatter.disableComms = true;
-                        ruin.UnitType = Unit.unitTypesLookUpStr[messageData];
+                        ruin.UnitType = (Unit.EUnitType)int.Parse(messageData);
                         XMLFormatter.disableComms = false;
                     }
                 }

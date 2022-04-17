@@ -21,7 +21,6 @@ public class CameraController : MonoBehaviour
     private bool m_fastInputValue = false;
     private float m_zoomInputValue = 0;
 
-    private IWorldSelectable m_currentSelectable = null;
     private Rect m_worldRect = new Rect(0, 0, 20, 10);
 
     public void SetCameraPosition(Vector2 position)

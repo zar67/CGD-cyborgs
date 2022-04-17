@@ -11,7 +11,7 @@ public class Unit : MonoBehaviour, ITileObject
     #region UnityTypes enum and UnitDamage/UnitStats structs
 
     [Serializable]
-    public enum UnitTypes
+    public enum EUnitType
     {
         SOLDIER,
         TANK,
@@ -21,7 +21,7 @@ public class Unit : MonoBehaviour, ITileObject
     [Serializable]
     public struct UnitDamage
     {
-        public UnitTypes againstType;
+        public EUnitType againstType;
         public int damage;
     }
 
@@ -35,9 +35,7 @@ public class Unit : MonoBehaviour, ITileObject
         public int sight;
         public int killCount;
 
-
-
-        public int GetDamage(UnitTypes type)
+        public int GetDamage(EUnitType type)
         {
             foreach (UnitDamage dmg in damages)
             {
@@ -54,13 +52,15 @@ public class Unit : MonoBehaviour, ITileObject
 
     public event Action OnDeath;
 
+    public Sprite Sprite => unitSprite.sprite;
+
     [Header("Sprites")]
     [SerializeField] private SpriteRenderer unitSprite;
     [SerializeField] private UnitVisuals unitVisualsHandler;
     [SerializeField] private List<Sprite> playerSprites;
 
     [Header("Unit type")]
-    [SerializeField] private UnitTypes unitType;
+    [SerializeField] private EUnitType unitType;
 
     private TerrainType[] traversibleTerrain;
 
@@ -76,7 +76,7 @@ public class Unit : MonoBehaviour, ITileObject
     private int ruinId = -1;
     private string playerId = "";
 
-    public UnitTypes Type => unitType;
+    public EUnitType Type => unitType;
 
     private bool specialClick = false;
     public bool Attacking => specialClick;
@@ -89,19 +89,6 @@ public class Unit : MonoBehaviour, ITileObject
         get;
         set;
     }
-
-    public static Dictionary<UnitTypes, string> unitTypesLookUp = new Dictionary<UnitTypes, string>()
-    {
-        {UnitTypes.SOLDIER, "soldier" },
-        {UnitTypes.TANK, "tank" },
-        {UnitTypes.PLANE, "plane" },
-    };
-    public static Dictionary<string, UnitTypes> unitTypesLookUpStr = new Dictionary<string, UnitTypes>()
-    {
-        {"soldier", UnitTypes.SOLDIER},
-        {"tank" , UnitTypes.TANK},
-        {"plane" , UnitTypes.PLANE},
-    };
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 

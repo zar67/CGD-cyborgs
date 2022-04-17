@@ -95,7 +95,7 @@ public class XMLFormatter
         m_TurnHistory.Add(new TurnData(typeStr, id, data));
     }
 
-    public static void AddUnitTypeChange(Ruin _ruin, Unit.UnitTypes _unitType)
+    public static void AddUnitTypeChange(Ruin _ruin, Unit.EUnitType _unitType)
     {
         if (disableComms)
         {
@@ -104,7 +104,7 @@ public class XMLFormatter
 
         string typeStr = turnTypeLookUp[TurnType.ttUnitChange];
         string id = _ruin.unique_id.ToString();
-        string data = Unit.unitTypesLookUp[_unitType];
+        string data = ((int)_unitType).ToString();
         m_TurnHistory.Add(new TurnData(typeStr, id, data));
     }
 
@@ -204,17 +204,15 @@ public class XMLFormatter
             XmlAttribute ownerAttrib = xmlDoc.CreateAttribute("owner");
             XmlAttribute idAttrib = xmlDoc.CreateAttribute("id");
 
-            if (tile.TileObject is Ruin)
+            if (tile.TileObject is Ruin ruin)
             {
-                var ruin = (Ruin)tile.TileObject;
                 itemTypeAttrib.Value = "ruin";
                 idAttrib.Value = ruin.unique_id.ToString();
                 ownerAttrib.Value = ruin.m_playerOwner;
             }
-            else if (tile.TileObject is Unit)
+            else if (tile.TileObject is Unit unit)
             {
-                var unit = (Unit)tile.TileObject;
-                itemTypeAttrib.Value = Unit.unitTypesLookUp[unit.Type];
+                itemTypeAttrib.Value = ((int)unit.Type).ToString();
                 idAttrib.Value = unit.GetID().ToString();
             }
 

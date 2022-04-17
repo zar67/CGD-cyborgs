@@ -15,7 +15,7 @@ public class GlobalData
         }
     }
 
-    public static void UpdateDailyChallenge(Unit.UnitTypes unitType)
+    public static void UpdateDailyChallenge(Unit.EUnitType unitType)
     {
         foreach (Challenge c in dailyChallenges)
         {
