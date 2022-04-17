@@ -14,11 +14,11 @@ public class Client
         m_client = _client;
         m_name = _name;
     }
-    public Client(String _ip, Int32 _port, string _name, ref TextMeshProUGUI _connectedTxt)
+    public Client(string _ip, int _port, string _name, ref TextMeshProUGUI _connectedTxt)
     {
         try
         {
-            String message = _name;
+            string message = _name;
             // Create a TcpClient.
             // Note, for this client to work you need to have a TcpServer
             // connected to the same address as specified by the server, port
@@ -27,7 +27,7 @@ public class Client
             m_client = new TcpClient(_ip, _port);
 
             // Translate the passed message into ASCII and store it as a Byte array.
-            Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
+            byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
 
             // Get a client stream for reading and writing.
             //  Stream stream = client.GetStream();
@@ -42,13 +42,13 @@ public class Client
             // Receive the TcpServer.response.
 
             // Buffer to store the response bytes.
-            data = new Byte[256];
+            data = new byte[256];
 
             // String to store the response ASCII representation.
-            String responseData = String.Empty;
+            string responseData = string.Empty;
 
             // Read the first batch of the TcpServer response bytes.
-            Int32 bytes = stream.Read(data, 0, data.Length);
+            int bytes = stream.Read(data, 0, data.Length);
             responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
             Debug.Log("Received: =" + responseData);
 

@@ -58,8 +58,11 @@ public class XMLFormatter
 
     public static void AddPositionChange(Unit _unit)
     {
-        if(disableComms)
+        if (disableComms)
+        {
             return;
+        }
+
         string typeStr = turnTypeLookUp[TurnType.ttPOSITION];
         string id = _unit.GetID().ToString();
         string data = _unit.Tile.Coordinates.ToString();
@@ -68,8 +71,11 @@ public class XMLFormatter
 
     public static void AddHealthChange(Unit _unit)
     {
-        if(disableComms)
+        if (disableComms)
+        {
             return;
+        }
+
         string typeStr = turnTypeLookUp[TurnType.ttHEALTH];
         string id = _unit.GetID().ToString();
         string data = _unit.Stats.health.ToString();
@@ -78,8 +84,11 @@ public class XMLFormatter
 
     public static void AddRuinOwnerChange(Ruin _ruin, string _owner)
     {
-        if(disableComms)
+        if (disableComms)
+        {
             return;
+        }
+
         string typeStr = turnTypeLookUp[TurnType.ttRUIN];
         string id = _ruin.unique_id.ToString();
         string data = _owner;
@@ -88,13 +97,16 @@ public class XMLFormatter
 
     public static void AddUnitTypeChange(Ruin _ruin, Unit.UnitTypes _unitType)
     {
-        if(disableComms)
+        if (disableComms)
+        {
             return;
+        }
+
         string typeStr = turnTypeLookUp[TurnType.ttUnitChange];
         string id = _ruin.unique_id.ToString();
         string data = Unit.unitTypesLookUp[_unitType];
         m_TurnHistory.Add(new TurnData(typeStr, id, data));
-	}
+    }
 
     private static void ConstructTurnXML(ref XmlDocument _xmlDoc, ref XmlElement _xmlParent)
     {
@@ -154,8 +166,6 @@ public class XMLFormatter
         xmlNode.Attributes.Append(typeAttrib);
         xmlNode.Attributes.Append(idAttrib);
         xmlNode.Attributes.Append(dataAttrib);
-
-        Debug.Log(xmlDoc.OuterXml);
 
         return xmlDoc;
     }

@@ -183,7 +183,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
             return null;
         }
 
-        return ((pair.Value == null || !validTerrain.Contains(pair.Value.Terrain) || pair.Value.TileObject != null) ? GetNextNeighbour(index, validTerrain, iterations-1) : pair.Value);
+        return ((pair.Value == null || !validTerrain.Contains(pair.Value.Terrain) || pair.Value.TileObject != null) ? GetNextNeighbour(index, validTerrain, iterations - 1) : pair.Value);
     }
 
     public Tile GetClosestNeighbour(Tile data)
@@ -361,7 +361,7 @@ public class Tile : MonoBehaviour, IWorldSelectable
                         if (tile.TileObject is Unit aUnit)
                         {
                             aUnit.TakeDamage(unit.Stats.GetDamage(aUnit.Type), HexCoordinates.Add(
-                                    HexCoordinates.GetCoordinateRotatedInDirection(UnitFactory.Instance.GetUnitAttackPattern(unit.Type).ennemyMove, 
+                                    HexCoordinates.GetCoordinateRotatedInDirection(UnitFactory.Instance.GetUnitAttackPattern(unit.Type).ennemyMove,
                                     (int)HexCoordinates.GetDirectionFromFirstPoint(unit.Tile.Coordinates, Coordinates)), aUnit.Tile.Coordinates));
                         }
                     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -9,12 +8,12 @@ using UnityEngine;
 public class Host : MonoBehaviour
 {
     private TcpListener m_listener;
-    private Byte[] bytes;
-    private String data;
+    private byte[] bytes;
+    private string data;
     private GameObject m_listContent;
     private static List<Client> m_allCLients = new List<Client>();
     private const int m_MAX_PLAYER_COUNT = 1;
-    public Host(string _name, Int32 _port, IPAddress _ip, GameObject _listContent, ref TextMeshProUGUI _connectedTxt)
+    public Host(string _name, int _port, IPAddress _ip, GameObject _listContent, ref TextMeshProUGUI _connectedTxt)
     {
         m_listContent = _listContent;
         //set up server
@@ -29,7 +28,7 @@ public class Host : MonoBehaviour
 
 
             // Buffer for reading data
-            bytes = new Byte[256];
+            bytes = new byte[256];
             data = null;
         }
         catch
@@ -127,7 +126,7 @@ public class Host : MonoBehaviour
         }
     }
 
-    public void AddClient(String _ip, Int32 _port, string _name, ref TextMeshProUGUI _connectedTxt)
+    public void AddClient(string _ip, int _port, string _name, ref TextMeshProUGUI _connectedTxt)
     {
         var client = new Client(_ip, _port, _name, ref _connectedTxt);
         m_allCLients.Add(client);

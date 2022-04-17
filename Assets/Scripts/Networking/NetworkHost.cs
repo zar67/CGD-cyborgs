@@ -66,18 +66,6 @@ public class NetworkHost : NetworkCommunication
             };
             XmlDocument xmlBlob = XMLFormatter.ConstructMessage(msgData);
             AddToTxQueue(xmlBlob.OuterXml);
-
-            //byte[] byteMsg = Encoding.ASCII.GetBytes(xmlBlob.OuterXml);
-            //c.GetStream().Write(byteMsg, 0, byteMsg.Length);
-
-            /*if(c.Status == TaskStatus.Created)
-                Debug.Log("Created!");
-            if(c.IsCompleted)
-                Debug.Log("Completed!");*/
-            Debug.Log("Completed!");
-
-
-            //Thread.Sleep(10);
         }
     }
 
@@ -86,21 +74,6 @@ public class NetworkHost : NetworkCommunication
     {
         while (true)
         {
-            /*foreach(TcpClient client in m_allClients)
-            {
-                NetworkStream stream = client.GetStream();
-                int bytesRecived = stream.Read(m_buffer, 0, m_buffer.Length);
-                if(bytesRecived > 0)
-                {
-                    string msg = Encoding.ASCII.GetString(m_buffer, 0, bytesRecived);
-                    lock(m_rxQueue)
-                    {
-                        m_rxQueue.Add(msg);
-			        }
-                    Debug.Log("Added To rx: " + msg);
-		        }
-			}*/
-
             foreach (NetworkClient client in m_allClients)
             {
                 if (client.IsConnected())
