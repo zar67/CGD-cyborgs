@@ -58,8 +58,11 @@ public class XMLFormatter
 
     public static void AddPositionChange(Unit _unit)
     {
-        if(disableComms)
+        if (disableComms)
+        {
             return;
+        }
+
         string typeStr = turnTypeLookUp[TurnType.ttPOSITION];
         string id = _unit.GetID().ToString();
         string data = _unit.Tile.Coordinates.ToString();
@@ -68,8 +71,11 @@ public class XMLFormatter
 
     public static void AddHealthChange(Unit _unit)
     {
-        if(disableComms)
+        if (disableComms)
+        {
             return;
+        }
+
         string typeStr = turnTypeLookUp[TurnType.ttHEALTH];
         string id = _unit.GetID().ToString();
         string data = _unit.Stats.health.ToString();
@@ -78,23 +84,29 @@ public class XMLFormatter
 
     public static void AddRuinOwnerChange(Ruin _ruin, string _owner)
     {
-        if(disableComms)
+        if (disableComms)
+        {
             return;
+        }
+
         string typeStr = turnTypeLookUp[TurnType.ttRUIN];
         string id = _ruin.unique_id.ToString();
         string data = _owner;
         m_TurnHistory.Add(new TurnData(typeStr, id, data));
     }
 
-    public static void AddUnitTypeChange(Ruin _ruin, Unit.UnitTypes _unitType)
+    public static void AddUnitTypeChange(Ruin _ruin, Unit.EUnitType _unitType)
     {
-        if(disableComms)
+        if (disableComms)
+        {
             return;
+        }
+
         string typeStr = turnTypeLookUp[TurnType.ttUnitChange];
         string id = _ruin.unique_id.ToString();
-        string data = Unit.unitTypesLookUp[_unitType];
+        string data = ((int)_unitType).ToString();
         m_TurnHistory.Add(new TurnData(typeStr, id, data));
-	}
+    }
 
     private static void ConstructTurnXML(ref XmlDocument _xmlDoc, ref XmlElement _xmlParent)
     {
@@ -155,8 +167,6 @@ public class XMLFormatter
         xmlNode.Attributes.Append(idAttrib);
         xmlNode.Attributes.Append(dataAttrib);
 
-        Debug.Log(xmlDoc.OuterXml);
-
         return xmlDoc;
     }
 
@@ -194,17 +204,15 @@ public class XMLFormatter
             XmlAttribute ownerAttrib = xmlDoc.CreateAttribute("owner");
             XmlAttribute idAttrib = xmlDoc.CreateAttribute("id");
 
-            if (tile.TileObject is Ruin)
+            if (tile.TileObject is Ruin ruin)
             {
-                var ruin = (Ruin)tile.TileObject;
                 itemTypeAttrib.Value = "ruin";
                 idAttrib.Value = ruin.unique_id.ToString();
                 ownerAttrib.Value = ruin.m_playerOwner;
             }
-            else if (tile.TileObject is Unit)
+            else if (tile.TileObject is Unit unit)
             {
-                var unit = (Unit)tile.TileObject;
-                itemTypeAttrib.Value = Unit.unitTypesLookUp[unit.Type];
+                itemTypeAttrib.Value = ((int)unit.Type).ToString();
                 idAttrib.Value = unit.GetID().ToString();
             }
 

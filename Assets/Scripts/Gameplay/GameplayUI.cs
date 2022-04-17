@@ -1,6 +1,6 @@
+using Audio;
 using TMPro;
 using UnityEngine;
-using Audio;
 using AudioType = Audio.AudioType;
 
 public class GameplayUI : MonoBehaviour
@@ -67,7 +67,6 @@ public class GameplayUI : MonoBehaviour
                 timerText.color = defaultTextColor;
             }
 
-            //Update text
             timerText.text = i.ToString();
         }
 

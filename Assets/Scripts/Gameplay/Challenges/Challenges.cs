@@ -34,7 +34,7 @@ public abstract class Challenge : ScriptableObject
 
     public void IncreaseCurrentAmount()
     {
-        if(!completed)
+        if (!completed)
         {
             currentAmount++;
         }
@@ -42,11 +42,11 @@ public abstract class Challenge : ScriptableObject
 
     public void ClaimReward()
     {
-        if(!rewardClaimed && completed)
+        if (!rewardClaimed && completed)
         {
             SaveReadWrite.data.score += reward.score;
             rewardClaimed = true;
-            ServerManager sm = new ServerManager();
+            var sm = new ServerManager();
             sm.SetScore(SaveReadWrite.data.name, SaveReadWrite.data.score.ToString());
         }
     }

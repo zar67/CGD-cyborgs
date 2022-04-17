@@ -6,49 +6,50 @@ using UnityEngine.Networking;
 
 public class ServerManager : MonoBehaviour
 {
-    [SerializeField] GameObject prefabItem;
-    [SerializeField] GameObject contents;
-    [SerializeField] GameObject mainMenu;
+    [SerializeField] private GameObject prefabItem;
+    [SerializeField] private GameObject contents;
+    [SerializeField] private GameObject mainMenu;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-       FillLeaderBoards();
+        FillLeaderBoards();
     }
 
     public void SetScore(string _name, string _score)
     {
-         StartCoroutine(GetRequest("http://liam0neale.pythonanywhere.com/SetScore/" + _name + "/" + _score));
-	}
+        StartCoroutine(GetRequest("http://liam0neale.pythonanywhere.com/SetScore/" + _name + "/" + _score));
+    }
 
     public void IncrementScore(string _name, string _score)
     {
         StartCoroutine(GetRequest("http://liam0neale.pythonanywhere.com/IncrementScore/" + _name + "/" + _score));
-	}
+    }
 
     public void DecrementScore(string _name, string _score)
     {
         StartCoroutine(GetRequest("http://liam0neale.pythonanywhere.com/DecrementScore/" + _name + "/" + _score));
-	}
+    }
 
     public void MainMenu()
     {
         mainMenu.SetActive(true);
         gameObject.SetActive(false);
-	}
+    }
 
     public void Resfresh()
     {
         FillLeaderBoards();
-	}
+    }
 
     public void FillLeaderBoards()
     {
-         StartCoroutine(BuildLeaderBoards());
-	}
-     IEnumerator GetRequest(string uri)
-     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        StartCoroutine(BuildLeaderBoards());
+    }
+
+    private IEnumerator GetRequest(string uri)
+    {
+        using (var webRequest = UnityWebRequest.Get(uri))
         {
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
@@ -72,10 +73,10 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-    IEnumerator BuildLeaderBoards()
-     {
+    private IEnumerator BuildLeaderBoards()
+    {
         string uri = "http://liam0neale.pythonanywhere.com/GetAllScores";
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        using (var webRequest = UnityWebRequest.Get(uri))
         {
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
@@ -134,13 +135,13 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-    IEnumerator Upload()
+    private IEnumerator Upload()
     {
-        WWWForm form = new WWWForm();
+        var form = new WWWForm();
         form.AddField("name", "harry");
         form.AddField("score", "175");
 
-        using (UnityWebRequest www = UnityWebRequest.Post("http://liam0neale.pythonanywhere.com/SetScore/name/score", form))
+        using (var www = UnityWebRequest.Post("http://liam0neale.pythonanywhere.com/SetScore/name/score", form))
         {
             yield return www.SendWebRequest();
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Xml;
 using TMPro;
@@ -32,7 +31,7 @@ public class MyNetwork : MonoBehaviour
     [SerializeField] private CameraController m_cameraController;
 
     public static bool m_isHost = false;
-    private Int32 m_port = 15000;
+    private int m_port = 15000;
     private static NetworkHost m_host;
     private static NetworkClient m_client;
     private string hostIP = "";
@@ -63,9 +62,14 @@ public class MyNetwork : MonoBehaviour
     {
         string myID = "";
         if (m_host != null)
+        {
             myID = m_host.GetName();
+        }
         else if (m_client != null)
+        {
             myID = m_client.GetName();
+        }
+
         return myID;
     }
 
@@ -329,7 +333,7 @@ public class MyNetwork : MonoBehaviour
                             }
                         }
                         XMLFormatter.disableComms = true;
-                        ruin.UnitType = Unit.unitTypesLookUpStr[messageData];
+                        ruin.UnitType = (Unit.EUnitType)int.Parse(messageData);
                         XMLFormatter.disableComms = false;
                     }
                 }
@@ -343,7 +347,7 @@ public class MyNetwork : MonoBehaviour
                 {
                     if (messageType == "connection")
                     {
-                        var item = Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
+                        GameObject item = Instantiate(Resources.Load("ClientItem") as GameObject, Vector3.zero, Quaternion.identity);
                         item.transform.SetParent(m_clientListContent.transform);
                         item.GetComponent<TextMeshProUGUI>().text = messageID;
                         item.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);

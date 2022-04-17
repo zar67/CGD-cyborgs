@@ -1,9 +1,8 @@
-using UnityEngine;
 using Audio;
-using AudioType = Audio.AudioType;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using AudioType = Audio.AudioType;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -35,7 +34,6 @@ public class GameplayManager : MonoBehaviour
         else
         {
             _instance = this;
-            //DontDestroyOnLoad(this.gameObject);
         }
     }
 
@@ -43,12 +41,9 @@ public class GameplayManager : MonoBehaviour
 
     private void Awake()
     {
-
         ui = UIObject.GetComponent<GameplayUI>();
         timerCurrent = turnTime;
         SingletonSetUp();
-        //ui.Show(false);
-
     }
 
     private void Start()
@@ -93,7 +88,7 @@ public class GameplayManager : MonoBehaviour
         UnitFactory.Instance.ResetTurn();
     }
 
-    bool CheckGameOver()
+    private bool CheckGameOver()
     {
         (bool, string) end = WorldGenerator.Instance.GetGameOver();
 
@@ -114,16 +109,15 @@ public class GameplayManager : MonoBehaviour
 
     public void GameOver(string winner)
     {
-        //MyNetwork.GameStarted = false;
         ui.Show(false);
         ui.Disable();
         gameOverUI.SetActive(true);
         FindObjectOfType<AudioController>().StopAudio(AudioType.ST_01, true);
         FindObjectOfType<AudioController>().StopAudio(AudioType.ST_03, true);
         FindObjectOfType<AudioController>().PlayAudio(AudioType.ST_04, true, 5);
-        Debug.Log("GAME OVER. Winner is " + winner);
         winnerText.text = winner + " is the winner!";
         restartButton.onClick.AddListener(RestartScene);
+
         // TODO go to game over screen!
     }
 

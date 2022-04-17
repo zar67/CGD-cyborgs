@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class UnitVisuals : MonoBehaviour
 {
@@ -21,14 +19,17 @@ public class UnitVisuals : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (!specialVisuals) return;
+        if (!specialVisuals)
+        {
+            return;
+        }
 
         if (textDamageTimer > 0)
         {
             textDamageTimer -= Time.deltaTime;
-            unitText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, ((floatTime - textDamageTimer) / floatTime) * floatHeight); 
+            unitText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, ((floatTime - textDamageTimer) / floatTime) * floatHeight);
         }
 
         if (damageTimer > 0)
@@ -49,7 +50,7 @@ public class UnitVisuals : MonoBehaviour
         }
         else if (textDamageTimer <= 0)
         {
-            specialVisuals = false; 
+            specialVisuals = false;
             unitText.SetActive(false);
         }
     }

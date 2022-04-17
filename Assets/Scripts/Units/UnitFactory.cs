@@ -9,14 +9,14 @@ public class UnitFactory : MonoBehaviour
     [Serializable]
     private struct UnitToGameObject
     {
-        public Unit.UnitTypes type;
+        public Unit.EUnitType type;
         public GameObject prefab;
     }
 
     [Serializable]
     private struct UnitToStats
     {
-        public Unit.UnitTypes type;
+        public Unit.EUnitType type;
         public Unit.UnitStats stats;
         public AttackPattern attackPattern;
         public List<TerrainType> traversibleTerrain;
@@ -36,8 +36,8 @@ public class UnitFactory : MonoBehaviour
     [SerializeField] private List<UnitToStats> stats;
     [SerializeField] private List<UnitToGameObject> prefabs;
 
-    private Dictionary<Unit.UnitTypes, GameObject> unitPrefabs;
-    private Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)> unitStats;
+    private Dictionary<Unit.EUnitType, GameObject> unitPrefabs;
+    private Dictionary<Unit.EUnitType, (Unit.UnitStats, AttackPattern, List<TerrainType>)> unitStats;
 
     private Dictionary<string, int> spritesToUseForPlayer;
 
@@ -75,8 +75,8 @@ public class UnitFactory : MonoBehaviour
     private void SetUpDictionaries()
     {
         spritesToUseForPlayer = new Dictionary<string, int>();
-        unitPrefabs = new Dictionary<Unit.UnitTypes, GameObject>();
-        unitStats = new Dictionary<Unit.UnitTypes, (Unit.UnitStats, AttackPattern, List<TerrainType>)>();
+        unitPrefabs = new Dictionary<Unit.EUnitType, GameObject>();
+        unitStats = new Dictionary<Unit.EUnitType, (Unit.UnitStats, AttackPattern, List<TerrainType>)>();
         foreach (UnitToGameObject u in prefabs)
         {
             unitPrefabs.Add(u.type, u.prefab);
@@ -100,17 +100,17 @@ public class UnitFactory : MonoBehaviour
 
     #region Get base unit stats functions
 
-    public AttackPattern GetUnitAttackPattern(Unit.UnitTypes unitType)
+    public AttackPattern GetUnitAttackPattern(Unit.EUnitType unitType)
     {
         return unitStats[unitType].Item2;
     }
 
-    public List<TerrainType> GetTraversableTerrain(Unit.UnitTypes unitType)
+    public List<TerrainType> GetTraversableTerrain(Unit.EUnitType unitType)
     {
         return unitStats[unitType].Item3;
     }
 
-    public Unit.UnitStats GetBaseUnitStats(Unit.UnitTypes unitType)
+    public Unit.UnitStats GetBaseUnitStats(Unit.EUnitType unitType)
     {
         return unitStats[unitType].Item1;
     }
@@ -127,7 +127,7 @@ public class UnitFactory : MonoBehaviour
     }
 
     //Creates and returns a unit on a given tile.
-    public Unit CreateUnitOnTile(Unit.UnitTypes unitType, Tile tile, int ruinId = -1, string playerId = "")
+    public Unit CreateUnitOnTile(Unit.EUnitType unitType, Tile tile, int ruinId = -1, string playerId = "")
     {
         if (tile.TileObject != null)
         {

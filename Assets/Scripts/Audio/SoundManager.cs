@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,19 +8,13 @@ public class SoundManager : MonoBehaviour
     public Sound[] sounds;
     private static Dictionary<string, float> soundTimerDictionary;
 
-    public static SoundManager instance
-    {
-        get
-        {
-            return _instance;
-        }
-    }
+    public static SoundManager instance => _instance;
 
     private void Awake()
     {
         if (_instance != null && _instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         else
         {
@@ -47,11 +40,6 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        // Add this part after having a theme song 
-        // Play('Theme'); 
-    }
     public void Play(string name)
     {
         Sound sound = Array.Find(sounds, s => s.name == name);
@@ -62,7 +50,10 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        if (!CanPlaySound(sound)) return;
+        if (!CanPlaySound(sound))
+        {
+            return;
+        }
 
         sound.source.Play();
     }

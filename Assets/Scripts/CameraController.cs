@@ -1,18 +1,25 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    public float panSpeed = 20f;
-    public float panBorderThickness = 10f;
-    public float scroll = 8;
-    public Camera m_OrthographicCamera;
+    [Header("References")]
+    [SerializeField] private Camera m_targetCamera = default;
+    [SerializeField] private Transform m_targetCameraTransform = default;
 
-    public float minFOV;
-    public float maxFOV;
-    public float sensitivity;
-    public float FOV;
+    [Header("Camera Movement Values")]
+    [SerializeField] private float m_defaultCameraSpeed = 5.0f;
+    [SerializeField] private float m_fasterCameraSpeed = 10.0f;
 
-    public int scrollSpeed = 1;
+    [Header("Camer Zoom Values")]
+    [SerializeField] private float m_defaultZoomSpeed = 1.0f;
+    [SerializeField] private float m_fasterZoomSpeed = 2.0f;
+    [SerializeField] private float m_minSizeValue = 5.0f;
+    [SerializeField] private float m_maxSizeValue = 15.0f;
+
+    private Vector2 m_movementInputValue = Vector2.zero;
+    private bool m_fastInputValue = false;
+    private float m_zoomInputValue = 0;
 
     private Rect m_worldRect = new Rect(0, 0, 20, 10);
 
@@ -24,44 +31,51 @@ public class CameraController : MonoBehaviour
     public void SetWorldRect(Rect rect)
     {
         m_worldRect = rect;
-        m_worldRect.x -= panBorderThickness;
-        m_worldRect.y -= panBorderThickness;
-        m_worldRect.width += panBorderThickness * 2;
-        m_worldRect.height += panBorderThickness * 2;
+    }
+
+    public void OnMoveInput(InputAction.CallbackContext context)
+    {
+        m_movementInputValue = context.ReadValue<Vector2>();
+    }
+
+    public void OnFasterInput(InputAction.CallbackContext context)
+    {
+        m_fastInputValue = context.performed;
+    }
+
+    public void OnZoomInput(InputAction.CallbackContext context)
+    {
+        m_zoomInputValue = context.ReadValue<float>();
     }
 
     private void Update()
     {
-        Vector3 pos = transform.position;
-        if (Input.GetKey("w") || Input.mousePosition.y >= Screen.height - panBorderThickness)
-        {
-            pos.y += panSpeed * Time.deltaTime;
-        }
+        Move();
+        Zoom();
+    }
 
-        if (Input.GetKey("s") || Input.mousePosition.y <= panBorderThickness)
-        {
-            pos.y -= panSpeed * Time.deltaTime;
-        }
+    private void Move()
+    {
+        float movementSpeed = m_fastInputValue ? m_fasterCameraSpeed : m_defaultCameraSpeed;
 
-        if (Input.GetKey("d") || Input.mousePosition.x >= Screen.width - panBorderThickness)
-        {
-            pos.x += panSpeed * Time.deltaTime;
-        }
+        Vector3 cameraPosition = m_targetCameraTransform.position;
+        cameraPosition.x += m_movementInputValue.x * movementSpeed * Time.deltaTime;
+        cameraPosition.y += m_movementInputValue.y * movementSpeed * Time.deltaTime;
 
-        if (Input.GetKey("a") || Input.mousePosition.x <= panBorderThickness)
-        {
-            pos.x -= panSpeed * Time.deltaTime;
-        }
+        cameraPosition.x = Mathf.Clamp(cameraPosition.x, m_worldRect.min.x, m_worldRect.max.x);
+        cameraPosition.y = Mathf.Clamp(cameraPosition.y, m_worldRect.min.y, m_worldRect.max.y);
 
+        m_targetCameraTransform.position = cameraPosition;
+    }
 
-        FOV = Camera.main.orthographicSize;
-        FOV += Input.GetAxis("Mouse ScrollWheel") * sensitivity * -1;
-        FOV = Mathf.Clamp(FOV, minFOV, maxFOV);
-        Camera.main.orthographicSize = FOV;
+    private void Zoom()
+    {
+        float zoomSpeed = m_fastInputValue ? m_fasterZoomSpeed : m_defaultZoomSpeed;
 
-        pos.x = Mathf.Clamp(pos.x, m_worldRect.min.x, m_worldRect.max.x);
-        pos.y = Mathf.Clamp(pos.y, m_worldRect.min.y, m_worldRect.max.y);
+        float cameraSize = m_targetCamera.orthographicSize;
+        cameraSize += m_zoomInputValue * zoomSpeed * Time.deltaTime;
 
-        transform.position = pos;
+        cameraSize = Mathf.Clamp(cameraSize, m_minSizeValue, m_maxSizeValue);
+        m_targetCamera.orthographicSize = cameraSize;
     }
 }

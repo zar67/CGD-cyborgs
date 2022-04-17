@@ -7,6 +7,8 @@ public class Ruin : MonoBehaviour, ITileObject
 {
     public const int RUIN_SIGHT = 5;
 
+    public Sprite Sprite => m_ruinSpriteRenderer.sprite;
+
     [SerializeField] private SpriteRenderer m_ruinSpriteRenderer = default;
     [SerializeField] private SpriteRenderer m_takeOverSpriteRenderer = default;
 
@@ -18,11 +20,11 @@ public class Ruin : MonoBehaviour, ITileObject
     private bool hasUnit = false;
     private Unit ruinUnit;
 
-    public Unit.UnitTypes UnitType
+    public Unit.EUnitType UnitType
     {
         get;
         set;
-    } = Unit.UnitTypes.SOLDIER;
+    } = Unit.EUnitType.SOLDIER;
 
     public Tile Tile
     {
@@ -88,8 +90,8 @@ public class Ruin : MonoBehaviour, ITileObject
                 WorldSelection.ChangeSelection(this);
             }
         }
-        else if (eventData.button == PointerEventData.InputButton.Right &&
-            WorldSelection.SelectedObject == this)
+        else if (eventData.button == PointerEventData.InputButton.Right && 
+                 WorldSelection.SelectedObject == this)
         {
             WorldSelection.ChangeSelection(null);
         }
@@ -98,10 +100,11 @@ public class Ruin : MonoBehaviour, ITileObject
     private bool CheckCanTakeOver()
     {
         if (WorldSelection.SelectedObject is Unit unit &&
-            MyNetwork.GetMyInstanceID() != m_playerOwner && 
+            MyNetwork.GetMyInstanceID() != m_playerOwner &&
             MyNetwork.GetMyInstanceID() == unit.GetPlayerId())
         {
-            if (!unit.isPlayer(m_playerOwner) && WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true))
+            if (!unit.isPlayer(m_playerOwner) && 
+                WorldGenerator.GetPath(unit.Tile, Tile, unit.TraversibleTerrains.ToList(), out List<Tile> path, true))
             {
                 return path.Count - 1 <= unit.Movement;
             }
@@ -151,7 +154,7 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         m_takeOverSpriteRenderer.enabled = false;
     }
-    
+
     public void SpawnUnit(bool nullTurn = false)
     {
         if (Tile.TileObject != null)
@@ -170,7 +173,10 @@ public class Ruin : MonoBehaviour, ITileObject
                 ruinUnit.OnDeath += RespawnUnit;
                 hasUnit = true;
 
-                if (nullTurn) ruinUnit.NullTurn();
+                if (nullTurn)
+                {
+                    ruinUnit.NullTurn();
+                }
             }
             else
             {
@@ -198,7 +204,7 @@ public class Ruin : MonoBehaviour, ITileObject
         m_playerOwner = newPlayerOwner;
 
         //need to add this messae to queue before unit is created local side
-        if(_sendMessage)
+        if (_sendMessage)
         {
             XMLFormatter.AddRuinOwnerChange(this, m_playerOwner);
         }
@@ -227,7 +233,6 @@ public class Ruin : MonoBehaviour, ITileObject
     {
         if (id == unique_id)
         {
-            //hasUnit = false;
             RespawnUnit();
         }
     }

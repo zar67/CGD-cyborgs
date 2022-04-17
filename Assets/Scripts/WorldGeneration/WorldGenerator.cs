@@ -89,7 +89,7 @@ public class WorldGenerator : MonoBehaviour
 
     public Vector2 GetStartingPosition(string playerID)
     {
-        foreach(Ruin ruin in AllRuins)
+        foreach (Ruin ruin in AllRuins)
         {
             if (ruin.m_playerOwner == playerID)
             {
@@ -309,7 +309,7 @@ public class WorldGenerator : MonoBehaviour
             {
                 index = Random.Range(0, WorldTiles.Count - 1);
             }
-            
+
             Ruin newRuin = Instantiate(RuinPrefab, transform);
 
             string playerID = "";

@@ -1,9 +1,9 @@
+using Audio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Audio;
 using AudioType = Audio.AudioType;
 
 public class Unit : MonoBehaviour, ITileObject
@@ -11,7 +11,7 @@ public class Unit : MonoBehaviour, ITileObject
     #region UnityTypes enum and UnitDamage/UnitStats structs
 
     [Serializable]
-    public enum UnitTypes
+    public enum EUnitType
     {
         SOLDIER,
         TANK,
@@ -21,7 +21,7 @@ public class Unit : MonoBehaviour, ITileObject
     [Serializable]
     public struct UnitDamage
     {
-        public UnitTypes againstType;
+        public EUnitType againstType;
         public int damage;
     }
 
@@ -35,9 +35,7 @@ public class Unit : MonoBehaviour, ITileObject
         public int sight;
         public int killCount;
 
-
-
-        public int GetDamage(UnitTypes type)
+        public int GetDamage(EUnitType type)
         {
             foreach (UnitDamage dmg in damages)
             {
@@ -54,13 +52,15 @@ public class Unit : MonoBehaviour, ITileObject
 
     public event Action OnDeath;
 
+    public Sprite Sprite => unitSprite.sprite;
+
     [Header("Sprites")]
     [SerializeField] private SpriteRenderer unitSprite;
     [SerializeField] private UnitVisuals unitVisualsHandler;
     [SerializeField] private List<Sprite> playerSprites;
 
     [Header("Unit type")]
-    [SerializeField] private UnitTypes unitType;
+    [SerializeField] private EUnitType unitType;
 
     private TerrainType[] traversibleTerrain;
 
@@ -76,7 +76,7 @@ public class Unit : MonoBehaviour, ITileObject
     private int ruinId = -1;
     private string playerId = "";
 
-    public UnitTypes Type => unitType;
+    public EUnitType Type => unitType;
 
     private bool specialClick = false;
     public bool Attacking => specialClick;
@@ -89,19 +89,6 @@ public class Unit : MonoBehaviour, ITileObject
         get;
         set;
     }
-
-    public static Dictionary<UnitTypes, string> unitTypesLookUp = new Dictionary<UnitTypes, string>() 
-    { 
-        {UnitTypes.SOLDIER, "soldier" }, 
-        {UnitTypes.TANK, "tank" }, 
-        {UnitTypes.PLANE, "plane" }, 
-	}; 
-    public static Dictionary<string, UnitTypes> unitTypesLookUpStr = new Dictionary<string, UnitTypes>() 
-    { 
-        {"soldier", UnitTypes.SOLDIER}, 
-        {"tank" , UnitTypes.TANK}, 
-        {"plane" , UnitTypes.PLANE}, 
-	}; 
 
     public TerrainType[] TraversibleTerrains => traversibleTerrain;
 
@@ -239,7 +226,10 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!Tile.IsDiscovered) return;
+        if (!Tile.IsDiscovered)
+        {
+            return;
+        }
 
         TileInformationUI.Instance.SetText(unitType, MyNetwork.GetMyInstanceID() == playerId);
 
@@ -275,7 +265,7 @@ public class Unit : MonoBehaviour, ITileObject
                 if (path.Count - 1 <= movementLeft)
                 {
                     movementLeft -= path.Count - 1;
-                
+
                     FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_04, true);
                     MoveToTile(current);
                 }
@@ -315,7 +305,7 @@ public class Unit : MonoBehaviour, ITileObject
                 tile.Discover();
             }
         }
-        if(sendMsg)
+        if (sendMsg)
         {
             XMLFormatter.AddPositionChange(this);
         }
@@ -324,7 +314,7 @@ public class Unit : MonoBehaviour, ITileObject
 
         Show(Tile.IsDiscovered);
     }
-    
+
     public void HasAttacked()
     {
         FindObjectOfType<AudioController>().PlayAudio(AudioType.SFX_06, true);
@@ -341,7 +331,7 @@ public class Unit : MonoBehaviour, ITileObject
         if (!WorldGenerator.Instance.IsThereTileAtLocation(move) || (WorldGenerator.Instance.GetTileAtCoordinate(move).TileObject != null && WorldGenerator.Instance.GetTileAtCoordinate(move).TileObject != this))
         {
             unitStats.health -= 1;
-            unitVisualsHandler.TookDamage(dmg+1);
+            unitVisualsHandler.TookDamage(dmg + 1);
 
         }
         else
@@ -373,15 +363,15 @@ public class Unit : MonoBehaviour, ITileObject
 
     public void HandleDeath(int id)
     {
-       
+
         Tile.SetTileObject(null);
         unitSprite.color = new Color(0, 0, 0, 0);
         unitSprite.sortingOrder = -1;
         isDead = true;
         if (id == ruinId)
         {
-        
-          
+
+
             OnDeath?.Invoke();
             Destroy(gameObject);
         }
@@ -408,7 +398,10 @@ public class Unit : MonoBehaviour, ITileObject
         playerId = newPlayerId;
         unitSprite.sprite = playerSprites[newSprite];
 
-        if (newPlayerId == MyNetwork.GetMyInstanceID()) GlobalData.UpdateDailyChallenge<ColoniseRuins>();
+        if (newPlayerId == MyNetwork.GetMyInstanceID())
+        {
+            GlobalData.UpdateDailyChallenge<ColoniseRuins>();
+        }
     }
 
     public void NullTurn()

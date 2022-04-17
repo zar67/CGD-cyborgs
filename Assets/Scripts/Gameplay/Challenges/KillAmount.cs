@@ -5,14 +5,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DefaultChallenge", menuName = "Challenges/KillAmountOf")]
 public class KillAmount : Challenge
 {
-    private Dictionary<Unit.UnitTypes, string> formattedNames = new Dictionary<Unit.UnitTypes, string>()
+    private Dictionary<Unit.EUnitType, string> formattedNames = new Dictionary<Unit.EUnitType, string>()
     {
-        {Unit.UnitTypes.SOLDIER, "Soldier" },
-        {Unit.UnitTypes.TANK, "Tank" },
-        {Unit.UnitTypes.PLANE, "Plane" },
+        {Unit.EUnitType.SOLDIER, "Soldier" },
+        {Unit.EUnitType.TANK, "Tank" },
+        {Unit.EUnitType.PLANE, "Plane" },
     };
 
-    public Unit.UnitTypes unitType;
+    public Unit.EUnitType unitType;
 
     public override string GetDescription()
     {
